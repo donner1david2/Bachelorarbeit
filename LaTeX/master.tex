@@ -65,7 +65,21 @@
 % (!!) FOOTNOTE POSITION NOT RECOMMENDED IN MINT DOMAIN:
 % autocite=footnote
 %
-\usepackage[backend=biber, autocite=inline, style=numeric]{biblatex} 	
+\usepackage[backend=biber, autocite=inline, style=authoryear]{biblatex} 	
+
+% use [] for parencites
+\makeatletter
+\DeclareFieldFormat{citebackslash}{[\mkbibnamelast{#1}]}
+\renewcommand*{\nameyeardelim}{\addcomma\space} % Adds comma like [Jones, 2024]
+\DeclareFieldFormat{biblabeldate}{#1}
+\DeclareCiteCommand{\parencite}[\mkbibbrackets]
+  {\usebibmacro{prenote}}
+  {\usebibmacro{citeindex}%
+   \usebibmacro{cite}}
+  {\multicitedelim}
+  {\usebibmacro{postnote}}
+\makeatother
+
 \usepackage{makeidx}                  % allows index generation
 \usepackage{listings}	                %Format Listings properly
 \usepackage{lipsum}                   % Blindtext
@@ -83,7 +97,7 @@
 \usepackage{setspace}
 \usepackage{tocloft}
 \usepackage[T1]{fontenc}
-
+ 
 % Definitionen und Commands
 \newcommand{\indextype}{numeric}
 \newcommand{\abs}{\par\vskip 0.2cm\goodbreak\noindent}
