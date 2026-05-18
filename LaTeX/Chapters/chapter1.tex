@@ -1,3 +1,12 @@
 % !TEX root =  master.tex
 
 \chapter{Beispiel-Kapitel: Gebrauchsanleitung \LaTeX}
+
+\section{Proxy}
+
+Ein Proxy-Server ist in dieser Systemarchitektur aus mehreren Gründen äußerst hilfreich, die sich direkt aus den dokumentierten Funktionen moderner Reverse-Proxies ableiten lassen. Entsprechend der NGINX-Dokumentation und der Caddy-Dokumentation zur 
+reverse\_proxy-Direktive übernimmt ein solcher Server die zentrale Lastverteilung (Load Balancing), indem er die Anfragen des Clients entgegennimmt und sie flexibel an die spezialisierten Backend-Dienste, wie die Backend-App, den Server für Videodaten oder das Dart-Modul, 
+weiterleitet. Durch das in NGINX etablierte Caching von statischen Inhalten wie HTML-Daten werden die internen Server entlastet und die Antwortzeiten für den Client verkürzt. Zudem verdeutlicht der HAProxy Starter Guide, 
+dass ein Proxy essenziell für das Verbindungsmanagement ist: Er fängt langsame Client-Verbindungen ab und gibt Ressourcen frei \enquote{freeing up connections}, wodurch die eigentlichen Anwendungsserver vor Überlastung geschützt werden, 
+während Datenströme wie der Video-Upload stabil verarbeitet werden können. Schließlich sorgt der Proxy für ein hohes Maß an Sicherheit, da er als Schutzschild fungiert, die interne Netzwerkinfrastruktur vor direktem Zugriff verbirgt 
+und unvalidierte Anfragen bereits an der Peripherie filtert.(source: add NGINX, HAProxy, Caddy)
