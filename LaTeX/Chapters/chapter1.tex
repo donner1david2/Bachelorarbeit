@@ -10,3 +10,19 @@ weiterleitet. Durch das in NGINX etablierte Caching von statischen Inhalten wie 
 dass ein Proxy essenziell für das Verbindungsmanagement ist: Er fängt langsame Client-Verbindungen ab und gibt Ressourcen frei \enquote{freeing up connections}, wodurch die eigentlichen Anwendungsserver vor Überlastung geschützt werden, 
 während Datenströme wie der Video-Upload stabil verarbeitet werden können. Schließlich sorgt der Proxy für ein hohes Maß an Sicherheit, da er als Schutzschild fungiert, die interne Netzwerkinfrastruktur vor direktem Zugriff verbirgt 
 und unvalidierte Anfragen bereits an der Peripherie filtert.(source: add NGINX, HAProxy, Caddy)
+
+\section{Codec Lizenz}
+
+Die Verfügbaren Codecs H.265 und H.264 werden momentan beide Lizenziert. Für uns ist dieser Fall interessant, da die Lizenzen sowohl Verteilung Codierten Inhalten via Streaming, als auch der Verkauf von Geräten mit der Fähigkeit für Codierung von den Formaten umfasst.
+Für H.264 gilt dabei, dass beim von Verkauf von unter 100.000 Geräten keine Lizenzgebühren anfallen. Für das Streamen von codierten Inhalten war es bis ende 2025 der Fall, dass keinerlei Lizenzgebühren anfallen solange der Inhalt frei für den Nutzer 
+zur Verfügung gestellt ist. Seit 2026 gibt es aber ein neues Stufen System welches in Abhängigkeit von Faktoren wie monatliche Nutzer man in verschieden Stufen eingeteilt wird. Die niedrigste Stufe startet jedoch bei Jährlichen Lizenzgebühren von 100.000\$,
+die einzige Möglichkeit das für diesen Anwendungsfall keine Lizenzgebühren anfallen, wäre wenn die Webseite zur Bereitstellung der Videos nicht als Platform in sinne des Patent pools, eingestuft werden würde.
+Bei H.265 hingegen gibt es theoretisch die Möglichkeit komplett kostenfrei zu bleiben. Hierzu muss jährlich unter 25000€ Lizenzgebühren anfallen, bei zwischen 0,4 bis 1,2 Euro pro Gerät. Für die Verteilung im Internet besteht ein ähnliches Modell bei einem der Patent-Pools,
+solange unter 50000€ jährlich an gebühren anfallen müssen diese nicht gezahlt werden. Ein zweiter Patent-Pool erhebt keine Lizenzgebühren für das Streaming von H.265 videos. Der letzte Pool gibt die Möglichkeit für Zahlung eines Prozentes der Einnahmen der Platform,
+einen Betrag von 12 bis 15 cent pro Nutzer, oder einen Festen verhandelten Betrag der zu zahlen ist. Da der Patent-Pool aber wahrscheinlich nicht akzeptiert dass keine Einnahmen entstehen werden, ist es unwahrscheinlich, dass diese Form akzeptiert wird und 
+auf die per Nutzer Basis oder den festen Betrag ausgewichen werden müsste. 
+Da es nicht so scheint als ob eine vollständig kostenfreie Verwendung eines Codecs plausibel ist, erscheint H.265 als passendere Variante, da es zumindest bei einer überschaubaren Menge an Nutzern als kostengünstigere seien sollte. Des Weiteren, erzielt H.265 im
+Vergleich zu H.264 bessere Kompression, und ist somit unter Betrachtung der benötigten Bandbreite besser.\parencite{accessadvance_2025_hevc,,avanci_2026_avanci,httpswwwstreamingmediacomauthors4247janozerhtm_2026_h264,httpswwwstreamingmediaglobalcomauthors4247janozerhtm_2026_avanci}
+
+\section{Content Distribution Network}
+
