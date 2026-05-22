@@ -9,7 +9,7 @@ reverse\_proxy-Direktive übernimmt ein solcher Server die zentrale Lastverteilu
 weiterleitet. Durch das in NGINX etablierte Caching von statischen Inhalten wie HTML-Daten werden die internen Server entlastet und die Antwortzeiten für den Client verkürzt. Zudem verdeutlicht der HAProxy Starter Guide, 
 dass ein Proxy essenziell für das Verbindungsmanagement ist: Er fängt langsame Client-Verbindungen ab und gibt Ressourcen frei \enquote{freeing up connections}, wodurch die eigentlichen Anwendungsserver vor Überlastung geschützt werden, 
 während Datenströme wie der Video-Upload stabil verarbeitet werden können. Schließlich sorgt der Proxy für ein hohes Maß an Sicherheit, da er als Schutzschild fungiert, die interne Netzwerkinfrastruktur vor direktem Zugriff verbirgt 
-und unvalidierte Anfragen bereits an der Peripherie filtert.(source: add NGINX, HAProxy, Caddy)
+und ungeprüfte Anfragen bereits an der Peripherie filtert.(source: add NGINX, HAProxy, Caddy)
 
 \section{Codec Lizenz}
 
