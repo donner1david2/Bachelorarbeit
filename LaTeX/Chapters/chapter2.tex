@@ -1,7 +1,11 @@
 % !TEX root =  master.tex
-\chapter{Beispiel-Kapitel: Noch ein Kapitel}
+\chapter{DART}
 
-blabla
+Als Videoquelle dient der Löwen-DART HB10, dieser erstellt kurze Videoschnipsel für jeden Wurf, aus einem Spiel des Zukünftigen Turnier Modus. Nach Abschluss des Spiels werden alle Videoschnipsel zu einem Video zusammengeführt, und für das Streaming vorbereitet. 
 
-\section{Abschnitt mit Coding}
+\section{Aufbau und Ablauf}
 
+Die Videofunktion des HB10 erstreckt sich über zwei Anwendungen, welche miteinander kommunizieren. Die erste ist die eigentliche DART-Anwendung, diese ist dafür zuständig die zweite Anwendung über Ereignisse wie Treffer, Spiel Start und Ende zu Informieren,
+sowie das Abschließende übertragen an den Server. Die zweite Anwendung, ist verantwortlich für das zwischen Speichern, das Zusammenschneiden, das Komprimieren der Videodaten, sowie das anschließende erstellen der Playlist.
+
+\newpage

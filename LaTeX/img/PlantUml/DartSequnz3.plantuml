@@ -1,0 +1,61 @@
+@startuml
+participant Dart_App
+participant Video_Main
+participant File_System
+participant Server
+
+loop player playing Dart
+
+    loop not game ended
+        activate Dart_App
+        Dart_App -> Video_Main: send_Hit
+        deactivate Dart_App
+        activate Video_Main
+
+        Video_Main -> File_System: save_raw
+        activate File_System
+
+        File_System -> File_System: save
+        deactivate File_System
+
+        deactivate Video_Main
+    end
+    
+    Dart_App -> Dart_App: game_finished
+    activate Dart_App
+
+    Dart_App -> Video_Main: send_game_finished    
+    deactivate Dart_App
+    activate Video_Main
+
+    Video_Main -> File_System: read_raw
+    activate File_System
+
+    File_System --> Video_Main: data
+    deactivate File_System
+
+    Video_Main -> Video_Main: compress_video
+
+    Video_Main -> File_System: save_compressed
+    activate File_System
+
+    File_System -> File_System: save
+    deactivate File_System
+
+    Video_Main -> Dart_App: send_video_finished(path)
+    deactivate Video_Main
+    activate Dart_App
+
+    Dart_App -> File_System: getVideo
+    deactivate Dart_App
+    activate File_System
+
+    File_System -> Dart_App: video
+    deactivate File_System
+    activate Dart_App
+
+    Dart_App -> Server: upload_video
+    deactivate Dart_App
+    activate Server
+end
+@enduml

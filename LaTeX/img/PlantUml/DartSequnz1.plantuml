@@ -1,0 +1,26 @@
+@startuml
+participant Dart_App
+participant Video_Main
+'participant Video_Frame_Thread
+
+par Video_Main Thread
+    Video_Main -> Video_Main: bind_Socket
+    activate Video_Main
+    deactivate Video_Main
+
+    loop waiting for connection
+        Video_Main -> Video_Main: listen
+    end
+
+    Video_Main -> : open_Camera_Connection
+    Video_Main -> : create_Frame_Thread
+    'Video_Main -> Video_Frame_Thread: create
+
+else Dart_App Thread
+    loop connecting
+        Dart_App -> Video_Main: connect
+    end
+
+    Dart_App -> Dart_App: Game_start
+end
+@enduml

@@ -1,0 +1,19 @@
+@startuml
+participant Video_Frames_Thread
+participant Kamera
+
+-> Video_Frames_Thread: create()
+activate Video_Frames_Thread
+
+loop reading frames
+    Video_Frames_Thread -> Kamera: receive_frame()
+    deactivate Video_Frames_Thread
+    activate Kamera
+    Kamera -> Video_Frames_Thread: deliver frame
+    deactivate Kamera
+    activate Video_Frames_Thread
+
+    Video_Frames_Thread -> Video_Frames_Thread: buffer_frames
+    deactivate Video_Frames_Thread
+end
+@enduml
