@@ -1,0 +1,83 @@
+@startuml sequenz
+
+participant Dart_App
+participant Video_Main
+participant Video_Frames
+participant File_System
+participant Kamera
+participant Server
+
+activate Server
+activate Kamera
+activate File_System
+activate Dart_App 
+activate Video_Main
+
+par Video_Main Thread
+
+    Video_Main -> Video_Main: bind Socket
+
+    loop while awaiting connection
+        Video_Main -> Video_Main: listen for Socket connection
+    end
+
+else Dart_App Thread
+
+    loop while connecting
+        Dart_App -> Video_Main: connect to Socket
+    end
+
+end
+
+' Start Video Frames Thread
+Video_Main -> Video_Frames: start()
+activate Video_Frames
+
+par Video_Frames Thread
+
+    loop while reading frames
+        Video_Frames -> Kamera: receive_frame()
+        activate Kamera
+        Kamera --> Video_Frames: deliver frames
+        deactivate Kamera
+    end
+
+else Video_Main Message Thread
+
+    loop while handling messages
+
+        loop game not finished
+            Dart_App -> Video_Main: send_Hit
+            Video_Main -> Video_Main: read Socket
+
+            Video_Main -> File_System: save_raw
+            activate File_System
+            File_System -> File_System: save
+            deactivate File_System
+        end
+
+        Dart_App -> Video_Main: send_game_Finished
+
+        Video_Main -> File_System: read_raw
+        activate File_System
+        File_System --> Video_Main: return
+        deactivate File_System
+
+        Video_Main -> Video_Main: Compress_Video
+        Video_Main -> Dart_App: video_fin(path)
+        Dart_App -> Server: upload_video
+
+    end
+
+    Video_Frames -> Video_Main: Join
+    deactivate Video_Frames
+
+end
+
+deactivate Dart_App 
+deactivate Video_Main 
+deactivate File_System
+deactivate Kamera
+deactivate Server
+
+@enduml
