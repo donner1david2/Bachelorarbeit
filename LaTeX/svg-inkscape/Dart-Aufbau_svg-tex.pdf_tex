@@ -1,0 +1,71 @@
+%% Creator: Inkscape 1.4.2 (f4327f4, 2025-05-13), www.inkscape.org
+%% PDF/EPS/PS + LaTeX output extension by Johan Engelen, 2010
+%% Accompanies image file 'Dart-Aufbau_svg-tex.pdf' (pdf, eps, ps)
+%%
+%% To include the image in your LaTeX document, write
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics{<filename>.pdf}
+%% To scale the image, write
+%%   \def\svgwidth{<desired width>}
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics[width=<desired width>]{<filename>.pdf}
+%%
+%% Images with a different path to the parent latex file can
+%% be accessed with the `import' package (which may need to be
+%% installed) using
+%%   \usepackage{import}
+%% in the preamble, and then including the image with
+%%   \import{<path to file>}{<filename>.pdf_tex}
+%% Alternatively, one can specify
+%%   \graphicspath{{<path to file>/}}
+%% 
+%% For more information, please see info/svg-inkscape on CTAN:
+%%   http://tug.ctan.org/tex-archive/info/svg-inkscape
+%%
+\begingroup%
+  \makeatletter%
+  \providecommand\color[2][]{%
+    \errmessage{(Inkscape) Color is used for the text in Inkscape, but the package 'color.sty' is not loaded}%
+    \renewcommand\color[2][]{}%
+  }%
+  \providecommand\transparent[1]{%
+    \errmessage{(Inkscape) Transparency is used (non-zero) for the text in Inkscape, but the package 'transparent.sty' is not loaded}%
+    \renewcommand\transparent[1]{}%
+  }%
+  \providecommand\rotatebox[2]{#2}%
+  \newcommand*\fsize{\dimexpr\f@size pt\relax}%
+  \newcommand*\lineheight[1]{\fontsize{\fsize}{#1\fsize}\selectfont}%
+  \ifx\svgwidth\undefined%
+    \setlength{\unitlength}{396.75bp}%
+    \ifx\svgscale\undefined%
+      \relax%
+    \else%
+      \setlength{\unitlength}{\unitlength * \real{\svgscale}}%
+    \fi%
+  \else%
+    \setlength{\unitlength}{\svgwidth}%
+  \fi%
+  \global\let\svgwidth\undefined%
+  \global\let\svgscale\undefined%
+  \makeatother%
+  \begin{picture}(1,0.50094518)%
+    \lineheight{1}%
+    \setlength\tabcolsep{0pt}%
+    \put(0,0){\includegraphics[width=\unitlength,page=1]{Dart-Aufbau_svg-tex.pdf}}%
+    \put(0.14392722,0.30245747){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}HB10\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=2]{Dart-Aufbau_svg-tex.pdf}}%
+    \put(0.04808185,0.2173913){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}Dart\end{tabular}}}}%
+    \put(0.10452287,0.2173913){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}-\end{tabular}}}}%
+    \put(0.11491664,0.2173913){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}App\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=3]{Dart-Aufbau_svg-tex.pdf}}%
+    \put(0.34906805,0.05860113){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}Video\end{tabular}}}}%
+    \put(0.42371456,0.05860113){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}-\end{tabular}}}}%
+    \put(0.43410775,0.05860113){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}App\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=4]{Dart-Aufbau_svg-tex.pdf}}%
+    \put(0.23246503,0.18147448){\rotatebox{-38.6338369}{\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}Socket\end{tabular}}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=5]{Dart-Aufbau_svg-tex.pdf}}%
+    \put(0.23152174,0.4536862){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}Server\end{tabular}}}}%
+  \end{picture}%
+\endgroup%
