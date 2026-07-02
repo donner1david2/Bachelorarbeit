@@ -1,26 +1,30 @@
 @startuml
-participant Dart_App
-participant Video_Main
-'participant Video_Frame_Thread
+skinparam defaultFontName "Times New Roman"
+skinparam defaultFontSize 12 
+skinparam defaultFontColor black
 
-par Video_Main Thread
-    Video_Main -> Video_Main: bind_Socket
-    activate Video_Main
-    deactivate Video_Main
+participant Dart-App
+participant Video-Main
+'participant Video-Frame-Thread
+
+par Video-Main Thread
+    Video-Main -> Video-Main: bind-Socket
+    activate Video-Main
+    deactivate Video-Main
 
     loop waiting for connection
-        Video_Main -> Video_Main: listen
+        Video-Main -> Video-Main: listen
     end
 
-    Video_Main -> : open_Camera_Connection
-    Video_Main -> : create_Frame_Thread
-    'Video_Main -> Video_Frame_Thread: create
+    Video-Main -> : open-Camera-Connection
+    Video-Main -> : create-Frame-Thread
+    'Video-Main -> Video-Frame-Thread: create
 
-else Dart_App Thread
+else Dart-App Thread
     loop connecting
-        Dart_App -> Video_Main: connect
+        Dart-App -> Video-Main: connect
     end
 
-    Dart_App -> Dart_App: Game_start
+    Dart-App -> Dart-App: Game-start
 end
 @enduml

@@ -1,19 +1,23 @@
 @startuml
-participant Video_Frames_Thread
+skinparam defaultFontName "Times New Roman"
+skinparam defaultFontSize 12 
+skinparam defaultFontColor black
+
+participant Video-Frames-Thread
 participant Kamera
 
--> Video_Frames_Thread: create()
-activate Video_Frames_Thread
+-> Video-Frames-Thread: create()
+activate Video-Frames-Thread
 
 loop reading frames
-    Video_Frames_Thread -> Kamera: receive_frame()
-    deactivate Video_Frames_Thread
+    Video-Frames-Thread -> Kamera: receive-frame()
+    deactivate Video-Frames-Thread
     activate Kamera
-    Kamera -> Video_Frames_Thread: deliver frame
+    Kamera -> Video-Frames-Thread: deliver frame
     deactivate Kamera
-    activate Video_Frames_Thread
+    activate Video-Frames-Thread
 
-    Video_Frames_Thread -> Video_Frames_Thread: buffer_frames
-    deactivate Video_Frames_Thread
+    Video-Frames-Thread -> Video-Frames-Thread: buffer-frames
+    deactivate Video-Frames-Thread
 end
 @enduml
