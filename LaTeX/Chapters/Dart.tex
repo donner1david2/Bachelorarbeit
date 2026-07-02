@@ -10,7 +10,7 @@ sowie das Abschließende übertragen an den Server. Die zweite Anwendung, ist ve
 
 \begin{figure}[H]
     \centering
-    \includesvg[width=\textwidth]{img/Dart-Aufbau.svg}
+    \includesvg[width=\textwidth]{img/Video-Aufbau.svg}
     \caption{Aufbau der Videofunktion des HB10}
     \label{fig:dartaufbau}
 \end{figure}
@@ -30,12 +30,6 @@ Die Dart\_App ist für den Spielbetrieb zuständig.
 Die Video\_App ist für die Verarbeitung der Videodaten verantwortlich. Ihr Aufbau lässt sich om groben wie folgt Skizzieren:
 
 \todo{diagramm für aufbau videoapp}
-\begin{figure}
-    \centering
-    %\includesvg[width=\textwidth]{img/Video-App-Aufbau.svg}
-    \caption{Aufbau der Video\_App}
-    \label{fig:videoappaufbau}
-\end{figure}
 
 Die Video\_App besitzt eine Socket Verbindung zur Dart\_App, über diese werden die Spielereignisse wie Treffer übertragen. Des weiteren besitzt sie einen Ringpuffer, in welchem zu immer 3 Sekunden an Videodaten zwischengespeichert werden.
 Abschließend besitzt die Video\_App eine Pipeline, welche die Videodaten zu ende eines Spiels komprimiert, und für das Streaming vorbereitet, und abchließend auf dem gerät speichert.
@@ -122,7 +116,9 @@ Dabei soll die Videofunktionalität den Hauptbetrieb des HB10 nicht beeinträcht
 \subsection{Codec Lizenz}
 
 Es bestehen für sowohl H.264 als auch H.265 patentpools, welche Lizenzgebühren für die Nutzung der Codecs verlangen. Diese Lizenzgebühren fallen sowohl für den Verkauf von Geräten mit Kompression mittels der Codecs, als auch für das Streaming von Videos, welche mittels H.264 oder H.265 komprimiert wurden.
-Da H.264 ein deutlich älterer Codec ist, sind bereits der Großteil der Patente abgelaufen, jedoch existieren noch einige wenige aktive Patente. Da nicht 100\% sicher ist, ob die Nutzung von H.264 automatisch diese Patente verletzt, müsste man um sicher zu gehen, eine Lizenz für H.264 erwerben. 
+
+Da H.264 ein deutlich älterer Codec ist, sind bereits der Großteil der Patente abgelaufen, jedoch existieren noch einige wenige aktive Patente. Da nicht 100\% sicher ist, ob die Nutzung von H.264 automatisch diese Patente verletzt, müsste man um sicher zu gehen, 
+für jedes einzelne Patent überprüfen ob dieses für unseren Anwendungsfall relevant ist, oder eine Lizenz für H.264 erwerben. 
 Da aber die Patentpools erkannt haben, dass die Patente für H.264 bald auslaufen, wurde die minimale Lizenzgebühr auf 100000\$ pro Jahr festgelegt, historisch wurde dieser Preis auf eine andere Weise errechnet, wobei Lizenzgebühren von unter 10000\$ pro Jahr erloschen, 
 dies ist seit beginn 2026 nicht mehr der Fall.
 
@@ -130,10 +126,9 @@ Für H.265 bestehen zwei patentpools, welche beide getrennt Lizenzgebühren für
 erhebt einer der patentpools keine Lizenzgebühren, der andere bietet verschiedene Lizenzmodelle an, zum einen gibt es die Möglichkeit einen Prozentsatz der Streaming Einnahmen zu bezahlen, auf der anderen Seite einen Festen abgestimmten Betrag Jährlich zu zahlen, oder man zahlt einen cent Betrag pro Nutzer.
 Ob hierbei die Möglichkeit besteht, keine Lizenzgebühren zu zahlen, solange keine Einnahmen durch das Streaming generiert werden, ist unklar und müsste wahrscheinlich mit dem patenpool geklärt werden.
 
-Es besteht auch die Möglichkeit, dass Risiko einzugehen, und die Codecs ohne Lizenzen zu nutzen, da sich diese Lizenzmodelle an Unternehmen richten, welche Hauptsächlich mit dem Streaming von Videos Geld verdienen, jedoch ist dies natürlich mit einem nicht geringen Risiko verbunden. Welcher weg schließlich
-genommen wird kann nicht in dieser Arbeit entschieden werden.
+Es besteht auch die Möglichkeit, dass für unseren Anwendungsfall, keine lizenzgebühren für die Nutzung von H.264 anfallen, da diese an Plattformen gerichtet sind. Ob die Webseite für das Anschauen der Videos als Platform gilt, ist unklar und müsste mit den Patentpools geklärt werden.
 
-Sollte aus Gründen auf die hardware Komprimierung verzichtet werden und auf Software Komprimierung zurückgegriffen werden, besteht auch die Möglichkeit, die Codecs VP9 oder AV1 zu nutzen, da diese OPen Source sind und keine Lizenzgebühren verlangen, bei einer vergleichbaren Kompressionsrate.
+Sollte aus Gründen auf die hardware Komprimierung verzichtet werden und auf Software Komprimierung zurückgegriffen werden, besteht auch die Möglichkeit die Codecs VP8 oder VP9 zu nutzen, da für diese Bisher keine Lizenzgebühren anfallen, bei einer vergleichbaren Kompressionsrate.
 
 \subsection{Treiber Inkompatibilität}
 

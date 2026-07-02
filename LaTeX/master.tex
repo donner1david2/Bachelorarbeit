@@ -27,6 +27,7 @@
                paper=a4,toc=bibliography,pointlessnumbers,ngerman]{scrreprt}
                
 \usepackage{fontspec}
+\setmainfont{Times New Roman}
 
 %% LANGUAGE SETTINGS
 %
@@ -97,7 +98,7 @@
 \usepackage{setspace}
 \usepackage{tocloft}
 %\usepackage[T1]{fontenc}
-\usepackage{todo}
+\usepackage{todonotes}
  
 % Definitionen und Commands
 \newcommand{\indextype}{numeric}
@@ -159,13 +160,15 @@
 \Kurs{TINF23AI1}
 \Studienrichtung{Duale Hochschule Baden-Würtemberg Mannheim}
 \Matrikelnummer{3428675}
-\Studiengangsleiter{Prof. Hoffmann}
-\WissBetreuer{<Ihr(e) wissenschaftliche(r) Betreuer(in)>}
+\Studiengangsleiter{Prof. Hofmann}
+\WissBetreuer{Prof. Hofmann}
 \FirmenBetreuer{Weinard Knud}
 \Bearbeitungszeitraum{02.06.2026 -- 25.08.2026}
 \Abgabedatum{25.08.2026}
 
 \begin{document}
+
+\listoftodos
 
 \setTitlepage
 
@@ -255,8 +258,9 @@
 \input{Chapters/introduction}
 
 % mehrere Grundlagen- und Forschungs-Kapitel
-\input{Chapters/chapter1}
-\input{Chapters/chapter2}
+\input{Chapters/Teschnologien}
+\input{Chapters/Architektur}
+\input{Chapters/Dart}
 
 % Fazit und Ausblick
 \input{Chapters/conclusion}
