@@ -30,5 +30,6 @@
 !**/img/*.pdf
 *.tdo
 *.pdf_tex
+*.png
 
 /FFMPEG

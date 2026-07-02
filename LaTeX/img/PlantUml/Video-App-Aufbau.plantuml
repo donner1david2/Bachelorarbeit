@@ -1,0 +1,31 @@
+@startuml
+skinparam componentStyle rectangle
+skinparam defaultFontName "Times New Roman"
+skinparam defaultFontSize 12 
+skinparam defaultFontColor black
+
+skinparam nodesep 120
+skinparam ranksep 35
+
+component "Socket Server" as Socket
+component "Frame Capture" as Capture
+component "Ring Buffer\nvideoBuffer" as Buffer
+component "Raw File Storage\n*.yuv" as RawFiles
+component "Frame Conversion\nYUYV -> YUV420P" as Conversion
+component "H.264 Encoder\nlibopenh264" as Encoder
+component "MP4 Generator" as MP4
+component "HLS Generator" as HLS
+
+Capture --> Buffer : schreibt Frames
+
+Socket --> RawFiles : DART_HIT
+Buffer --> RawFiles : speichert Ringbuffer
+
+Socket --> Conversion : GAME_END
+RawFiles --> Conversion : liest YUV-Dateien
+
+Conversion --> Encoder
+Encoder --> MP4
+MP4 --> HLS
+
+@enduml
