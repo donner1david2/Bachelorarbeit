@@ -28,5 +28,7 @@
 *.synctex(busy)
 *.synctex.gz
 !**/img/*.pdf
+*.tdo
+*.pdf_tex
 
 /FFMPEG
