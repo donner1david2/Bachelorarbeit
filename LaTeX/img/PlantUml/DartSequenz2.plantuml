@@ -3,21 +3,21 @@ skinparam defaultFontName "Times New Roman"
 skinparam defaultFontSize 12 
 skinparam defaultFontColor black
 
-participant Video-Frames-Thread
+participant VideoFramesThread
 participant Kamera
 
--> Video-Frames-Thread: create()
-activate Video-Frames-Thread
+-> VideoFramesThread: create()
+activate VideoFramesThread
 
 loop reading frames
-    Video-Frames-Thread -> Kamera: receive-frame()
-    deactivate Video-Frames-Thread
+    VideoFramesThread -> Kamera: receiveframe()
+    deactivate VideoFramesThread
     activate Kamera
-    Kamera -> Video-Frames-Thread: deliver frame
+    Kamera -> VideoFramesThread: deliver frame
     deactivate Kamera
-    activate Video-Frames-Thread
+    activate VideoFramesThread
 
-    Video-Frames-Thread -> Video-Frames-Thread: buffer-frames
-    deactivate Video-Frames-Thread
+    VideoFramesThread -> VideoFramesThread: bufferframes
+    deactivate VideoFramesThread
 end
 @enduml

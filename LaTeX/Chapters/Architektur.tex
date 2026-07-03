@@ -1,11 +1,18 @@
 % !TEX root =  master.tex
 \chapter{Systemarchitektur}
 
+Für das System musste eine Gesamte Arrchitektur entwickelt werden, welche die Komponenten HB10, Nutzer(Browser) und Server miteinander verbindet. Die einzige bereits vorhandene Komponente ist der HB10, welcher allerdings noch nicht über die Videoaufnahme-Funktionalität verfügt. 
+
 \begin{figure}[H]
     \centering
     \includesvg[width=\textwidth]{img/System.svg}
     \caption{Systemarchitektur}
     \label{fig:architektur}
 \end{figure}
+
+Der HB10 kann seine aufgenommenen Videos mittels HTTP an den Server übertragen. Als Server dient ein einfacher Webserver, welcher zugriff auf eine Datenbank und das Dateisystem hat, um empfangene Videos und deren Metadaten zu speichern. Der Nutzer erhält über den Webserver zugriff auf eine Webplattform, über welche er die Videos ansehen kann.
+Ein Alternativer Gedanke wäre es, statt das Dateisystem des Server zu verwenden, die Videos in einem Object-Storage zu speichern. Dies ist mittlerweile eine gängige Praxis, bei VoD Streaming Plattformen. Object-Storage bringt jedoch viel Komplexität mit sich, die nicht gerechtfertigt werden kann,
+da die Größenordnung der Anzahl an Videos mit der zu rechnen ist, die Vorteile \todo{Vorteile erklären} die Object-Storage mit sich bringt stark vermindern. Deshalb wurde entschieden, die Videos auf dem Dateisystem des Servers zu speichern. Da die Videos maximal eine Länge von einigen Minuten haben, ist die Dateigröße relativ klein,
+sodass eine Speicherung auf dem Dateisystem des Servers keine Probleme mit sich bringen sollte, und die Verknüpfung von Metadaten und Videos stark vereinfacht wird.
 
 \newpage

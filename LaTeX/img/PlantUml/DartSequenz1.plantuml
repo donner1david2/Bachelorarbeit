@@ -3,28 +3,28 @@ skinparam defaultFontName "Times New Roman"
 skinparam defaultFontSize 12 
 skinparam defaultFontColor black
 
-participant Dart-App
-participant Video-Main
-'participant Video-Frame-Thread
+participant DartApp
+participant VideoMain
+'participant VideoFrameThread
 
-par Video-Main Thread
-    Video-Main -> Video-Main: bind-Socket
-    activate Video-Main
-    deactivate Video-Main
+par VideoMain Thread
+    VideoMain -> VideoMain: bindSocket
+    activate VideoMain
+    deactivate VideoMain
 
     loop waiting for connection
-        Video-Main -> Video-Main: listen
+        VideoMain -> VideoMain: listen
     end
 
-    Video-Main -> : open-Camera-Connection
-    Video-Main -> : create-Frame-Thread
-    'Video-Main -> Video-Frame-Thread: create
+    VideoMain -> : openCameraConnection
+    VideoMain -> : createFrameThread
+    'VideoMain -> VideoFrameThread: create
 
-else Dart-App Thread
+else DartApp Thread
     loop connecting
-        Dart-App -> Video-Main: connect
+        DartApp -> VideoMain: connect
     end
 
-    Dart-App -> Dart-App: Game-start
+    DartApp -> DartApp: Gamestart
 end
 @enduml

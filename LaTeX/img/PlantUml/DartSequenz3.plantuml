@@ -3,63 +3,63 @@ skinparam defaultFontName "Times New Roman"
 skinparam defaultFontSize 12 
 skinparam defaultFontColor black
 
-participant Dart-App
-participant Video-Main
-participant File-System
+participant DartApp
+participant VideoMain
+participant FileSystem
 participant Server
 
 loop player playing Dart
 
     loop not game ended
-        activate Dart-App
-        Dart-App -> Video-Main: send-Hit
-        deactivate Dart-App
-        activate Video-Main
+        activate DartApp
+        DartApp -> VideoMain: sendHit
+        deactivate DartApp
+        activate VideoMain
 
-        Video-Main -> File-System: save-raw
-        activate File-System
+        VideoMain -> FileSystem: saveraw
+        activate FileSystem
 
-        File-System -> File-System: save
-        deactivate File-System
+        FileSystem -> FileSystem: save
+        deactivate FileSystem
 
-        deactivate Video-Main
+        deactivate VideoMain
     end
     
-    Dart-App -> Dart-App: game-finished
-    activate Dart-App
+    DartApp -> DartApp: gamefinished
+    activate DartApp
 
-    Dart-App -> Video-Main: send-game-finished    
-    deactivate Dart-App
-    activate Video-Main
+    DartApp -> VideoMain: sendgamefinished    
+    deactivate DartApp
+    activate VideoMain
 
-    Video-Main -> File-System: read-raw
-    activate File-System
+    VideoMain -> FileSystem: readraw
+    activate FileSystem
 
-    File-System --> Video-Main: data
-    deactivate File-System
+    FileSystem --> VideoMain: data
+    deactivate FileSystem
 
-    Video-Main -> Video-Main: compress-video
+    VideoMain -> VideoMain: compressvideo
 
-    Video-Main -> File-System: save-compressed
-    activate File-System
+    VideoMain -> FileSystem: savecompressed
+    activate FileSystem
 
-    File-System -> File-System: save
-    deactivate File-System
+    FileSystem -> FileSystem: save
+    deactivate FileSystem
 
-    Video-Main -> Dart-App: send-video-finished(path)
-    deactivate Video-Main
-    activate Dart-App
+    VideoMain -> DartApp: sendvideofinished(path)
+    deactivate VideoMain
+    activate DartApp
 
-    Dart-App -> File-System: getVideo
-    deactivate Dart-App
-    activate File-System
+    DartApp -> FileSystem: getVideo
+    deactivate DartApp
+    activate FileSystem
 
-    File-System -> Dart-App: video
-    deactivate File-System
-    activate Dart-App
+    FileSystem -> DartApp: video
+    deactivate FileSystem
+    activate DartApp
 
-    Dart-App -> Server: upload-video
-    deactivate Dart-App
+    DartApp -> Server: uploadvideo
+    deactivate DartApp
     activate Server
 end
 @enduml
