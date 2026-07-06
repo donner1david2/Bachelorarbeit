@@ -1,0 +1,22 @@
+@startuml
+skinparam defaultFontName "Times New Roman"
+skinparam defaultFontSize 12 
+skinparam defaultFontColor black
+
+participant Sender
+participant Receiver
+
+activate Sender
+Sender -> Sender: serializeData()
+Sender -> Receiver: sendDataLength()
+
+activate Receiver
+Receiver -> Receiver: readLength()
+Sender -> Receiver: sendData()
+deactivate Sender
+
+Receiver -> Receiver: readDataOfSizeLength()
+Receiver -> Receiver: DeserializeData()
+deactivate Receiver
+
+@enduml

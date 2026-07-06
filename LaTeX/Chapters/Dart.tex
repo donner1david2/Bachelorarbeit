@@ -24,48 +24,30 @@ und bietet eine vergleichsweise geringe Dateigröße. Dies trägt dazu bei, dass
 und wird in dieser Arbeit nicht weiter behandelt.
 
 \subsection{Dart\_App}
-Die Dart\_App ist für den Spielbetrieb zuständig.
+Die Dart\_App bildet die zentrale Anwendung für den eigentlichen Spielbetrieb des HB10. Sie verwaltet die Spiellogik, verarbeitet spielbezogene Eingaben und stellt die für den Betrieb des Geräts notwendigen Funktionen bereit. 
+Im Kontext der Videofunktion übernimmt sie dabei nicht die Verarbeitung der Bilddaten selbst, sondern stellt die Einbindung der Videoaufzeichnung in das bestehende System sicher.
+
+Die Dart\_App bildet somit die Schnittstelle zwischen dem eigentlichen Spielgeschehen und der ergänzenden Videofunktion, ohne Teil der Medienverarbeitung zu sein. 
+Diese Trennung reduziert die Komplexität innerhalb der Hauptanwendung und erleichtert die Erweiterung des Systems um zusätzliche videobezogene Funktionen.
 
 \subsection{Video\_App}
-Die Video\_App ist für die Verarbeitung der Videodaten verantwortlich. Ihr Aufbau lässt sich om groben wie folgt Skizzieren:
+Die Video\_App ist die eigenständige Komponente zur Verarbeitung der im HB10 anfallenden Videodaten. Während die Dart\_App den Spielbetrieb steuert, konzentriert sich die Video\_App ausschließlich auf Aufgaben der Videoaufnahme und -aufbereitung. 
+Sie ist damit funktional klar von der Hauptanwendung getrennt und erweitert das Gesamtsystem um die technische Umsetzung der Videofunktion.
 
-\todo{diagramm für aufbau videoapp}
+Über die Schnittstelle zur Dart\_App wird die Video\_App in das Gesamtsystem eingebunden, während die Kamera die eigentliche Quelle der Bilddaten darstellt. Ergänzt wird dies durch interne Puffer- und Verarbeitungsstrukturen, die erforderlich sind, 
+um die Videodaten in einer für die spätere Nutzung geeigneten Form bereitzustellen.
 
-Die Video\_App besitzt eine Socket Verbindung zur Dart\_App, über diese werden die Spielereignisse wie Treffer übertragen. Des weiteren besitzt sie einen Ringpuffer, in welchem zu immer 3 Sekunden an Videodaten zwischengespeichert werden.
-Abschließend besitzt die Video\_App eine Pipeline, welche die Videodaten zu ende eines Spiels komprimiert, und für das Streaming vorbereitet, und abchließend auf dem gerät speichert.
+Die Video\_App kann damit als eigenständige technische Verarbeitungseinheit verstanden werden. Ihre Aufgabe besteht darin, Rohdaten der Kamera aufzunehmen und innerhalb einer separaten Anwendung so zu verwalten, dass sie für die weiteren Schritte des Systems verfügbar sind. 
+Durch diese Auslagerung videobezogener Funktionen bleibt die Gesamtarchitektur übersichtlich und die Hauptanwendung wird von medienspezifischen Aufgaben entlastet.
 
 \subsection{Ablauf}
 
-Die Sequenzdiagramme beschreiben die Struktur des Videosystems im Zusammenspiel mit der \texttt{Dart\_App}. Sichtbar werden dabei drei eng miteinander verknüpfte Ebenen: die Verarbeitung von Spielereignissen, der Aufbau der Systemkommunikation 
+Der Ablauf der Videoaufnahme und Komprimierung lässt sich grob in drei Bereiche unterteilen: die Verarbeitung von Spielereignissen, der Aufbau der Systemkommunikation 
 sowie die fortlaufende Erfassung und Zwischenspeicherung der Videodaten. Zusammen zeigen die Diagramme, wie aus einzelnen Ereignissen im Spiel schrittweise verwertbare Videoinhalte entstehen.
 
-\subsubsection{Sequenzdiagramm 1: Verarbeitung eines Wurfes bis zur Bereitstellung des Videos}
+\subsubsection{Initialisierung des Systems und Aufbau der Kommunikation}
 
-Das erste Sequenzdiagramm beschreibt den fachlichen Ablauf, der von einem registrierten Wurf bis zur späteren Bereitstellung des zugehörigen Videos reicht. Im Mittelpunkt steht die Zusammenarbeit zwischen \texttt{Dart\_App}, \texttt{Video\_Main}, \texttt{File\_System} und \texttt{Server}. 
-Deutlich wird hierbei vor allem die Trennung zwischen dem Spielbetrieb selbst und der nachgelagerten Videoverarbeitung.
-
-\begin{figure}[H]
-    \centering
-    \includesvg[width=0.75\textwidth]{img/PlantUml/DartSequenz1/DartSequenz1.svg}
-    \caption{Ablauf vom registrierten Dartwurf bis zur Bereitstellung des verarbeiteten Videos}
-    \label{fig:dartsequenz1}
-\end{figure}
-
-Während das Spiel läuft, werden Trefferereignisse aus der \texttt{Dart\_App} an die Videokomponente weitergegeben. Die Videokomponente reagiert auf diese Ereignisse, indem die zugehörigen Bilddaten gesichert und als eigenständige Sequenzen im Dateisystem abgelegt werden. 
-Dadurch werden relevante Spielsituationen unmittelbar festgehalten, ohne dass bereits während des Spiels eine vollständige Videobearbeitung erforderlich ist.
-
-Die Struktur dieses Ablaufs zeigt, dass das System einzelne Würfe zunächst als Rohdaten behandelt. Diese Vorgehensweise entlastet den laufenden Spielprozess, da die rechenintensiven Verarbeitungsschritte in eine spätere Phase verschoben werden. Gleichzeitig bleibt jede Spielsituation in einer Form erhalten, 
-aus der sich nachträglich ein zusammenhängendes Video erzeugen lässt.
-
-Nach dem Ende des Spiels beginnt die zweite Phase des Ablaufs. Die zuvor abgelegten Rohdaten werden erneut eingelesen, in eine konsistente Reihenfolge gebracht und zu einem verarbeiteten Ergebnis zusammengeführt. Dadurch entsteht aus mehreren einzelnen Wurfsequenzen ein zusammenhängender Videobestand,
-der das Spiel oder die relevanten Spielsituationen nachvollziehbar dokumentiert.
-
-Im weiteren Verlauf wird das aufbereitete Material in ein nutzbares Ausgabeformat überführt und für den Abruf bereitgestellt. Das Diagramm zeigt hier den Übergang von der internen Verarbeitung hin zur externen Verwendung. Die \texttt{Dart\_App} erhält die Information, 
-dass die Videoerzeugung abgeschlossen ist, kann das Ergebnis abrufen und anschließend an den Server weiterreichen.
-
-\subsubsection{Sequenzdiagramm 2: Initialisierung des Systems und Aufbau der Kommunikation}
-
-Das zweite Sequenzdiagramm beschreibt die Startphase des Systems. Im Vordergrund stehen hier der Aufbau der Kommunikationsverbindung zwischen den beteiligten Komponenten sowie die Herstellung der Betriebsbereitschaft für die spätere Videoaufnahme. Sichtbar wird insbesondere, 
+Im ersten Bereich der Video\_App findet der Aufbau der Verbindung zwischen den beteiligten Komponenten sowie die Herstellung der Betriebsbereitschaft für die spätere Videoaufnahme. Sichtbar wird insbesondere, 
 dass das System nicht erst mit dem ersten Wurf aktiv wird, sondern bereits im Vorfeld in einen aufnahmefähigen Zustand überführt werden muss.
 
 \begin{figure}[H]
@@ -78,18 +60,14 @@ dass das System nicht erst mit dem ersten Wurf aktiv wird, sondern bereits im Vo
 Zu Beginn stellt die Videokomponente eine Kommunikationsschnittstelle bereit und wechselt anschließend in einen wartenden Zustand. Diese Wartephase ist notwendig, damit eingehende Verbindungen von außen angenommen werden können. Das Diagramm macht deutlich, dass die Videokomponente zunächst passiv bleibt, 
 bis eine Verbindung von der \texttt{Dart\_App} aufgebaut wird.
 
-Parallel dazu versucht die \texttt{Dart\_App}, die Verbindung zur Videokomponente herzustellen. Erst wenn dieser Schritt erfolgreich abgeschlossen ist, kann ein geregelter Nachrichtenaustausch stattfinden. Das Diagramm veranschaulicht diese Parallelität 
-durch die gleichzeitige Darstellung des wartenden Systems auf der einen und des Verbindungsaufbaus auf der anderen Seite. Dadurch wird die wechselseitige Abhängigkeit beider Komponenten im Initialisierungsvorgang sichtbar.
+Parallel dazu versucht die \texttt{Dart\_App}, die Verbindung zur Videokomponente herzustellen. Erst wenn dieser Schritt erfolgreich abgeschlossen ist, kann ein geregelter Nachrichtenaustausch stattfinden.
 
-Nach dem erfolgreichen Kommunikationsaufbau folgt die Aktivierung der Kameraanbindung. Damit wird die Grundlage für die spätere laufende Bildaufnahme geschaffen. Dieser Schritt ist ein zentraler Bestandteil der Initialisierung, 
+Nach dem erfolgreichen Kommunikationsaufbau folgt die Aktivierung der Kameraanbindung. Damit wird die Grundlage für die spätere laufende Bildaufnahme geschaffen. Dieser Schritt ist ein wichtiger Bestandteil der Initialisierung, 
 da das System bereits vor dem ersten für das Spiel relevanten Ereignis in der Lage sein muss, Videodaten fortlaufend bereitzuhalten.
 
-Zusätzlich zeigt das Diagramm, dass für die Erfassung der Bilddaten eine eigene parallele Ausführung vorgesehen ist. Kommunikation und Videoerfassung werden somit strukturell voneinander getrennt. Das zweite Sequenzdiagramm beschreibt insgesamt die Voraussetzungen dafür, 
-dass das System im eigentlichen Spielbetrieb gleichzeitig auf Nachrichten reagieren und kontinuierlich Videodaten erfassen kann.
+\subsubsection{Kontinuierliche Erfassung und Zwischenspeicherung der Bilddaten}
 
-\subsubsection{Sequenzdiagramm 3: Kontinuierliche Erfassung und Zwischenspeicherung der Bilddaten}
-
-Das dritte Sequenzdiagramm beschreibt den fortlaufenden Aufnahmeprozess im Hintergrund. Im Mittelpunkt stehen der periodische Empfang von Bilddaten aus der Kamera sowie deren Zwischenspeicherung innerhalb des Systems. Anders als das erste Diagramm, das sich auf Spielereignisse konzentriert, 
+Im zweiten Teil finden der periodische Empfang von Bilddaten aus der Kamera sowie deren Zwischenspeicherung innerhalb des Systems statt. Anders als das erste Diagramm, das sich auf Spielereignisse konzentriert, 
 und das zweite Diagramm, das die Initialisierung zeigt, stellt dieses Diagramm die dauerhafte Laufzeitstruktur der Videoerfassung dar.
 
 \begin{figure}[hbp]%[H]
@@ -99,14 +77,51 @@ und das zweite Diagramm, das die Initialisierung zeigt, stellt dieses Diagramm d
     \label{fig:dartsequenz3}
 \end{figure}
 
-Nach der erfolgreichen Initialisierung beginnt die kontinuierliche Aufnahme der Kameradaten. Die erfassten Bilder werden nicht sofort endgültig gespeichert oder direkt verteilt, sondern zunächst in einer internen Pufferstruktur abgelegt. Das Diagramm zeigt damit, 
-dass das System mit einem fortlaufenden Datenstrom arbeitet, aus dem bei Bedarf bestimmte Ausschnitte ausgewählt werden können.
+Nach der erfolgreichen Initialisierung beginnt die kontinuierliche Aufnahme der Kameradaten. Die erfassten Bilder werden nicht sofort endgültig gespeichert oder direkt verteilt, sondern zunächst in einem internen Ringbuffer abgelegt.
 
-Diese Pufferung ist für das Gesamtsystem von zentraler Bedeutung. Relevante Spielsituationen beginnen in der Regel nicht exakt in dem Moment, in dem ein Ereignis gemeldet wird, sondern umfassen auch den zeitlichen Kontext davor. Durch die Zwischenspeicherung stehen daher nicht nur aktuelle, 
+Diese Pufferung ist sehr wichtig für das System. Relevante Spielsituationen beginnen in der Regel nicht exakt in dem Moment, in dem ein Ereignis gemeldet wird, sondern umfassen auch den zeitlichen Kontext davor. Durch die Zwischenspeicherung stehen daher nicht nur aktuelle, 
 sondern auch unmittelbar zuvor aufgenommene Bilddaten zur Verfügung.
 
-Die Schleifenstruktur im Diagramm verdeutlicht, dass dieser Prozess unabhängig von einzelnen Spielaktionen dauerhaft im Hintergrund aktiv bleibt. Solange das System in Betrieb ist, werden neue Bilddaten aufgenommen, in die bestehende Struktur eingeordnet und dort vorgehalten. 
-Die Videoerfassung bildet damit eine kontinuierliche Grundlage, auf die andere Abläufe im System zugreifen können.
+Die Videoerfassung läuft kontinuierlich im Hintergrund und ist nicht an einzelne Spielaktionen gebunden. Solange das System in Betrieb ist, werden fortlaufend neue Bilddaten aufgenommen, in die bestehende Datenstruktur eingeordnet und dort vorgehalten. 
+Dadurch stellt die Videoerfassung eine permanente Grundlage bereit, auf die andere Prozesse des Systems zugreifen können.
+
+\subsubsection{Verarbeitung eines Wurfes bis zur Bereitstellung des Videos}
+
+Der letzte Teil ist zuständig für den fachlichen Ablauf, der von einem registrierten Wurf bis zur späteren Bereitstellung des zugehörigen Videos reicht. Im Mittelpunkt steht die Zusammenarbeit zwischen \texttt{Dart\_App}, \texttt{Video\_Main}, \texttt{File\_System} und \texttt{Server}. 
+Deutlich wird hierbei vor allem die Trennung zwischen dem Spielbetrieb selbst und der nachgelagerten Videoverarbeitung.
+
+\begin{figure}[H]
+    \centering
+    \includesvg[width=0.75\textwidth]{img/PlantUml/DartSequenz1/DartSequenz1.svg}
+    \caption{Ablauf vom registrierten Dartwurf bis zur Bereitstellung des verarbeiteten Videos}
+    \label{fig:dartsequenz1}
+\end{figure}
+
+Während das Spiel läuft, werden Trefferereignisse aus der \texttt{Dart\_App} an die Videokomponente weitergegeben. Die Videokomponente reagiert auf diese Ereignisse, indem die zugehörigen Bilddaten gesichert und als eigenständige Dateien im Dateisystem abgelegt werden. 
+Dadurch werden relevante Spielsituationen unmittelbar festgehalten, ohne dass bereits während des Spiels eine vollständige Videobearbeitung erforderlich ist.
+
+Die Struktur dieses Ablaufs zeigt, dass das System einzelne Würfe zunächst als Rohdaten behandelt. Diese Vorgehensweise entlastet den laufenden Spielprozess, da die rechenintensiven Verarbeitungsschritte in eine spätere Phase verschoben werden. Gleichzeitig bleibt jede Spielsituation in einer Form erhalten, 
+aus der sich nachträglich ein zusammenhängendes Video erzeugen lässt.
+
+Nach dem Ende des Spiels beginnt die zweite Phase des Ablaufs. Die zuvor abgelegten Rohdaten werden erneut eingelesen, in eine konsistente Reihenfolge gebracht und zu einem verarbeiteten Ergebnis zusammengeführt. Dadurch entsteht aus mehreren einzelnen Wurfsequenzen ein zusammenhängendes Video,
+das die relevanten Spielsituationen nachvollziehbar aufzeichnet.
+
+Im weiteren Verlauf wird das aufbereitete Material in ein nutzbares Ausgabeformat überführt und für den Abruf bereitgestellt. Die \texttt{Dart\_App} erhält die Information, dass die Videoerzeugung abgeschlossen ist, kann das Ergebnis abrufen und anschließend an den Server weiterreichen.
+
+\subsection{Kommunikation zwischen Dart\_App und Video\_App}
+
+Bei jedem Austausch zwischen Dart\_App und Video\_App findet folgender Ablauf statt beide Anwendungen, können als Beide Rollen vorkommen.
+
+\begin{figure}[H]
+    \centering
+    \includesvg[width=0.75\textwidth]{img/PlantUml/socket/socket.svg}
+    \caption{Ablauf der Socket Kommunikation}
+    \label{fig:dartsocket}
+\end{figure}
+
+Für die Kommunikation zwischen Dart\_App und Video\_App wird eine Socket Verbindung verwendet. Die Video\_App wartet auf eine Verbindung der Dart\_App, und ist Anschließend bereit Ereignisse mit zusätzlichen Daten zu erhalten.
+Als Daten werden von beiden Anwendungen bekannte Datenstrukturen verwendet, die benötigte Daten in einen Seriellen Bytestream schreiben, anschließend wird zunächst die Länge des Bytestreams übertragen, und darauf wird der eigentlicher Stream übertragen.
+Der Empfänger kann im den Empfangenen Stream dann deserealisieren um alle Daten zu erhalten die er benötigt.
 
 \section{Kompression}
 
