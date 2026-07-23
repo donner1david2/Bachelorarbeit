@@ -1,0 +1,31 @@
+\chapter{Server}
+
+\section{Wahl des Servertyps}
+
+Für den Server wurde entschieden, auf einen klassischen Webserver kombiniert mit relationaler Datenbank zurückzugreifen, der die Videos auf dem Dateisystem speichert. Ein Alternativer Gedanke wäre es, statt das Dateisystem des Servers zu verwenden, die Videos in einem Object-Storage zu speichern. 
+Dies ist mittlerweile eine empfohlene Praxis bei VoD Streaming Plattformen. Object-Storage bringt jedoch viel Komplexität mit sich, die nicht gerechtfertigt werden kann. Denn die Größenordnung der Anzahl an Videos mit denen zu rechnen ist, 
+vermindern stark die Vorteile \todo{Vorteile erklären} die Object-Storage mit sich bringt. Deshalb wurde entschieden, die Videos auf dem Dateisystem des Servers zu speichern. Da die Videos maximal eine Länge von einigen Minuten haben, ist die Dateigröße relativ klein, 
+sodass eine Speicherung auf dem Dateisystem des Servers keine Probleme mit sich bringen sollte, und die Verknüpfung von Metadaten und Videos stark vereinfacht wird.
+
+\section{Wahl des Streaming Protokolls}
+
+Für die Auswahl eines passenden Streaming Protokolls müssen einige Faktoren beachtet werden. Die benötigte Bandbreite, um einerseits die Auslastung des Servers niedrig zu halten, und es auch Nutzern mit niedriger Download-Geschwindigkeit zu ermöglichen, die Videos anzuschauen. 
+Weitere wichtige Faktoren sind die benötige Verbindungsdauer und die Verbindungsart, wenn der Server für jeden Nutzer eine Socket-Verbindung aufrecht erhalten muss, führt dies auch bei moderater Nutzung zu Problemen alle Nutzer gleichzeitig zu bedienen. 
+Deshalb ist das passende Streaming Protokoll zu finden essentiell, um die VOD-Platform Ressourcen effizient zu hosten, und dem Nutzer ein angenehmes Erlebnis zu bieten.
+
+Im Zuge einer Recherche wurden folgende Protokolle auf die Eignung für unseren Anwendungsfall untersucht: RTMP (Real-Time Messaging Protocol) \parencite{lei_jiang_wang_2012} und HLS (HTTP Live Streaming) \parencite{Saini2026}.
+
+Für die Implementierung der VOD Platform wird HLS verwendet. Ein wesentlicher Grund für den Einsatz von HTTP Live Streaming (HLS) anstelle von Real-Time Messaging Protocol (RTMP) liegt in der unterschiedlichen Integration in moderne Webtechnologien und deren Weiterentwicklung. 
+RTMP wurde ursprünglich für den Einsatz mit dem Adobe Flash Player konzipiert, welcher heute nicht mehr unterstützt wird, wodurch die praktische Nutzbarkeit von RTMP stark eingeschränkt ist \cite{lei_jiang_wang_2012}. 
+Im Gegensatz dazu basiert HLS auf standardisierten HTTP-Mechanismen und ist dadurch mit einer Vielzahl von Geräten und Browsern ohne zusätzliche Plugins kompatibel. 
+
+Darüber hinaus ermöglicht HLS als Vertreter von HTTP Adaptive Streaming eine dynamische Anpassung der Bitrate an die aktuellen Netzwerkbedingungen, was zu einer verbesserten Erfahrung für den Nutzer führt \cite{Saini2026}. 
+Diese Eigenschaft ist besonders in heterogenen Netzumgebungen mit schwankender Bandbreite von entscheidender Bedeutung. Moderne Studien zeigen zudem, dass adaptive Streaming-Ansätze in Kombination mit aktuellen Transportprotokollen eine effiziente Nutzung von Netzwerkressourcen ermöglichen 
+und die Leistungsfähigkeit gegenüber älteren, persistenten Verbindungen erhöhen können \cite{10.1145/3793674}. 
+
+Zusammenfassend bietet HLS gegenüber RTMP entscheidende Vorteile hinsichtlich Kompatibilität, Skalierbarkeit und Anpassungsfähigkeit, weshalb es sich als de-facto-Standard für heutige Streaming-Anwendungen etabliert hat.
+
+Alternativ zu HLS wäre auch MPEG-DASH \parencite{Saini2026} eine Option, sie basieren auf einem ähnlichen Prinzip, und für die Implementierung gäbe es wahrscheinlich keine großen Unterschiede, jedoch verwendet Apple ausschließlich HLS auf seinen Geräten.
+Somit müsste für die Integration von Apple Geräten ohnehin HLS verwendet werden, zusätzlich dazu noch MPEG-DASH einzubauen würde keinen Mehrwert bringen.
+
+\newpage

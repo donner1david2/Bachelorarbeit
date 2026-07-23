@@ -33,10 +33,10 @@
 %
 % @stud: Sprache ggf. anpassen
 %
-%\usepackage[ngerman]{babel} 	        % german language
-%\usepackage[german=quotes]{csquotes} 	% correct quoting using \enquote{}
-\usepackage[english]{babel}          % english language
-\usepackage{csquotes} 	              % correct quoting using \enquote{}
+\usepackage[ngerman]{babel} 	        % german language
+\usepackage[german=quotes]{csquotes} 	% correct quoting using \enquote{}
+%\usepackage[english]{babel}          % english language
+%\usepackage{csquotes} 	              % correct quoting using \enquote{}
 
 %%%%%%%%%%%%%
 %% ZITIERSTIL
@@ -66,7 +66,7 @@
 % (!!) FOOTNOTE POSITION NOT RECOMMENDED IN MINT DOMAIN:
 % autocite=footnote
 %
-\usepackage[backend=biber, autocite=inline, style=authoryear]{biblatex} 	
+\usepackage[backend=biber, autocite=inline, style=numeric]{biblatex} 	
 
 % use [] for parencites
 \makeatletter
@@ -160,9 +160,9 @@
 \Kurs{TINF23AI1}
 \Studienrichtung{Duale Hochschule Baden-Würtemberg Mannheim}
 \Matrikelnummer{3428675}
-\Studiengangsleiter{Prof. Hofmann}
-\WissBetreuer{Prof. Hofmann}
-\FirmenBetreuer{Weinard Knud}
+\Studiengangsleiter{Proffesor Holger Hofmann}
+\WissBetreuer{Proffesor Holger Hofmann}
+\FirmenBetreuer{Knud Weinard}
 \Bearbeitungszeitraum{02.06.2026 -- 25.08.2026}
 \Abgabedatum{25.08.2026}
 
@@ -207,33 +207,6 @@
 \tableofcontents
 \cleardoublepage
 
-% Abbildungsverzeichnis
-\phantomsection
-\addcontentsline{toc}{chapter}{\listfigurename}
-\listoffigures
-\cleardoublepage
-
-%	Tabellenverzeichnis
-\phantomsection
-\addcontentsline{toc}{chapter}{\listtablename}
-\listoftables
-\cleardoublepage
-
-%	Listingsverzeichnis / Quelltextverzeichnis
-\lstlistoflistings
-\cleardoublepage
-
-% Algorithmenverzeichnis
-\listofalgorithms
-\cleardoublepage
-
-% Abkürzungsverzeichnis
-% @stud: acronyms.tex bearbeiten
-\input{Front/acronyms} 
-\cleardoublepage
-
-\onehalfspacing
-
 %	Kurzfassung / Abstract
 % @stud: abstract.tex bearbeiten
 \input{Front/abstract} 
@@ -261,6 +234,8 @@
 \input{Chapters/Teschnologien}
 \input{Chapters/Architektur}
 \input{Chapters/Dart}
+\input{Chapters/Server}
+\input{Chapters/Webplattform.tex}
 
 % Fazit und Ausblick
 \input{Chapters/conclusion}
@@ -283,6 +258,33 @@
 %\printbibliography[title=\Literaturverzeichnis] 
 \printbibliography 
 \cleardoublepage
+
+% Abbildungsverzeichnis
+\phantomsection
+\addcontentsline{toc}{chapter}{\listfigurename}
+\listoffigures
+\cleardoublepage
+
+%	Tabellenverzeichnis
+%\phantomsection
+%\addcontentsline{toc}{chapter}{\listtablename}
+%\listoftables
+%\cleardoublepage
+
+%	Listingsverzeichnis / Quelltextverzeichnis
+\lstlistoflistings
+\cleardoublepage
+
+% Algorithmenverzeichnis
+%\listofalgorithms
+%\cleardoublepage
+
+% Abkürzungsverzeichnis
+% @stud: acronyms.tex bearbeiten
+\input{Front/acronyms} 
+\cleardoublepage
+
+\onehalfspacing
 
 %\initializeBibliography
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

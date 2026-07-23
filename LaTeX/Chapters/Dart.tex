@@ -1,9 +1,9 @@
 % !TEX root =  master.tex
-\chapter{DART}
+\chapter{HB10}
 
 Als Videoquelle dient der Löwen-DART HB10, dieser erstellt kurze Videoschnipsel für jeden Wurf, aus einem Spiel des Zukünftigen Turnier Modus. Nach Abschluss des Spiels werden alle Videoschnipsel zu einem Video zusammengeführt, und für das Streaming vorbereitet. 
 
-\section{Aufbau und Ablauf}
+\section{Aufbau}
 
 Die Videofunktion des HB10 erstreckt sich über zwei Anwendungen, welche miteinander kommunizieren. Die erste ist die eigentliche DART-Anwendung, diese ist dafür zuständig die zweite Anwendung über Ereignisse wie Treffer, Spiel Start und Ende zu Informieren,
 sowie das Abschließende übertragen an den Server. Die zweite Anwendung, ist verantwortlich für das zwischen Speichern, das Zusammenschneiden, das Komprimieren der Videodaten, sowie das anschließende erstellen der Playlist.
@@ -40,21 +40,21 @@ um die Videodaten in einer für die spätere Nutzung geeigneten Form bereitzuste
 Die Video\_App kann damit als eigenständige technische Verarbeitungseinheit verstanden werden. Ihre Aufgabe besteht darin, Rohdaten der Kamera aufzunehmen und innerhalb einer separaten Anwendung so zu verwalten, dass sie für die weiteren Schritte des Systems verfügbar sind. 
 Durch diese Auslagerung videobezogener Funktionen bleibt die Gesamtarchitektur übersichtlich und die Hauptanwendung wird von medienspezifischen Aufgaben entlastet.
 
-\subsection{Ablauf}
+\section{Ablauf}
 
 Der Ablauf der Videoaufnahme und Komprimierung lässt sich grob in drei Bereiche unterteilen: die Verarbeitung von Spielereignissen, der Aufbau der Systemkommunikation 
 sowie die fortlaufende Erfassung und Zwischenspeicherung der Videodaten. Zusammen zeigen die Diagramme, wie aus einzelnen Ereignissen im Spiel schrittweise verwertbare Videoinhalte entstehen.
 
-\subsubsection{Initialisierung des Systems und Aufbau der Kommunikation}
+\subsection{Initialisierung des Systems und Aufbau der Kommunikation}
 
 Im ersten Bereich der Video\_App findet der Aufbau der Verbindung zwischen den beteiligten Komponenten sowie die Herstellung der Betriebsbereitschaft für die spätere Videoaufnahme. Sichtbar wird insbesondere, 
 dass das System nicht erst mit dem ersten Wurf aktiv wird, sondern bereits im Vorfeld in einen aufnahmefähigen Zustand überführt werden muss.
 
 \begin{figure}[H]
     \centering
-    \includesvg[width=0.65\textwidth]{img/PlantUml/DartSequenz2/DartSequenz2.svg}
+    \includesvg[width=0.65\textwidth]{img/PlantUml/DartSequenz1/DartSequenz1.svg}
     \caption{Initialisierung von Socket-Kommunikation und Kameraverbindung}
-    \label{fig:dartsequenz2}
+    \label{fig:dartsequenz1}
 \end{figure}
 
 Zu Beginn stellt die Videokomponente eine Kommunikationsschnittstelle bereit und wechselt anschließend in einen wartenden Zustand. Diese Wartephase ist notwendig, damit eingehende Verbindungen von außen angenommen werden können. Das Diagramm macht deutlich, dass die Videokomponente zunächst passiv bleibt, 
@@ -65,16 +65,16 @@ Parallel dazu versucht die \texttt{Dart\_App}, die Verbindung zur Videokomponent
 Nach dem erfolgreichen Kommunikationsaufbau folgt die Aktivierung der Kameraanbindung. Damit wird die Grundlage für die spätere laufende Bildaufnahme geschaffen. Dieser Schritt ist ein wichtiger Bestandteil der Initialisierung, 
 da das System bereits vor dem ersten für das Spiel relevanten Ereignis in der Lage sein muss, Videodaten fortlaufend bereitzuhalten.
 
-\subsubsection{Kontinuierliche Erfassung und Zwischenspeicherung der Bilddaten}
+\subsection{Kontinuierliche Erfassung und Zwischenspeicherung der Bilddaten}
 
 Im zweiten Teil finden der periodische Empfang von Bilddaten aus der Kamera sowie deren Zwischenspeicherung innerhalb des Systems statt. Anders als das erste Diagramm, das sich auf Spielereignisse konzentriert, 
 und das zweite Diagramm, das die Initialisierung zeigt, stellt dieses Diagramm die dauerhafte Laufzeitstruktur der Videoerfassung dar.
 
 \begin{figure}[hbp]%[H]
     \centering
-    \includesvg[width=0.833\textwidth]{img/PlantUml/DartSequenz3/DartSequenz3.svg}
+    \includesvg[width=0.833\textwidth]{img/PlantUml/DartSequenz2/DartSequenz2.svg}
     \caption{Kontinuierliche Erfassung und Zwischenspeicherung von Kameraframes}
-    \label{fig:dartsequenz3}
+    \label{fig:dartsequenz2}
 \end{figure}
 
 Nach der erfolgreichen Initialisierung beginnt die kontinuierliche Aufnahme der Kameradaten. Die erfassten Bilder werden nicht sofort endgültig gespeichert oder direkt verteilt, sondern zunächst in einem internen Ringbuffer abgelegt.
@@ -85,16 +85,16 @@ sondern auch unmittelbar zuvor aufgenommene Bilddaten zur Verfügung.
 Die Videoerfassung läuft kontinuierlich im Hintergrund und ist nicht an einzelne Spielaktionen gebunden. Solange das System in Betrieb ist, werden fortlaufend neue Bilddaten aufgenommen, in die bestehende Datenstruktur eingeordnet und dort vorgehalten. 
 Dadurch stellt die Videoerfassung eine permanente Grundlage bereit, auf die andere Prozesse des Systems zugreifen können.
 
-\subsubsection{Verarbeitung eines Wurfes bis zur Bereitstellung des Videos}
+\subsection{Verarbeitung eines Wurfes bis zur Bereitstellung des Videos}
 
-Der letzte Teil ist zuständig für den fachlichen Ablauf, der von einem registrierten Wurf bis zur späteren Bereitstellung des zugehörigen Videos reicht. Im Mittelpunkt steht die Zusammenarbeit zwischen \texttt{Dart\_App}, \texttt{Video\_Main}, \texttt{File\_System} und \texttt{Server}. 
+Der letzte Teil \ref{fig:dartsequenz3} ist zuständig für den fachlichen Ablauf, der von einem registrierten Wurf bis zur späteren Bereitstellung des zugehörigen Videos reicht. Im Mittelpunkt steht die Zusammenarbeit zwischen \texttt{Dart\_App}, \texttt{Video\_Main}, \texttt{File\_System} und \texttt{Server}. 
 Deutlich wird hierbei vor allem die Trennung zwischen dem Spielbetrieb selbst und der nachgelagerten Videoverarbeitung.
 
 \begin{figure}[H]
     \centering
-    \includesvg[width=0.75\textwidth]{img/PlantUml/DartSequenz1/DartSequenz1.svg}
-    \caption{Ablauf vom registrierten Dartwurf bis zur Bereitstellung des verarbeiteten Videos}
-    \label{fig:dartsequenz1}
+    \includesvg[width=0.75\textwidth]{img/PlantUml/DartSequenz3/DartSequenz3.svg}
+    \caption{Der Ablauf vom registrierten Dartwurf bis zur Bereitstellung des verarbeiteten Videos. Die Dart\_App ist die Haupt Dartanwendung.}
+    \label{fig:dartsequenz3}
 \end{figure}
 
 Während das Spiel läuft, werden Trefferereignisse aus der \texttt{Dart\_App} an die Videokomponente weitergegeben. Die Videokomponente reagiert auf diese Ereignisse, indem die zugehörigen Bilddaten gesichert und als eigenständige Dateien im Dateisystem abgelegt werden. 
@@ -102,7 +102,7 @@ Dadurch werden relevante Spielsituationen unmittelbar festgehalten, ohne dass be
 
 Die Struktur dieses Ablaufs zeigt, dass das System einzelne Würfe zunächst als Rohdaten behandelt. Diese Vorgehensweise entlastet den laufenden Spielprozess, da die rechenintensiven Verarbeitungsschritte in eine spätere Phase verschoben werden. Gleichzeitig bleibt jede Spielsituation in einer Form erhalten, 
 aus der sich nachträglich ein zusammenhängendes Video erzeugen lässt.
-
+ 
 Nach dem Ende des Spiels beginnt die zweite Phase des Ablaufs. Die zuvor abgelegten Rohdaten werden erneut eingelesen, in eine konsistente Reihenfolge gebracht und zu einem verarbeiteten Ergebnis zusammengeführt. Dadurch entsteht aus mehreren einzelnen Wurfsequenzen ein zusammenhängendes Video,
 das die relevanten Spielsituationen nachvollziehbar aufzeichnet.
 
@@ -110,7 +110,7 @@ Im weiteren Verlauf wird das aufbereitete Material in ein nutzbares Ausgabeforma
 
 \subsection{Kommunikation zwischen Dart\_App und Video\_App}
 
-Bei jedem Austausch zwischen Dart\_App und Video\_App findet folgender Ablauf statt beide Anwendungen, können als Beide Rollen vorkommen.
+Bei jedem Austausch zwischen Dart\_App und Video\_App findet folgender Ablauf statt. Beide Anwendungen können als Beide Rollen vorkommen.
 
 \begin{figure}[H]
     \centering
@@ -119,7 +119,7 @@ Bei jedem Austausch zwischen Dart\_App und Video\_App findet folgender Ablauf st
     \label{fig:dartsocket}
 \end{figure}
 
-Für die Kommunikation zwischen Dart\_App und Video\_App wird eine Socket Verbindung verwendet. Die Video\_App wartet auf eine Verbindung der Dart\_App, und ist Anschließend bereit Ereignisse mit zusätzlichen Daten zu erhalten.
+Für die Kommunikation zwischen Dart\_App und Video\_App wird eine Socket Verbindung verwendet (s. \ref{fig:dartsocket}). Die Video\_App wartet auf eine Verbindung der Dart\_App, und ist Anschließend bereit Ereignisse mit zusätzlichen Daten zu erhalten.
 Als Daten werden von beiden Anwendungen bekannte Datenstrukturen verwendet, die benötigte Daten in einen Seriellen Bytestream schreiben, anschließend wird zunächst die Länge des Bytestreams übertragen, und darauf wird der eigentlicher Stream übertragen.
 Der Empfänger kann im den Empfangenen Stream dann deserealisieren um alle Daten zu erhalten die er benötigt.
 
@@ -130,6 +130,8 @@ Dabei soll die Videofunktionalität den Hauptbetrieb des HB10 nicht beeinträcht
 
 \subsection{Codec Lizenz}
 
+\todo{quellen einbauen}
+
 Es bestehen für sowohl H.264 als auch H.265 patentpools, welche Lizenzgebühren für die Nutzung der Codecs verlangen. Diese Lizenzgebühren fallen sowohl für den Verkauf von Geräten mit Kompression mittels der Codecs, als auch für das Streaming von Videos, welche mittels H.264 oder H.265 komprimiert wurden.
 
 Da H.264 ein deutlich älterer Codec ist, sind bereits der Großteil der Patente abgelaufen, jedoch existieren noch einige wenige aktive Patente. Da nicht 100\% sicher ist, ob die Nutzung von H.264 automatisch diese Patente verletzt, müsste man um sicher zu gehen, 
@@ -139,7 +141,7 @@ dies ist seit beginn 2026 nicht mehr der Fall.
 
 Für H.265 bestehen zwei patentpools, welche beide getrennt Lizenzgebühren für die Nutzung des Codecs verlangen. Für den Verkauf von Geräten mit H.265 Kompression, verlangt ein Patentpool 0,4-1,2\$ pro Gerät, aber mit einem Kredit/Freibetrag sollte man unter 50000\$ pro Jahr bleiben. Für das Streaming,
 erhebt einer der patentpools keine Lizenzgebühren, der andere bietet verschiedene Lizenzmodelle an, zum einen gibt es die Möglichkeit einen Prozentsatz der Streaming Einnahmen zu bezahlen, auf der anderen Seite einen Festen abgestimmten Betrag Jährlich zu zahlen, oder man zahlt einen cent Betrag pro Nutzer.
-Ob hierbei die Möglichkeit besteht, keine Lizenzgebühren zu zahlen, solange keine Einnahmen durch das Streaming generiert werden, ist unklar und müsste wahrscheinlich mit dem patenpool geklärt werden.
+Ob hierbei die Möglichkeit besteht, keine Lizenzgebühren zu zahlen, solange keine Einnahmen durch das Streaming generiert werden, ist unklar und müsste wahrscheinlich mit dem Patentpool geklärt werden.
 
 Es besteht auch die Möglichkeit, dass für unseren Anwendungsfall, keine lizenzgebühren für die Nutzung von H.264 anfallen, da diese an Plattformen gerichtet sind. Ob die Webseite für das Anschauen der Videos als Platform gilt, ist unklar und müsste mit den Patentpools geklärt werden.
 
@@ -151,5 +153,15 @@ Bei der Implementierung der Hardware Komprimierung wurde festgestellt, dass die 
 die Grafiktreiber des HB10 zu aktualisieren, da die Treiber bereits die aktuellste Version sind, die mit der Linux version des HB10 kompatibel sind. Das bedeutet, um die Hardware Komprimierung auf dem HB10 umzusetzen, müsste die Linux version des HB10 aktualisiert werden,
 was vermutlich mit einem hohen Aufwand für Anpassungen an der vorhanden Software, und auf jeden fall mit einem hohen Testaufwand verbunden ist. Deshalb wurde sich dazu entschieden, für die Arbeit vorläufig auf die hardware Komprimierung zu verzichtet, und stattdessen Software Komprimierung
 verwendet.
+
+Um eine initiale Untersuchung durchzuführen was die Unterschiede zwischen hardware und software Komprimierung sind, wurde ein HB10 mit einem neuen Ubuntu Betriebssystem aufgesetzt. Da die Dart Anwendungen nicht auf dieser Version laufen, kann nicht getestet werden, 
+wie sich das Komprimieren auf den laufenden Spielbetrieb auswirken würde. Der entwickelte Benchmark, untersucht folgende Kriterien:
+\begin{itemize}
+    \item Maximale CPU Auslastung: Ist entscheidend um zu erkennen, ob das durchführen der Komprimierung das gesamte System lahmlegen könnte.
+    \item Durchschnittliche CPU Auslastung: Ist wichtig um entscheiden zu können, ob die Komprimierung parallel zu dem normalen Betrieb stattfinden kann, oder der HB10 nach dem Ende eines Spieles Zeit reservieren muss, um zu komprimieren.
+    \item Dauer der Komprimierung: sollte die Komprimierung separat zum Spielgeschehen stattfinden, sollte diese nicht zu viel Zeit benötigen, sodass der Spieler nicht zu lange warten muss, bis er weiter spielen kann.
+    \item Qualität der Komprimierung: obwohl die Videoqualität nicht der entscheidendste Punkt für die Überprüfung von Dart-Spielen ist, muss eine gewisse Videoqualität vorhanden sein, um alle relevanten Ereignisse darzustellen.
+    \item Größe des komprimierten Videos: da wie bereits angesprochen verschiedene Aufsteller verschieden schnelle Internet-Anschlüsse besitzen ist es wichtig, dass das fertige Video so klein wie möglich ist.  
+\end{itemize}
 
 \newpage

@@ -16,7 +16,7 @@ loop player playing Dart
         deactivate DartApp
         activate VideoMain
 
-        VideoMain -> FileSystem: saveraw
+        VideoMain -> FileSystem: saveRaw
         activate FileSystem
 
         FileSystem -> FileSystem: save
@@ -25,28 +25,28 @@ loop player playing Dart
         deactivate VideoMain
     end
     
-    DartApp -> DartApp: gamefinished
+    DartApp -> DartApp: gameFinished
     activate DartApp
 
-    DartApp -> VideoMain: sendgamefinished    
+    DartApp -> VideoMain: sendGameFinished    
     deactivate DartApp
     activate VideoMain
 
-    VideoMain -> FileSystem: readraw
+    VideoMain -> FileSystem: readRaw
     activate FileSystem
 
     FileSystem --> VideoMain: data
     deactivate FileSystem
 
-    VideoMain -> VideoMain: compressvideo
+    VideoMain -> VideoMain: compressVideo
 
-    VideoMain -> FileSystem: savecompressed
+    VideoMain -> FileSystem: saveCompressed
     activate FileSystem
 
     FileSystem -> FileSystem: save
     deactivate FileSystem
 
-    VideoMain -> DartApp: sendvideofinished(path)
+    VideoMain -> DartApp: sendVideoFinished(path)
     deactivate VideoMain
     activate DartApp
 
@@ -58,7 +58,7 @@ loop player playing Dart
     deactivate FileSystem
     activate DartApp
 
-    DartApp -> Server: uploadvideo
+    DartApp -> Server: uploadVideo
     deactivate DartApp
     activate Server
 end

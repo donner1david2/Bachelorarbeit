@@ -8,9 +8,8 @@ participant VideoMain
 'participant VideoFrameThread
 
 par VideoMain Thread
-    VideoMain -> VideoMain: bindSocket
     activate VideoMain
-    deactivate VideoMain
+    VideoMain -> VideoMain: bindSocket
 
     loop waiting for connection
         VideoMain -> VideoMain: listen
@@ -19,12 +18,16 @@ par VideoMain Thread
     VideoMain -> : openCameraConnection
     VideoMain -> : createFrameThread
     'VideoMain -> VideoFrameThread: create
+    deactivate VideoMain
 
 else DartApp Thread
+    activate DartApp
+
     loop connecting
         DartApp -> VideoMain: connect
     end
 
     DartApp -> DartApp: Gamestart
+    deactivate DartApp
 end
 @enduml
