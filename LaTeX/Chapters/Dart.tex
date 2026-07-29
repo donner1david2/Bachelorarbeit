@@ -1,9 +1,12 @@
 % !TEX root =  master.tex
 \chapter{HB10}
 
-Als Videoquelle dient der Löwen-DART HB10, dieser erstellt kurze Videoschnipsel für jeden Wurf, aus einem Spiel des Zukünftigen Turnier Modus. Nach Abschluss des Spiels werden alle Videoschnipsel zu einem Video zusammengeführt, und für das Streaming vorbereitet. 
+Als Videoquelle dient der Löwen-DART HB10, dieser erstellt kurze Videoschnipsel für jeden Wurf, aus einem Spiel des Zukünftigen Turnier Modus. Nach Abschluss des Spiels werden alle Videoschnipsel zu einem Video zusammengeführt, und für das Streaming vorbereitet.
 
 \section{Aufbau}
+
+Der HB10  besteht aus einer Hauptanwendung in welcher der normale Spielbetrieb abläuft, und mehreren "Satellit"-Anwendungen welche sich auf eine bestimmte Funktionalität spezialisiert sind. Zum Beispiel der Update-Server, welcher dafür zuständig ist, das Gesamte System zu updaten.
+Für die Aufnahme-Funktion des HB10 würde eine solche Anwendung erstellt (siehe Video App in \ref{fig:dartaufbau}).
 
 Die Videofunktion des HB10 erstreckt sich über zwei Anwendungen, welche miteinander kommunizieren. Die erste ist die eigentliche DART-Anwendung, diese ist dafür zuständig die zweite Anwendung über Ereignisse wie Treffer, Spiel Start und Ende zu Informieren,
 sowie das Abschließende übertragen an den Server. Die zweite Anwendung, ist verantwortlich für das zwischen Speichern, das Zusammenschneiden, das Komprimieren der Videodaten, sowie das anschließende erstellen der Playlist.
@@ -12,7 +15,7 @@ sowie das Abschließende übertragen an den Server. Die zweite Anwendung, ist ve
     \centering
     \includesvg[width=\textwidth]{img/Video-Aufbau.svg}
     \caption{Aufbau der Videofunktion des HB10}
-    \label{fig:dartaufbau}
+    \label{fig:videoaufbau}
 \end{figure}
 
 \subsection{Kamera}
@@ -24,8 +27,15 @@ und bietet eine vergleichsweise geringe Dateigröße. Dies trägt dazu bei, dass
 und wird in dieser Arbeit nicht weiter behandelt.
 
 \subsection{Dart\_App}
-Die Dart\_App bildet die zentrale Anwendung für den eigentlichen Spielbetrieb des HB10. Sie verwaltet die Spiellogik, verarbeitet spielbezogene Eingaben und stellt die für den Betrieb des Geräts notwendigen Funktionen bereit. 
+Die Dart\_App bildet die zentrale Anwendung für den eigentlichen Spielbetrieb des HB10 (s. \ref{fig:dartaufbau}). Sie verwaltet die Spiellogik, verarbeitet spielbezogene Eingaben und stellt die für den Betrieb des Geräts notwendigen Funktionen bereit. 
 Im Kontext der Videofunktion übernimmt sie dabei nicht die Verarbeitung der Bilddaten selbst, sondern stellt die Einbindung der Videoaufzeichnung in das bestehende System sicher.
+
+\begin{figure}[H]
+    \centering
+    \includesvg[width=\textwidth]{img/Dart_Apps.svg}
+    \caption{Aufbau der einzelnen Komponenten des HB10.}
+    \label{fig:dartaufbau}
+\end{figure}
 
 Die Dart\_App bildet somit die Schnittstelle zwischen dem eigentlichen Spielgeschehen und der ergänzenden Videofunktion, ohne Teil der Medienverarbeitung zu sein. 
 Diese Trennung reduziert die Komplexität innerhalb der Hauptanwendung und erleichtert die Erweiterung des Systems um zusätzliche videobezogene Funktionen.
@@ -102,7 +112,7 @@ Dadurch werden relevante Spielsituationen unmittelbar festgehalten, ohne dass be
 
 Die Struktur dieses Ablaufs zeigt, dass das System einzelne Würfe zunächst als Rohdaten behandelt. Diese Vorgehensweise entlastet den laufenden Spielprozess, da die rechenintensiven Verarbeitungsschritte in eine spätere Phase verschoben werden. Gleichzeitig bleibt jede Spielsituation in einer Form erhalten, 
 aus der sich nachträglich ein zusammenhängendes Video erzeugen lässt.
- 
+
 Nach dem Ende des Spiels beginnt die zweite Phase des Ablaufs. Die zuvor abgelegten Rohdaten werden erneut eingelesen, in eine konsistente Reihenfolge gebracht und zu einem verarbeiteten Ergebnis zusammengeführt. Dadurch entsteht aus mehreren einzelnen Wurfsequenzen ein zusammenhängendes Video,
 das die relevanten Spielsituationen nachvollziehbar aufzeichnet.
 
@@ -160,7 +170,6 @@ wie sich das Komprimieren auf den laufenden Spielbetrieb auswirken würde. Der e
     \item Maximale CPU Auslastung: Ist entscheidend um zu erkennen, ob das durchführen der Komprimierung das gesamte System lahmlegen könnte.
     \item Durchschnittliche CPU Auslastung: Ist wichtig um entscheiden zu können, ob die Komprimierung parallel zu dem normalen Betrieb stattfinden kann, oder der HB10 nach dem Ende eines Spieles Zeit reservieren muss, um zu komprimieren.
     \item Dauer der Komprimierung: sollte die Komprimierung separat zum Spielgeschehen stattfinden, sollte diese nicht zu viel Zeit benötigen, sodass der Spieler nicht zu lange warten muss, bis er weiter spielen kann.
-    \item Qualität der Komprimierung: obwohl die Videoqualität nicht der entscheidendste Punkt für die Überprüfung von Dart-Spielen ist, muss eine gewisse Videoqualität vorhanden sein, um alle relevanten Ereignisse darzustellen.
     \item Größe des komprimierten Videos: da wie bereits angesprochen verschiedene Aufsteller verschieden schnelle Internet-Anschlüsse besitzen ist es wichtig, dass das fertige Video so klein wie möglich ist.  
 \end{itemize}
 
