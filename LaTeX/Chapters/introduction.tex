@@ -1,17 +1,40 @@
 % !TEX root =  master.tex
 \chapter{Einleitung}
 
-\nocite{*}
+%\nocite{*}
 
-Das E-Dart Gerät \textit{LÖWEN DART HB10} stellt ein System dar, welches bereits umfangreiche Funktionen für den Spielbetrieb bietet \parencite{lwenentertainment_2026_lwen}. Hierzu zählen neben dem Angebot verschiedener Dart-Spiele die Erfassung von Spielerstatistiken, 
-die Bereitstellung von Daten über eine mobile Applikation sowie ein Verwaltungsportal für Aufsteller. Ein zentraler Aspekt des aktuellen Betriebs sind die vernetzte Turniere, bei denen alle Teilnehmer zeitgleich an demselben Gerät agieren 
-und die Spielergebnisse direkt nach Abschluss der Partie an einen Server übertragen werden.\newline
+Der Dartsport hat sich von einer einfachen Dartscheibe, bei welcher die Spielstände manuell erfasst werden mussten, schrittweise zu elektronischen Dartgeräten weiterentwickelt. Bei diesen Geräten wird der Spielbetrieb durch technische Funktionen unterstützt, 
+etwa durch die automatische Erkennung von Treffern und das selbstständige Zählen der Punkte. Dadurch konnten klassische Spielabläufe vereinfacht und unterschiedliche Spielmodi direkt am Gerät bereitgestellt werden. Mit der zunehmenden Vernetzung der Geräte entsteht darüber hinaus ein erweitertes System, 
+bei dem das Dartgerät nicht mehr isoliert betrieben wird, sondern mit weiteren digitalen Komponenten verbunden ist. 
 
+Das E-Dart-Gerät \textit{LÖWEN DART HB10} stellt in diesem Zusammenhang eine aktuelle Weiterentwicklung dar. LÖWEN DART prägt nach eigenen Angaben seit 1986 den elektronischen Dartsport 
+und verbindet mit dem HB10 traditionelle E-Dart-Funktionen mit digitalen Erweiterungen \cite{lwenentertainment_2026_lwen}. Der HB10 wird als offizielles DSAB-Liga- und Turniergerät eingesetzt und bietet verschiedene Spielvarianten, Trainingsspiele sowie einen Turniermodus \cite{lwenentertainment_2026_lwen}. 
+Zu den technischen und funktionalen Eigenschaften zählen unter anderem ein hochauflösender Monitor, ein Touchpad, ein Treffererkennungssystem, eine App-Anmeldung über einen QR-Code im Spielermenü sowie die Möglichkeit zur Netzwerkanbindung \cite{lwenentertainment_2026_lwen}. 
+
+Durch diese Vernetzung entsteht ein System, 
+das über die reine Funktion einer elektronischen Dartscheibe hinausgeht. Während ein Offline-E-Dart-Gerät Spiele bereitstellt und Punkte automatisch zählt, ermöglicht ein vollständig vernetztes Gerät die Einbindung in einen größeren digitalen Kontext. 
+Dieser wird im Folgenden als \glqq Kosmos\grqq{} aus Gerät, Server und App verstanden. In diesem Umfeld können spielbezogene Daten zentral verarbeitet und für weitere Funktionen genutzt werden. Für Spieler ergeben sich daraus unter anderem Statistiken, Ranglisten und vernetzte Turnierformate. 
+LÖWEN beschreibt in diesem Zusammenhang den HB10 Feature Pass, durch den unter anderem größere Turniere vor Ort organisiert, Live-Statistiken und Ranglisten genutzt sowie eine Einbindung in den Ligabetrieb des Deutschen Sportautomatenbundes ermöglicht werden \cite{lwenentertainment_2026_lwen}. 
+Zusätzlich steht für Aufsteller mit dem LÖWEN DART-Portal ein zentraler Online-Zugriff auf HB10-Geräte zur Verfügung, über den Umsätze, Gerätedaten und Statistiken eingesehen werden können \cite{lwenentertainment_2026_lwen}. 
+
+Ein zentraler Aspekt des aktuellen Betriebs sind vernetzte Turniere, 
+bei denen Spielergebnisse digital verarbeitet und im Anschluss an ein Spiel an einen Server übertragen werden. Diese synchronen Turnierformen setzen voraus, dass die Teilnehmer innerhalb eines gemeinsamen zeitlichen Rahmens am Wettbewerb teilnehmen. 
 In Zukunft soll dieses System um asynchrone Turnierformate und Ranglisten ergänzt werden, bei denen die Möglichkeit besteht, Preisgelder zu gewinnen. Im Gegensatz zu den bestehenden Formaten ist hierbei keine gleichzeitige Anwesenheit der Spieler erforderlich. 
-Da die Wettbewerbe ortsungebunden durchgeführt werden können, ist eine spätere visuelle Überprüfung der sportlichen Integrität erforderlich.\newline
+Da die Wettbewerbe ortsungebunden durchgeführt werden können, ist eine spätere visuelle Überprüfung der sportlichen Integrität erforderlich. 
 
-Diese Arbeit beschafft sich mit der Realisierung einer \ac{VOD} Streaming Platform für das LÖWEN-Dart HB10, die eine Überprüfung vergangener Spiele durch die Nutzer ermöglicht. Um dies zu erreichen, muss zunächst ein Konzept für das System des Streamings entwickelt werden.
-Daraufhin muss eine Kamera in den HB10 integriert werden, und der HB10 um die Funktion erweitert werden, die von der Kamera aufgenommenen Videos für das \ac{VOD} Streaming an die Nutzer vorzubereiten. Anschließend daran ist es notwendig, einen Server \todo{vlt anpassen} zu entwickeln,
-welcher die Videos des HB10 empfängt, zwischen speichert und auf Anfrage des Nutzers an diesen überträgt. Zuletzt wird eine Webplatform erstellt, über welche die Nutzer, die gespeicherten Videos ansehen können.
+Ein mögliches asynchrones Spiel kann dabei so verstanden werden, dass ein Spieler ein Spiel eigenständig an einem HB10 durchführt, ohne dass andere Teilnehmer zeitgleich anwesend sein müssen. Während des Spielverlaufs werden die einzelnen Würfe 
+durch eine in das Gerät integrierte Kamera erfasst und als kurze Videosequenzen zwischengespeichert. Nach Abschluss des Spiels werden diese einzelnen Videoschnipsel in eine zeitlich geordnete Form gebracht, zu einem zusammenhängenden Video zusammengefügt und anschließend an einen Server übertragen.
+Dort wird das Video gespeichert und so bereitgestellt, dass andere Spieler oder berechtigte Nutzer es zu einem späteren Zeitpunkt über eine Webplattform abrufen und ansehen können. Dadurch entsteht ein Spielablauf, bei dem die sportliche Leistung nicht nur über das gemeldete Spielergebnis, 
+sondern zusätzlich über eine nachträglich überprüfbare visuelle Dokumentation nachvollzogen werden kann. 
+
+Mit dieser Erweiterung ergeben sich zusätzliche technische und organisatorische Anforderungen an das Gesamtsystem. Auf Seiten des HB10 muss eine geeignete Kamera integriert werden, die während des Spielbetriebs verwertbare Bilddaten liefert, ohne den eigentlichen Spielablauf zu beeinträchtigen. 
+Darüber hinaus müssen die aufgenommenen Videodaten zwischengespeichert, verarbeitet, komprimiert und nach Spielende zuverlässig übertragen werden. Auf Serverseite ist eine Speicherung der Videos sowie der zugehörigen Metadaten erforderlich, damit die Aufnahmen eindeutig einem Spiel, 
+einem Zeitpunkt und gegebenenfalls beteiligten Spielern zugeordnet werden können. Zusätzlich muss der Zugriff auf die Videos über eine Webplattform geregelt werden, sodass nur vorgesehene Nutzer die gespeicherten Inhalte abrufen können. 
+Da bei der Aufnahme und Bereitstellung von Videomaterial personenbezogene Informationen entstehen können, sind außerdem Anforderungen an Datenschutz, Zugriffskontrolle und den Umgang mit gespeicherten Aufnahmen zu berücksichtigen.
+
+Diese Arbeit befasst sich mit der Realisierung einer \ac{VOD}-Streaming-Plattform für das \textit{LÖWEN DART HB10}, 
+die eine Überprüfung vergangener Spiele durch die Nutzer ermöglicht. Um dies zu erreichen, muss zunächst ein Konzept für das Streaming-System entwickelt werden. Daraufhin muss eine Kamera in den HB10 integriert und das Gerät um die Funktion erweitert werden, 
+die von der Kamera aufgenommenen Videos für das \ac{VOD}-Streaming aufzubereiten. Anschließend ist ein Server zu entwickeln, welcher die Videos des HB10 empfängt, zwischenspeichert und auf Anfrage des Nutzers bereitstellt. Zuletzt wird eine Webplattform erstellt, 
+über welche die Nutzer die gespeicherten Videos ansehen können.
 
 \newpage

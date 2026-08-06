@@ -8,13 +8,22 @@ Als Videoquelle dient der Löwen-DART HB10, dieser erstellt kurze Videoschnipsel
 Der HB10  besteht aus einer Hauptanwendung in welcher der normale Spielbetrieb abläuft, und mehreren "Satellit"-Anwendungen welche sich auf eine bestimmte Funktionalität spezialisiert sind. Zum Beispiel der Update-Server, welcher dafür zuständig ist, das Gesamte System zu updaten.
 Für die Aufnahme-Funktion des HB10 würde eine solche Anwendung erstellt (siehe Video App in \ref{fig:dartaufbau}).
 
-Die Videofunktion des HB10 erstreckt sich über zwei Anwendungen, welche miteinander kommunizieren. Die erste ist die eigentliche DART-Anwendung, diese ist dafür zuständig die zweite Anwendung über Ereignisse wie Treffer, Spiel Start und Ende zu Informieren,
+\begin{figure}[H]
+    \centering
+    \includesvg[width=\textwidth]{img/Dart_Apps.svg}
+    \caption{Einordnung der Video-App in die bestehende Anwendungsstruktur des HB10. Die zentrale Dart-Anwendung bleibt für den eigentlichen Spielbetrieb verantwortlich, während die Video-App als separate Anwendung die Aufnahme und Aufbereitung der Videodaten übernimmt. 
+    Die Kommunikation zwischen beiden Anwendungen erfolgt über eine Socket-Verbindung, wodurch die Videofunktion funktional von der Hauptanwendung getrennt wird.}
+    \label{fig:dartaufbau}
+\end{figure}
+
+Die Videofunktion des HB10 erstreckt sich über zwei Anwendungen, welche miteinander kommunizieren (s. \ref{fig:videoaufbau}). Die erste ist die eigentliche DART-Anwendung, diese ist dafür zuständig die zweite Anwendung über Ereignisse wie Treffer, Spiel Start und Ende zu Informieren,
 sowie das Abschließende übertragen an den Server. Die zweite Anwendung, ist verantwortlich für das zwischen Speichern, das Zusammenschneiden, das Komprimieren der Videodaten, sowie das anschließende erstellen der Playlist.
 
 \begin{figure}[H]
     \centering
     \includesvg[width=\textwidth]{img/Video-Aufbau.svg}
-    \caption{Aufbau der Videofunktion des HB10}
+    \caption{Aufbau der Videofunktion innerhalb des HB10. Die Kamera liefert unkomprimierte Videodaten an die Videoaufnahme-Anwendung, während die Haupt-Dart-Anwendung den Spielbetrieb steuert und relevante Ereignisse über eine Socket-Verbindung an die Videokomponente weitergibt. 
+    Nach der Verarbeitung werden die erzeugten Videodateien für die spätere Bereitstellung an den Storage-Server übertragen.}
     \label{fig:videoaufbau}
 \end{figure}
 
@@ -29,13 +38,6 @@ und wird in dieser Arbeit nicht weiter behandelt.
 \subsection{Dart\_App}
 Die Dart\_App bildet die zentrale Anwendung für den eigentlichen Spielbetrieb des HB10 (s. \ref{fig:dartaufbau}). Sie verwaltet die Spiellogik, verarbeitet spielbezogene Eingaben und stellt die für den Betrieb des Geräts notwendigen Funktionen bereit. 
 Im Kontext der Videofunktion übernimmt sie dabei nicht die Verarbeitung der Bilddaten selbst, sondern stellt die Einbindung der Videoaufzeichnung in das bestehende System sicher.
-
-\begin{figure}[H]
-    \centering
-    \includesvg[width=\textwidth]{img/Dart_Apps.svg}
-    \caption{Aufbau der einzelnen Komponenten des HB10.}
-    \label{fig:dartaufbau}
-\end{figure}
 
 Die Dart\_App bildet somit die Schnittstelle zwischen dem eigentlichen Spielgeschehen und der ergänzenden Videofunktion, ohne Teil der Medienverarbeitung zu sein. 
 Diese Trennung reduziert die Komplexität innerhalb der Hauptanwendung und erleichtert die Erweiterung des Systems um zusätzliche videobezogene Funktionen.
@@ -57,13 +59,14 @@ sowie die fortlaufende Erfassung und Zwischenspeicherung der Videodaten. Zusamme
 
 \subsection{Initialisierung des Systems und Aufbau der Kommunikation}
 
-Im ersten Bereich der Video\_App findet der Aufbau der Verbindung zwischen den beteiligten Komponenten sowie die Herstellung der Betriebsbereitschaft für die spätere Videoaufnahme. Sichtbar wird insbesondere, 
+Im ersten Bereich der Video\_App findet der Aufbau der Verbindung zwischen den beteiligten Komponenten sowie die Herstellung der Betriebsbereitschaft für die spätere Videoaufnahme (s. \ref{fig:dartsequenz1}). Sichtbar wird insbesondere, 
 dass das System nicht erst mit dem ersten Wurf aktiv wird, sondern bereits im Vorfeld in einen aufnahmefähigen Zustand überführt werden muss.
 
 \begin{figure}[H]
     \centering
     \includesvg[width=0.65\textwidth]{img/PlantUml/DartSequenz1/DartSequenz1.svg}
-    \caption{Initialisierung von Socket-Kommunikation und Kameraverbindung}
+    \caption{Initialisierung der Videofunktion vor Beginn der eigentlichen Aufnahme. Die VideoMain-Komponente stellt zunächst eine Socket-Schnittstelle bereit und wartet auf eine Verbindung der Dart-App. 
+    Nach erfolgreichem Verbindungsaufbau wird zusätzlich die Kameraverbindung geöffnet und ein separater Thread für die fortlaufende Verarbeitung der Kamerabilder erzeugt.}
     \label{fig:dartsequenz1}
 \end{figure}
 
@@ -77,13 +80,14 @@ da das System bereits vor dem ersten für das Spiel relevanten Ereignis in der L
 
 \subsection{Kontinuierliche Erfassung und Zwischenspeicherung der Bilddaten}
 
-Im zweiten Teil finden der periodische Empfang von Bilddaten aus der Kamera sowie deren Zwischenspeicherung innerhalb des Systems statt. Anders als das erste Diagramm, das sich auf Spielereignisse konzentriert, 
-und das zweite Diagramm, das die Initialisierung zeigt, stellt dieses Diagramm die dauerhafte Laufzeitstruktur der Videoerfassung dar.
+Im zweiten Teil finden der periodische Empfang von Bilddaten aus der Kamera sowie deren Zwischenspeicherung innerhalb des Systems statt (s. \ref{fig:dartsequenz2}). Anders als im ersten Teil, der die Initialisierung zeigt, und der dritte Teil, der sich auf Spielereignisse konzentriert, 
+stellt dieses Diagramm die dauerhafte Laufzeitstruktur der Videoerfassung dar.
 
 \begin{figure}[hbp]%[H]
     \centering
     \includesvg[width=0.833\textwidth]{img/PlantUml/DartSequenz2/DartSequenz2.svg}
-    \caption{Kontinuierliche Erfassung und Zwischenspeicherung von Kameraframes}
+    \caption{Kontinuierliche Erfassung und Zwischenspeicherung der Kamerabilder während des Betriebs. Der VideoFramesThread liest fortlaufend einzelne Frames von der Kamera ein und legt diese in einem internen Puffer ab. 
+    Dadurch stehen bei einem später gemeldeten Spielereignis nicht nur aktuelle Bilddaten, sondern auch unmittelbar zuvor aufgenommene Frames zur Verfügung.}
     \label{fig:dartsequenz2}
 \end{figure}
 
@@ -103,7 +107,8 @@ Deutlich wird hierbei vor allem die Trennung zwischen dem Spielbetrieb selbst un
 \begin{figure}[H]
     \centering
     \includesvg[width=0.75\textwidth]{img/PlantUml/DartSequenz3/DartSequenz3.svg}
-    \caption{Der Ablauf vom registrierten Dartwurf bis zur Bereitstellung des verarbeiteten Videos. Die Dart\_App ist die Haupt Dartanwendung.}
+    \caption{Ablauf der Videoverarbeitung von einem registrierten Dartwurf bis zur Bereitstellung des fertigen Videos. Während des Spiels sendet die Dart-App Trefferereignisse an die VideoMain-Komponente, die daraufhin die zugehörigen Rohdaten im Dateisystem speichert. 
+    Nach Spielende werden die gespeicherten Rohdaten eingelesen, komprimiert und als verarbeitetes Video abgelegt, bevor die Dart-App das Ergebnis abruft und an den Server überträgt.}
     \label{fig:dartsequenz3}
 \end{figure}
 
@@ -125,7 +130,8 @@ Bei jedem Austausch zwischen Dart\_App und Video\_App findet folgender Ablauf st
 \begin{figure}[H]
     \centering
     \includesvg[width=0.75\textwidth]{img/PlantUml/socket/socket.svg}
-    \caption{Ablauf der Socket Kommunikation}
+    \caption{Ablauf der Nachrichtenübertragung zwischen zwei Anwendungen über die Socket-Verbindung. Der Sender serialisiert zunächst die zu übertragenden Daten, übermittelt anschließend die Länge des erzeugten Bytestreams und sendet danach die eigentlichen Nutzdaten. 
+    Der Empfänger liest zuerst die angegebene Datenlänge aus, empfängt darauf basierend den vollständigen Bytestream und rekonstruiert daraus die ursprüngliche Datenstruktur durch Deserialisierung.}
     \label{fig:dartsocket}
 \end{figure}
 
@@ -169,8 +175,49 @@ wie sich das Komprimieren auf den laufenden Spielbetrieb auswirken würde. Der e
 \begin{itemize}
     \item Maximale CPU Auslastung: Ist entscheidend um zu erkennen, ob das durchführen der Komprimierung das gesamte System lahmlegen könnte.
     \item Durchschnittliche CPU Auslastung: Ist wichtig um entscheiden zu können, ob die Komprimierung parallel zu dem normalen Betrieb stattfinden kann, oder der HB10 nach dem Ende eines Spieles Zeit reservieren muss, um zu komprimieren.
-    \item Dauer der Komprimierung: sollte die Komprimierung separat zum Spielgeschehen stattfinden, sollte diese nicht zu viel Zeit benötigen, sodass der Spieler nicht zu lange warten muss, bis er weiter spielen kann.
+    \item Dauer der Komprimierung: sollte die Komprimierung nach dem Ende des Spieles stattfinden, sollte diese nicht zu viel Zeit benötigen, sodass der Spieler nicht zu lange warten muss, bis er weiter spielen kann.
     \item Größe des komprimierten Videos: da wie bereits angesprochen verschiedene Aufsteller verschieden schnelle Internet-Anschlüsse besitzen ist es wichtig, dass das fertige Video so klein wie möglich ist.  
 \end{itemize}
+
+Das Benchmark wurde einmal mit dem H.264 hardware Codec der APU des HB10 durchgeführt und ein weiteres mal mit dem x264 Software Codec. Dabei sollten diese ein 78 Sekunden langes Video mit einer Auflösung von 1280x720 bei 10 fps komprimieren. 
+Mit hardware Komprimierung wurde eine durchschnittliche CPU Auslastung von 12,13\% mit einer Standardabweichung von 1,25 erreicht, bei einer durchschnittlichen Dauer von 8,59 Sekunden mit einer Standardabweichung von 0,13. 
+Im gegensatz wurde mit software Komprimierung eine durchschnittliche CPU Auslastung von 97,10\% Prozent mit einer Standardabweichung von 0,42 erreicht, bei einer durchschnittlichen Dauer von 55,13 Sekunden mit einer Standardabweichung von 0,75.
+Die kleinen Schwankungen in der Dauer können auf den scheduler des Betriebssystems zurückgeführt werden.
+
+Da die Software Komprimierung die CPU des HB10 komplett auslastet, ist es nicht möglich, die Komprimierung parallel zum normalen Spielbetrieb durchzuführen. Deshalb müsste die Komprimierung nach dem Ende des Spieles durchgeführt werden, was zu einer langen Wartezeit führen würde.
+Bei der Hardware Komprimierung hingegen betrug die Maximale CPU Auslastung im Durchschnitt nur 39,70\% mit einer Standardabweichung von 3,35. Wenn man davon ausgeht, 
+dass im Normalen Spielbetrieb die CPU Auslastung maximal bei 70\% in einem der vier Kerne liegt, sollte die Hardware Komprimierung problemlos parallel zum normalen Spielbetrieb durchgeführt werden können.
+
+Ein Unterschied in der resultierenden Dateigröße scheint keinen merkbaren Einfluss auf die Dauer oder CPU Auslastung der Komprimierung zu haben. Die entstehende Dateigröße der verschiedenen Codecs lag zwar standardmäßig auseinander, beide Codecs konnten jedoch die Dateigröße des anderen Codecs erreichen.
+Änderungen an der Dateigröße scheinen sich hauptsächlich auf die Videoqualität auszuwirken, und nicht auf die Dauer oder CPU Auslastung der Komprimierung. Da die Videoqualität für uns kein entscheidender Faktor ist, solange der Spieler und alle Würfe klar zu erkennen sind, 
+ist die Dateigröße kein entscheidender Faktor für die Wahl des Codecs.
+
+Anhand der Ergebnisse des Benchmarks ist zu erkennen, dass die hardware Komprimierung deutlich besser für den Einsatz auf dem HB10 geeignet ist, da die Software Komprimierung die CPU des HB10 komplett auslastet, und somit nicht parallel zum normalen Spielbetrieb durchgeführt werden kann.
+Trotzdem konnte im laufe der Arbeit nur die Software Komprimierung auf einer aktuellen Version des HB10 implementiert werden, da die Hardware Komprimierung aufgrund der Treiber-Inkompatibilität auf dem HB10 nicht möglich ist. Deshalb wurde die Software Komprimierung für die Arbeit verwendet, 
+und die Hardware Komprimierung als mögliche zukünftige Erweiterung verstanden.
+
+\subsection{Entfernungsbestimmung durch Objekterkennung}
+
+Eine mögliche Erweiterung der Videofunktion besteht darin, die aufgenommenen Bilddaten zusätzlich zur Abschätzung der Entfernung zwischen Spieler und Gerät zu verwenden. Dabei könnte ein Verfahren zur Objekterkennung eingesetzt werden, um den Spieler innerhalb des Kamerabildes zu lokalisieren.
+Die Kamera würde in diesem Fall nicht nur zur nachträglichen visuellen Überprüfung eines Spiels dienen, sondern zusätzlich als Grundlage für eine automatisierte Abstandsschätzung verwendet werden.
+ 
+Für ein solches Verfahren müsste zunächst festgelegt werden, welcher Punkt des Spielers als Referenz für die Berechnung genutzt werden soll. Denkbar wäre beispielsweise ein erkannter Bereich am unteren Körper oder eine andere möglichst eindeutig bestimmbare Position im Bild.
+Aus dieser Position könnte anschließend abgeleitet werden, an welcher Stelle sich der Spieler relativ zum Gerät befindet. Die eigentliche Entfernung würde dabei nicht direkt gemessen, sondern aus mehreren bekannten und erkannten Größen berechnet.
+Dazu gehören unter anderem die Position des Spielers im Bild, die Einbauhöhe der Kamera, die Ausrichtung der Kamera sowie die Eigenschaften des verwendeten Kamerabildes.
+
+Entscheidend ist hierbei, dass alle verwendeten Eingangsgrößen mit einer ausreichend hohen Genauigkeit bestimmt werden müssten. Bereits kleine Abweichungen bei der erkannten Position des Spielers könnten dazu führen, dass die berechnete Entfernung deutlich vom tatsächlichen Abstand abweicht.
+Gleiches gilt für Ungenauigkeiten bei der Kameramontage oder bei der Bestimmung des Kamerawinkels. Da die Entfernung aus diesen Messwerten rechnerisch abgeleitet wird, wirken sich Fehler nicht zwangsläufig nur geringfügig auf das Ergebnis aus.
+Stattdessen können sich kleine Messfehler in ungünstigen Situationen verstärken und zu vergleichsweise großen Fehlern in der berechneten Entfernung führen.
+ 
+Besonders kritisch ist dabei, dass die reale Umgebung nicht vollständig kontrolliert werden kann. Spieler unterscheiden sich in Körpergröße, Kleidung, Haltung und Bewegung während des Wurfs. Dadurch kann es für ein Erkennungsverfahren schwierig sein, 
+in jedem Bild zuverlässig denselben Referenzpunkt zu bestimmen. Zusätzlich können Beleuchtung, Bewegungsunschärfe, verdeckte Bildbereiche oder eine ungünstige Perspektive die Erkennung beeinflussen. 
+Auch mechanische Toleranzen am Gerät oder minimale Veränderungen der Kameraposition können die Genauigkeit der späteren Berechnung verschlechtern.
+ 
+Für eine produktive Nutzung müsste daher zunächst untersucht werden, wie stabil die Erkennung des Spielers unter realen Einsatzbedingungen funktioniert. Außerdem müsste geprüft werden, wie stark sich einzelne Messfehler auf die berechnete Entfernung auswirken.
+Dazu wäre eine Kalibrierung des Systems notwendig, bei der bekannte Abstände mit den berechneten Werten verglichen werden.  Erst wenn die Abweichungen ausreichend klein und reproduzierbar sind, könnte eine solche Funktion als zuverlässige Grundlage für eine automatische Abstandskontrolle verwendet werden.
+ 
+Im Rahmen dieser Arbeit ist die Entfernungsbestimmung durch Objekterkennung daher vor allem als mögliche zukünftige Erweiterung zu verstehen. Die vorhandene Videofunktion stellt zwar grundsätzlich Bilddaten bereit, die für eine solche Auswertung genutzt werden könnten.
+Die praktische Umsetzung wäre jedoch anspruchsvoll, da die Genauigkeit der Abstandsschätzung stark von der Qualität der Erkennung, der Kamerakalibrierung und der Stabilität der Messbedingungen abhängt. Aus diesem Grund müsste eine solche Funktion gesondert untersucht und validiert werden, 
+bevor sie für eine verlässliche Bewertung des Spielerabstands eingesetzt werden kann.
 
 \newpage

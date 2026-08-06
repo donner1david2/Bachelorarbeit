@@ -1,13 +1,14 @@
 % !TEX root =  master.tex
 \chapter{Systemarchitektur}
 
-Für das System musste eine Gesamte Architektur entwickelt werden, welche die Komponenten HB10, Nutzer (Browser) und Server miteinander verbindet. Die einzige bereits vorhandene Komponente ist der HB10, welcher allerdings noch keine Kamera enthält. In diesem Kapitel gibt wird ein grober Überblick über die 
+Für das System musste eine Gesamte Architektur entwickelt werden, welche die Komponenten HB10, Nutzer (Webseite) und Server miteinander verbindet (s. \ref{fig:architektur}). Die einzige bereits vorhandene Komponente ist der HB10, welcher allerdings noch keine Kamera enthält. In diesem Kapitel gibt wird ein grober Überblick über die 
 Architektur gegeben, die Details zu den einzelnen Komponenten werden zu einem späterem Zeitpunkt erläutert. 
 
 \begin{figure}[H]
     \centering
     \includesvg[width=\textwidth]{img/System.svg}
-    \caption{Systemarchitektur}
+    \caption{Gesamtarchitektur der entwickelten Video-on-Demand-Lösung. Der HB10 erfasst und überträgt die aufgenommenen Videodaten an einen Spring-Boot-Server, der die Videos im Dateisystem und die zugehörigen Metadaten in einer Datenbank speichert. 
+    Nutzer greifen über einen Browser auf die Webplattform zu und können die bereitgestellten Videos über den Server abrufen.}
     \label{fig:architektur}
 \end{figure}
 
