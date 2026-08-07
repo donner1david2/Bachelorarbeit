@@ -6,7 +6,7 @@ Als Videoquelle dient der Löwen-DART HB10, dieser erstellt kurze Videoschnipsel
 \section{Aufbau}
 
 Der HB10  besteht aus einer Hauptanwendung in welcher der normale Spielbetrieb abläuft, und mehreren "Satellit"-Anwendungen welche sich auf eine bestimmte Funktionalität spezialisiert sind. Zum Beispiel der Update-Server, welcher dafür zuständig ist, das Gesamte System zu updaten.
-Für die Aufnahme-Funktion des HB10 würde eine solche Anwendung erstellt (siehe Video App in \ref{fig:dartaufbau}).
+Für die Aufnahme-Funktion des HB10 würde eine solche Anwendung erstellt (siehe Video App in \cref{fig:dartaufbau}).
 
 \begin{figure}[H]
     \centering
@@ -16,7 +16,7 @@ Für die Aufnahme-Funktion des HB10 würde eine solche Anwendung erstellt (siehe
     \label{fig:dartaufbau}
 \end{figure}
 
-Die Videofunktion des HB10 erstreckt sich über zwei Anwendungen, welche miteinander kommunizieren (s. \ref{fig:videoaufbau}). Die erste ist die eigentliche DART-Anwendung, diese ist dafür zuständig die zweite Anwendung über Ereignisse wie Treffer, Spiel Start und Ende zu Informieren,
+Die Videofunktion des HB10 erstreckt sich über zwei Anwendungen, welche miteinander kommunizieren (s. \cref{fig:videoaufbau}). Die erste ist die eigentliche DART-Anwendung, diese ist dafür zuständig die zweite Anwendung über Ereignisse wie Treffer, Spiel Start und Ende zu Informieren,
 sowie das Abschließende übertragen an den Server. Die zweite Anwendung, ist verantwortlich für das zwischen Speichern, das Zusammenschneiden, das Komprimieren der Videodaten, sowie das anschließende erstellen der Playlist.
 
 \begin{figure}[H]
@@ -36,7 +36,7 @@ und bietet eine vergleichsweise geringe Dateigröße. Dies trägt dazu bei, dass
 und wird in dieser Arbeit nicht weiter behandelt.
 
 \subsection{Dart\_App}
-Die Dart\_App bildet die zentrale Anwendung für den eigentlichen Spielbetrieb des HB10 (s. \ref{fig:dartaufbau}). Sie verwaltet die Spiellogik, verarbeitet spielbezogene Eingaben und stellt die für den Betrieb des Geräts notwendigen Funktionen bereit. 
+Die Dart\_App bildet die zentrale Anwendung für den eigentlichen Spielbetrieb des HB10 (s. \cref{fig:dartaufbau}). Sie verwaltet die Spiellogik, verarbeitet spielbezogene Eingaben und stellt die für den Betrieb des Geräts notwendigen Funktionen bereit. 
 Im Kontext der Videofunktion übernimmt sie dabei nicht die Verarbeitung der Bilddaten selbst, sondern stellt die Einbindung der Videoaufzeichnung in das bestehende System sicher.
 
 Die Dart\_App bildet somit die Schnittstelle zwischen dem eigentlichen Spielgeschehen und der ergänzenden Videofunktion, ohne Teil der Medienverarbeitung zu sein. 
@@ -59,7 +59,7 @@ sowie die fortlaufende Erfassung und Zwischenspeicherung der Videodaten. Zusamme
 
 \subsection{Initialisierung des Systems und Aufbau der Kommunikation}
 
-Im ersten Bereich der Video\_App findet der Aufbau der Verbindung zwischen den beteiligten Komponenten sowie die Herstellung der Betriebsbereitschaft für die spätere Videoaufnahme (s. \ref{fig:dartsequenz1}). Sichtbar wird insbesondere, 
+Im ersten Bereich der Video\_App findet der Aufbau der Verbindung zwischen den beteiligten Komponenten sowie die Herstellung der Betriebsbereitschaft für die spätere Videoaufnahme (s. \cref{fig:dartsequenz1}). Sichtbar wird insbesondere, 
 dass das System nicht erst mit dem ersten Wurf aktiv wird, sondern bereits im Vorfeld in einen aufnahmefähigen Zustand überführt werden muss.
 
 \begin{figure}[H]
@@ -80,7 +80,7 @@ da das System bereits vor dem ersten für das Spiel relevanten Ereignis in der L
 
 \subsection{Kontinuierliche Erfassung und Zwischenspeicherung der Bilddaten}
 
-Im zweiten Teil finden der periodische Empfang von Bilddaten aus der Kamera sowie deren Zwischenspeicherung innerhalb des Systems statt (s. \ref{fig:dartsequenz2}). Anders als im ersten Teil, der die Initialisierung zeigt, und der dritte Teil, der sich auf Spielereignisse konzentriert, 
+Im zweiten Teil finden der periodische Empfang von Bilddaten aus der Kamera sowie deren Zwischenspeicherung innerhalb des Systems statt (s. \cref{fig:dartsequenz2}). Anders als im ersten Teil, der die Initialisierung zeigt, und der dritte Teil, der sich auf Spielereignisse konzentriert, 
 stellt dieses Diagramm die dauerhafte Laufzeitstruktur der Videoerfassung dar.
 
 \begin{figure}[hbp]%[H]
@@ -101,7 +101,7 @@ Dadurch stellt die Videoerfassung eine permanente Grundlage bereit, auf die ande
 
 \subsection{Verarbeitung eines Wurfes bis zur Bereitstellung des Videos}
 
-Der letzte Teil \ref{fig:dartsequenz3} ist zuständig für den fachlichen Ablauf, der von einem registrierten Wurf bis zur späteren Bereitstellung des zugehörigen Videos reicht. Im Mittelpunkt steht die Zusammenarbeit zwischen \texttt{Dart\_App}, \texttt{Video\_Main}, \texttt{File\_System} und \texttt{Server}. 
+Der letzte Teil \cref{fig:dartsequenz3} ist zuständig für den fachlichen Ablauf, der von einem registrierten Wurf bis zur späteren Bereitstellung des zugehörigen Videos reicht. Im Mittelpunkt steht die Zusammenarbeit zwischen \texttt{Dart\_App}, \texttt{Video\_Main}, \texttt{File\_System} und \texttt{Server}. 
 Deutlich wird hierbei vor allem die Trennung zwischen dem Spielbetrieb selbst und der nachgelagerten Videoverarbeitung.
 
 \begin{figure}[H]
@@ -135,7 +135,7 @@ Bei jedem Austausch zwischen Dart\_App und Video\_App findet folgender Ablauf st
     \label{fig:dartsocket}
 \end{figure}
 
-Für die Kommunikation zwischen Dart\_App und Video\_App wird eine Socket Verbindung verwendet (s. \ref{fig:dartsocket}). Die Video\_App wartet auf eine Verbindung der Dart\_App, und ist Anschließend bereit Ereignisse mit zusätzlichen Daten zu erhalten.
+Für die Kommunikation zwischen Dart\_App und Video\_App wird eine Socket Verbindung verwendet (s. \cref{fig:dartsocket}). Die Video\_App wartet auf eine Verbindung der Dart\_App, und ist Anschließend bereit Ereignisse mit zusätzlichen Daten zu erhalten.
 Als Daten werden von beiden Anwendungen bekannte Datenstrukturen verwendet, die benötigte Daten in einen Seriellen Bytestream schreiben, anschließend wird zunächst die Länge des Bytestreams übertragen, und darauf wird der eigentlicher Stream übertragen.
 Der Empfänger kann im den Empfangenen Stream dann deserealisieren um alle Daten zu erhalten die er benötigt.
 
@@ -208,7 +208,7 @@ Dazu gehören unter anderem die Position des Spielers im Bild, die Einbauhöhe d
 Entscheidend ist hierbei, dass alle verwendeten Eingangsgrößen mit einer ausreichend hohen Genauigkeit bestimmt werden müssten. Bereits kleine Abweichungen bei der erkannten Position des Spielers könnten dazu führen, dass die berechnete Entfernung deutlich vom tatsächlichen Abstand abweicht.
 Gleiches gilt für Ungenauigkeiten bei der Kameramontage oder bei der Bestimmung des Kamerawinkels. Da die Entfernung aus diesen Messwerten rechnerisch abgeleitet wird, wirken sich Fehler nicht zwangsläufig nur geringfügig auf das Ergebnis aus.
 Stattdessen können sich kleine Messfehler in ungünstigen Situationen verstärken und zu vergleichsweise großen Fehlern in der berechneten Entfernung führen.
- 
+
 Besonders kritisch ist dabei, dass die reale Umgebung nicht vollständig kontrolliert werden kann. Spieler unterscheiden sich in Körpergröße, Kleidung, Haltung und Bewegung während des Wurfs. Dadurch kann es für ein Erkennungsverfahren schwierig sein, 
 in jedem Bild zuverlässig denselben Referenzpunkt zu bestimmen. Zusätzlich können Beleuchtung, Bewegungsunschärfe, verdeckte Bildbereiche oder eine ungünstige Perspektive die Erkennung beeinflussen. 
 Auch mechanische Toleranzen am Gerät oder minimale Veränderungen der Kameraposition können die Genauigkeit der späteren Berechnung verschlechtern.
