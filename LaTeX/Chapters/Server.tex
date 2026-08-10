@@ -12,7 +12,83 @@ sodass eine Speicherung auf dem Dateisystem des Servers keine Probleme mit sich 
 Als Kommunikationsprotokoll zwischen Server und Clients wird HTTP zusammen mit REST-API verwendet. Da dies eine Simple aber ausreichende Methode ist. Der größte Nachteil ist das abgebrochene Anfragen nicht fortgesetzt werden können. Somit kann die Übertragung von großen Dateien problematisch werden.
 Da wir aber HLS als Streaming Protokoll verwenden (s. \ref{sec:hls}) liegen die Videos nicht als eine einzelne große Datei vor, sondern eine Playlist Datei mit einzelnen Video Segmenten, welche nicht größer als 5MB werden. Deshalb ist die Übertagung der Videos kein Problem.
 Es ist sehr einfach einen REST-Server mittels Spring Boot aufzustellen. Spring Boot übernimmt den großteil der Aufgaben und es müssen nur die Endpunkte für die Clients und die Schnittstellen zur Datenbank definiert werden.
-Um die Metadaten der Videos zu speichern wurde eine relationale Datenbank gewählt. 
+Um die Metadaten der Videos zu speichern wurde eine relationale Datenbank gewählt.
+
+\subsection{Speicherkonzept für Videodaten} 
+
+Für die Speicherung der Videodaten wurde im Prototyp eine Trennung zwischen den eigentlichen Videodateien und den dazugehörigen Metadaten umgesetzt. Die Videodateien werden dabei im Dateisystem des Servers abgelegt, während die beschreibenden Informationen zu einem Video 
+in einer relationalen Datenbank gespeichert werden. Diese Aufteilung entspricht dem grundlegenden Aufbau der Serverkomponente, bei dem der Server sowohl Zugriff auf das Dateisystem als auch auf eine PostgreSQL-Datenbank besitzt. 
+
+Der wesentliche Grund für diese Trennung liegt in den unterschiedlichen Eigenschaften der gespeicherten Daten. Videodateien bestehen aus vergleichsweise großen binären Datenmengen, die nach dem Upload im Regelfall vollständig abgelegt und später wieder gelesen werden. 
+Für solche großen Objekte ist eine Speicherung als eigenständige Datei im Dateisystem geeignet, da Dateisysteme für das sequenzielle Lesen und Schreiben größerer Dateien ausgelegt sind. Untersuchungen zur Speicherung großer Objekte zeigen, 
+dass Datenbanken insbesondere bei kleineren Objekten Vorteile haben können, während Dateisysteme bei größeren Objekten häufig effizienter sind \cite{sears_van_ingen_gray_2006}. Da die erzeugten Videos nicht als kleine Datensätze, 
+sondern als zusammenhängende Mediendateien beziehungsweise als HLS-Playlist mit Segmentdateien vorliegen, ist eine Speicherung außerhalb der Datenbank für diesen Anwendungsfall naheliegend. 
+
+Die relationale Datenbank übernimmt dagegen die Verwaltung der strukturierten Informationen zu den Videos. Dazu gehören beispielsweise die Spieler-ID, der Dateiname, der Speicherort, der Erstellungszeitpunkt und der aktuelle Status des Videos. Diese Daten müssen gezielt durchsucht, 
+gefiltert und über die Webplattform angezeigt werden können. Eine relationale Datenbank eignet sich hierfür, da die Metadaten in einer festen Struktur abgelegt und über Abfragen ausgewertet werden können. Die Videodatei selbst wird in diesem Modell nicht direkt in der Datenbank gespeichert, 
+sondern über einen gespeicherten Dateipfad mit dem Datenbankeintrag verknüpft. Dadurch entsteht eine eindeutige Beziehung zwischen dem physischen Speicherort der Datei und dem logischen Eintrag im System. 
+
+Ein Videoeintrag in der Datenbank kann somit als zentrale Referenz auf eine gespeicherte Aufnahme verstanden werden. Der Datenbankeintrag enthält die fachlichen Informationen, während der Dateipfad auf die konkrete Datei oder den Ordner mit den HLS-Segmenten verweist. 
+Wird ein Video über die Webplattform gesucht, werden zuerst die Metadaten aus der Datenbank geladen. Erst beim eigentlichen Abspielen wird die über den Dateipfad referenzierte Videodatei beziehungsweise die zugehörige HLS-Playlist vom Server ausgeliefert. 
+Dadurch müssen bei Such- und Listenansichten keine großen Videodaten aus der Datenbank gelesen werden. 
+
+Ein alternativer Ansatz wäre die Speicherung der Videodaten direkt in PostgreSQL, etwa als Large Object. PostgreSQL stellt hierfür grundsätzlich Mechanismen bereit, mit denen große Datenobjekte über eine spezielle Large-Object-Struktur verwaltet werden können \cite{2026}. 
+Für den vorliegenden Prototypen ergibt sich daraus jedoch kein wesentlicher Vorteil, da die Videos nicht innerhalb komplexer Datenbanktransaktionen verarbeitet werden müssen. Stattdessen genügt es, die Datei zuverlässig abzulegen und den Speicherort in der Datenbank zu speichern. 
+Damit bleibt die Datenbank auf die Verwaltung strukturierter Metadaten beschränkt, während das Dateisystem die binären Videodaten verwaltet. 
+
+Diese Trennung reduziert außerdem die Komplexität der Anwendung. Die Datenbank enthält nur kleine und gut abfragbare Datensätze, während die großen Videodateien unabhängig davon abgelegt werden. Gleichzeitig bleibt die Verbindung zwischen beiden Bestandteilen eindeutig nachvollziehbar. 
+Solange der Datenbankeintrag und der Dateipfad konsistent gehalten werden, kann jedes Video einem Spieler und einem konkreten Speicherort zugeordnet werden. Für den Prototyp ist dieses Speicherkonzept ausreichend, 
+da die zu erwartende Datenmenge begrenzt ist und die Videos nur eine Länge von wenigen Minuten besitzen.
+
+\subsection{Vergleich von Dateisystem und Object Storage} 
+
+Neben der Speicherung im Dateisystem wurde auch die Verwendung eines Object Storage betrachtet. Object Storage speichert Daten nicht als klassische Dateien in einer lokalen Ordnerstruktur, sondern als Objekte in einem Speicherbereich. 
+Jedes Objekt besitzt einen eindeutigen Schlüssel und kann über eine Schnittstelle abgerufen werden. Dieser Ansatz wird häufig bei großen verteilten Speichersystemen verwendet, da er auf hohe Skalierbarkeit und die Verwaltung großer Datenmengen ausgelegt ist \cite{sears_van_ingen_gray_2006}. 
+
+Ein wesentlicher Vorteil von Object Storage liegt in der Skalierbarkeit. Die Videodaten sind nicht an das Dateisystem eines einzelnen Servers gebunden, sondern können unabhängig von der Anwendung gespeichert werden.
+Dadurch kann ein System mit mehreren Serverinstanzen einfacher auf denselben Datenbestand zugreifen. Für große produktive Videoplattformen ist dies ein wichtiger Vorteil, da Speicherplatz und Serverkapazität getrennt voneinander erweitert werden können. 
+Außerdem bieten Object-Storage-Systeme häufig zusätzliche Funktionen wie Replikation, Lebenszyklus-Regeln und Zugriffskontrollen. 
+
+Demgegenüber steht jedoch eine höhere Komplexität. Für den Einsatz eines Object Storage muss eine zusätzliche Speicherkomponente eingebunden werden. Die Anwendung muss nicht mehr nur lokale Dateien schreiben und lesen, sondern über eine externe Schnittstelle mit dem Speichersystem kommunizieren. 
+Dabei müssen Aspekte wie Authentifizierung, Berechtigungen, Bucket-Strukturen, Objektpfade und Fehlerbehandlung berücksichtigt werden. Für einen Prototypen erhöht dies den Entwicklungsaufwand deutlich. 
+
+Auch der Betriebsaufwand ist bei Object Storage höher. Neben dem eigentlichen Server muss ein zusätzlicher Speicherdienst betrieben oder ein externer Anbieter genutzt werden. Dabei entstehen weitere Konfigurations- und Verwaltungsaufgaben. Bei einem lokalen Dateisystem ist der Betrieb einfacher, 
+da der Server direkt auf die gespeicherten Dateien zugreifen kann. Für die im Prototyp erwartete Datenmenge ist diese Einfachheit ein wichtiger Vorteil, da zunächst die grundsätzliche Funktionalität der Videoübertragung, Speicherung und Bereitstellung im Vordergrund steht. 
+
+Ein weiterer Unterschied betrifft die Kosten. Bei einer lokalen Speicherung entstehen vor allem Kosten für den vorhandenen Server und dessen Speicherplatz. Object Storage kann dagegen nutzungsabhängige Kosten verursachen, beispielsweise für gespeicherte Daten, Speicherzugriffe und Datenübertragungen. 
+Diese Kostenstruktur kann bei sehr großen Datenmengen sinnvoll sein, da Speicher flexibel erweitert werden kann. Für eine begrenzte Anzahl kurzer Videos ist dieser Vorteil jedoch weniger entscheidend. 
+
+Auch hinsichtlich der Integration ist das Dateisystem für den Prototyp einfacher geeignet. Der Server kann die empfangenen Videodaten direkt in einem Verzeichnis speichern und den Pfad in der Datenbank ablegen. Beim Abruf kann dieser Pfad verwendet werden, 
+um die HLS-Playlist und die dazugehörigen Segmente auszuliefern. Die bestehende REST-Struktur des Servers kann dadurch ohne zusätzliche Speicher-API umgesetzt werden. Bei Object Storage müsste dagegen zusätzlich entschieden werden, wie Objektschlüssel aufgebaut werden, 
+wie die Segmente hochgeladen werden und wie der Zugriff auf einzelne Objekte erfolgt. 
+
+Für den vorliegenden Prototypen und eine erste Version überwiegen daher die Vorteile des Dateisystems. Die erwartete Anzahl an Videos ist begrenzt, die Videos sind vergleichsweise kurz und durch HLS ohnehin in kleinere Dateien aufgeteilt. Die Speicherung im Dateisystem ist einfach umzusetzen, 
+reduziert die Anzahl zusätzlicher Komponenten und passt zur bestehenden Serverlogik. Object Storage bleibt dennoch eine sinnvolle Option für einen späteren produktiven Ausbau. Sobald mehrere Serverinstanzen eingesetzt werden, 
+sehr große Datenmengen entstehen oder höhere Anforderungen an Verfügbarkeit und Skalierbarkeit bestehen, kann ein Wechsel auf Object Storage erneut betrachtet werden.
+
+\subsection{Verwaltung von Videometadaten} 
+
+Damit gespeicherte Videos später gefunden, zugeordnet und bereitgestellt werden können, müssen neben den eigentlichen Videodateien auch Metadaten verwaltet werden. Diese Metadaten beschreiben ein Video, ohne selbst Bestandteil der Videodatei zu sein. 
+Im entwickelten System werden sie in einer relationalen Datenbank gespeichert. Die Datenbank bildet damit die zentrale Stelle für alle Informationen, die zur Identifikation, Suche und Verwaltung der Videos benötigt werden. 
+
+Zu den wichtigsten Metadaten gehört die Spieler-ID. Sie stellt die Verbindung zwischen einer gespeicherten Aufnahme und dem Spieler her, dem das Video zugeordnet ist. Dadurch kann die Webplattform Videos nach Spielern filtern oder einem Nutzer gezielt die zugehörigen Aufnahmen anzeigen. 
+Zusätzlich wird der Dateiname gespeichert. Dieser identifiziert die konkrete Videodatei beziehungsweise die HLS-Playlist innerhalb des Speicherbereichs. Ergänzend dazu wird der Speicherort abgelegt, damit der Server die Datei oder den Ordner mit den Segmenten im Dateisystem finden kann. 
+
+Ein weiterer relevanter Wert ist der Erstellungszeitpunkt. Dieser ermöglicht es, Videos zeitlich zu sortieren und verschiedene Aufnahmen eines Spielers voneinander zu unterscheiden. Gerade wenn ein Spieler mehrere Spiele absolviert, ist der Zeitpunkt notwendig, 
+um die Videos in eine nachvollziehbare Reihenfolge zu bringen. Zusätzlich könnte ein Videostatus gespeichert werden. Dieser beschreibt, ob ein Video beispielsweise gerade hochgeladen, vollständig gespeichert, verarbeitet oder bereits für den Abruf verfügbar ist. Dadurch kann verhindert werden, 
+dass ein Nutzer ein Video anfordert, das noch nicht vollständig bereitgestellt wurde. 
+
+Die Metadaten können außerdem um Spielinformationen erweitert werden. Dazu zählen beispielsweise eine Spiel-ID, eine Turnier-ID, der Spielmodus oder Informationen zum Ergebnis. Für den Prototypen ist eine minimale Struktur ausreichend, die den Upload, die Speicherung und den Abruf ermöglicht. 
+Für eine spätere stärkere Integration in das Dart-Ökosystem wäre eine Erweiterung jedoch sinnvoll. Dann könnten Videos nicht nur einem Spieler, sondern auch einem konkreten Spiel oder Wettbewerb zugeordnet werden. 
+
+Die getrennte Speicherung von Metadaten und Videodateien hat den Vorteil, dass die Datenbank nur strukturierte und vergleichsweise kleine Datensätze enthält. Bei einer Anfrage an die Webplattform müssen dadurch nicht die großen Videodaten geladen werden. 
+Stattdessen kann der Server zunächst nur die Metadaten auslesen und daraus eine Übersicht vorhandener Videos erzeugen. Erst wenn ein Nutzer ein bestimmtes Video auswählt, wird der gespeicherte Dateipfad verwendet, um die zugehörige HLS-Playlist und die Segmentdateien bereitzustellen. 
+
+Für die Konsistenz des Systems ist wichtig, dass der Datenbankeintrag und die Videodatei zusammenpassen. Wird eine Datei erfolgreich gespeichert, muss auch der zugehörige Datenbankeintrag angelegt oder aktualisiert werden. Umgekehrt sollte ein Video nicht als verfügbar markiert werden, 
+wenn die Datei im Dateisystem fehlt oder der Upload noch nicht abgeschlossen ist. Der Videostatus kann dabei genutzt werden, um diese Zustände abzubilden. Dadurch bleibt nachvollziehbar, welche Videos vollständig vorhanden sind und welche noch nicht abgerufen werden sollten. 
+
+Die Verwaltung der Videometadaten bildet damit die Grundlage für die spätere Nutzung der Webplattform. Ohne diese Informationen könnten die gespeicherten Dateien zwar technisch vorhanden sein, wären aber fachlich nicht sinnvoll zuordenbar. Erst durch die Metadaten wird ersichtlich, 
+zu welchem Spieler ein Video gehört, wann es erstellt wurde und unter welchem Speicherort es abgerufen werden kann. Deshalb werden die Videodateien im Dateisystem gespeichert, während die Metadaten getrennt davon in PostgreSQL verwaltet werden.
 
 \section{API-Endpunkte}
 
@@ -58,6 +134,24 @@ Somit müsste für die Integration von Apple Geräten ohnehin HLS verwendet werd
 
 \section{Integration in die Dart Umgebung}
 
-Momentan existieren die Videos abgekapselt vom restlichen Dart ökosystem nachdem sie auf dem Server gespeichert wurden ist die einzige Verbindung, dass die SpielerId für jedes Video gespeichert wird.
+\section{Skalierbarkeit des Servers} 
+
+Für den im Rahmen dieser Arbeit entwickelten Prototypen ist die Verwendung eines einzelnen Servers ausreichend. Die erwartete Anzahl an Nutzern und HB10-Geräten ist vergleichsweise gering, sodass die verfügbare Rechenleistung sowie die Netzwerkbandbreite eines einzelnen Systems den Anforderungen genügen. 
+Aus diesem Grund wurde auf zusätzliche Maßnahmen wie Load Balancing oder geografisch verteilte Serverstandorte verzichtet. 
+
+Sollte das System zukünftig produktiv eingesetzt werden und die Anzahl der Nutzer oder angeschlossenen HB10-Geräte deutlich steigen, könnte die Architektur schrittweise erweitert werden. Eine naheliegende Möglichkeit besteht darin, mehrere Instanzen der Serveranwendung parallel zu betreiben. 
+Dabei würde ein Load Balancer die eingehenden Anfragen auf mehrere Server verteilen. Dieses Vorgehen wird als horizontale Skalierung bezeichnet und ermöglicht es, die Verarbeitungskapazität durch das Hinzufügen weiterer Server zu erhöhen, ohne die Anwendung grundlegend verändern zu müssen \cite{Al-Dulaimy2024}. 
+
+Da im vorgestellten System die Videodateien und Metadaten über standardisierte HTTP-Schnittstellen bereitgestellt werden und die Geschäftslogik weitgehend zustandslos umgesetzt ist, eignet sich die Architektur grundsätzlich für eine solche horizontale Skalierung. Fällt eine Serverinstanz aus, 
+können eingehende Anfragen weiterhin von den verbleibenden Instanzen verarbeitet werden, wodurch sich gleichzeitig die Verfügbarkeit des Systems erhöht \cite{Smirnov2025}. 
+
+Eine weitere Ausbaustufe wäre die Trennung einzelner Komponenten. So könnten beispielsweise die Datenbank, die Speicherung der Videodateien und die Anwendungslogik auf separaten Systemen betrieben werden. Insbesondere bei einer großen Anzahl von Videos 
+bietet sich langfristig die Verwendung eines Object-Storage-Systems an, da Speicher- und Rechenressourcen unabhängig voneinander erweitert werden können. Dadurch wird verhindert, dass die Speicherkapazität eines einzelnen Servers zum begrenzenden Faktor wird. 
+
+Für einen internationalen Einsatz könnten zusätzlich mehrere Serverstandorte in verschiedenen Regionen betrieben werden. Nutzer würden dann automatisch mit dem geografisch nächstgelegenen Rechenzentrum verbunden werden, wodurch sich Latenzzeiten reduzieren lassen. 
+Da die Anwendungsfälle dieser Arbeit jedoch auf einen regional begrenzten Einsatz ausgelegt sind, würde eine solche Infrastruktur für den aktuellen Prototyp einen unverhältnismäßig hohen zusätzlichen Aufwand verursachen. 
+
+Insgesamt wurde die Architektur bewusst einfach gehalten, um die Kernfunktionalität der Videoübertragung, Speicherung und Bereitstellung zu evaluieren. Gleichzeitig erlaubt die gewählte Serverstruktur eine spätere Erweiterung hin zu einer verteilten und hochverfügbaren Infrastruktur, 
+falls ein produktiver Einsatz höhere Leistungs- und Skalierungsanforderungen mit sich bringt.
 
 \newpage

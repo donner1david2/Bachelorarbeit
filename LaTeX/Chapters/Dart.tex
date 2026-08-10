@@ -43,6 +43,15 @@ Die Dart\_App bildet somit die Schnittstelle zwischen dem eigentlichen Spielgesc
 Diese Trennung reduziert die Komplexität innerhalb der Hauptanwendung und erleichtert die Erweiterung des Systems um zusätzliche videobezogene Funktionen.
 
 \subsection{Video\_App}
+
+\begin{figure}
+    \centering
+    \includesvg[width=\textwidth]{img/Video_App.svg}
+    \caption{Architektur und Datenfluss der Videoaufnahme-Anwendung. Die Anwendung verarbeitet von der Kamera bereitgestellte YUYV-Videodaten, speichert diese zunächst in einem Ringpuffer und erzeugt daraus ereignisbasierte Videoausschnitte sowie fertige Videos. 
+    Die Steuerung erfolgt über Ereignisse und Antworten im Austausch mit der Dart-App; die erzeugten Videodateien werden im Dateisystem abgelegt.}
+    \label{fig:videoapp}
+\end{figure}
+
 Die Video\_App ist die eigenständige Komponente zur Verarbeitung der im HB10 anfallenden Videodaten. Während die Dart\_App den Spielbetrieb steuert, konzentriert sich die Video\_App ausschließlich auf Aufgaben der Videoaufnahme und -aufbereitung. 
 Sie ist damit funktional klar von der Hauptanwendung getrennt und erweitert das Gesamtsystem um die technische Umsetzung der Videofunktion.
 
@@ -200,7 +209,7 @@ und die Hardware Komprimierung als mögliche zukünftige Erweiterung verstanden.
 
 Eine mögliche Erweiterung der Videofunktion besteht darin, die aufgenommenen Bilddaten zusätzlich zur Abschätzung der Entfernung zwischen Spieler und Gerät zu verwenden. Dabei könnte ein Verfahren zur Objekterkennung eingesetzt werden, um den Spieler innerhalb des Kamerabildes zu lokalisieren.
 Die Kamera würde in diesem Fall nicht nur zur nachträglichen visuellen Überprüfung eines Spiels dienen, sondern zusätzlich als Grundlage für eine automatisierte Abstandsschätzung verwendet werden.
- 
+
 Für ein solches Verfahren müsste zunächst festgelegt werden, welcher Punkt des Spielers als Referenz für die Berechnung genutzt werden soll. Denkbar wäre beispielsweise ein erkannter Bereich am unteren Körper oder eine andere möglichst eindeutig bestimmbare Position im Bild.
 Aus dieser Position könnte anschließend abgeleitet werden, an welcher Stelle sich der Spieler relativ zum Gerät befindet. Die eigentliche Entfernung würde dabei nicht direkt gemessen, sondern aus mehreren bekannten und erkannten Größen berechnet.
 Dazu gehören unter anderem die Position des Spielers im Bild, die Einbauhöhe der Kamera, die Ausrichtung der Kamera sowie die Eigenschaften des verwendeten Kamerabildes.
