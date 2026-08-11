@@ -122,13 +122,20 @@ da sie alle für die Serverlogik benötigten Metadaten enthält und gleichzeitig
     \caption{REST-API-Endpunkte des Video Servers}
 \end{figure}
 
-Für die Kommunikation zwischen dem Server und den Clients werden REST-API-Endpunkte bereitgestellt. Diese Endpunkte ermöglichen es den Clients, Videos hochzuladen, Metadaten abzurufen und Videos zu streamen. Die API-Endpunkte sind wie folgt strukturiert:
+Für die Kommunikation zwischen dem Server und den Clients werden REST-API-Endpunkte bereitgestellt. Diese Endpunkte ermöglichen es den Clients, Videos hochzuladen, Metadaten abzurufen und Videos zu streamen \cref{fig:videocycle} . Die API-Endpunkte sind wie folgt strukturiert:
 
 \begin{itemize}
     \item \textbf{POST /video/{playerId}/{filename}}: Ein Endpunkt für den HB10, um ein Video hochzuladen. Der Endpunkt erhält die spielerId den Dateinamen und die Videodaten.
     \item \textbf{GET /video/{playerId}/{filename}}: Ein Endpunkt für den Nutzer, um die HLS playlist und Segmente für ein bestimmtes Video abzurufen.
     \item \textbf{GET /video/videos}: Ein Endpunkt für den Nutzer, um eine Liste aller verfügbaren Videos abzurufen. Der Endpunkt gibt eine Liste von Metadaten über die Videos zurück.
 \end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includesvg[width=\textwidth]{img/PlantUml/VideoZyklus/VideoZyklus.svg}
+    \caption{Lebenszyklus eines Videos}
+    \label{fig:videocycle}
+\end{figure}
 
 Für die Bereitstellung des Webclients wird ein statischer Endpunkt mittels SpringBoot bereitgestellt. 
 
