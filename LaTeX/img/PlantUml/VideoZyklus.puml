@@ -1,0 +1,50 @@
+@startuml
+
+scale 1.15
+
+skinparam dpi 150
+skinparam shadowing false
+skinparam sequenceMessageAlign left
+
+skinparam DefaultFontSize 15
+skinparam ParticipantFontSize 16
+skinparam SequenceMessageFontSize 14
+skinparam SequenceGroupFontSize 14
+
+skinparam ParticipantPadding 0
+skinparam BoxPadding 1
+skinparam Padding 8
+skinparam MessageSpacing 25
+
+skinparam sequence {
+ArrowThickness 1.3
+LifeLineBorderColor #555555
+ParticipantBorderColor #555555
+ParticipantBackgroundColor #EEEEEE
+}
+
+participant "HB10   " as HB10
+participant "Server   " as Server
+participant "Webclient     " as Webclient
+
+
+activate HB10
+HB10 -> HB10: nimmt Video auf
+HB10 -> Server: sendet Video mit POST /video/\{playerId\}/\{filename\}
+deactivate HB10
+activate Server
+Server -> Server: Server speichert Videodateien im Dateisystem
+Server -> Server: Server legt Metadaten in PostgreSQL ab
+activate Webclient
+Webclient -> Server: GET /video/videos
+Server -> Webclient: sendet Video Metadaten
+Webclient -> Server: GET /video/\{playerId\}/playlist.m3u8
+Server -> Webclient: gibt playlist zurück
+loop loading
+    Webclient -> Server: GET /video/\{playerId\}/segmentX.ts
+    Server -> Webclient: gibt Segment zurück
+end
+deactivate Webclient
+deactivate Server
+
+@enduml
