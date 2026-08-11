@@ -1,0 +1,17 @@
+@startuml
+
+skinparam defaultFontName "Times New Roman"
+skinparam defaultFontSize 12 
+skinparam defaultFontColor black
+
+entity "Video" as video {
+* id : BIGINT
+--
+name : VARCHAR
+path : VARCHAR
+throws : INTEGER
+date : TIMESTAMP
+tournament : VARCHAR
+}
+
+@enduml

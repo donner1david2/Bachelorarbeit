@@ -90,6 +90,30 @@ wenn die Datei im Dateisystem fehlt oder der Upload noch nicht abgeschlossen ist
 Die Verwaltung der Videometadaten bildet damit die Grundlage für die spätere Nutzung der Webplattform. Ohne diese Informationen könnten die gespeicherten Dateien zwar technisch vorhanden sein, wären aber fachlich nicht sinnvoll zuordenbar. Erst durch die Metadaten wird ersichtlich, 
 zu welchem Spieler ein Video gehört, wann es erstellt wurde und unter welchem Speicherort es abgerufen werden kann. Deshalb werden die Videodateien im Dateisystem gespeichert, während die Metadaten getrennt davon in PostgreSQL verwaltet werden.
 
+\subsection{Datenmodell} 
+
+Für die Verwaltung der Videometadaten wird ein einfaches Datenmodell verwendet. Da die Videodateien selbst nicht in der Datenbank gespeichert werden, sondern im Dateisystem liegen, muss die Datenbank nur die Informationen enthalten, die zur Identifikation, 
+Zuordnung und Bereitstellung eines Videos notwendig sind. Das Datenmodell besteht im Prototyp daher aus einer einzelnen Entität \textit{Video} (s. Abb. \ref{fig:video-entity}). Auch wenn dadurch nur eine Tabelle entsteht, 
+bildet diese Tabelle die zentrale Verbindung zwischen den gespeicherten Videodateien und der fachlichen Nutzung über die Webplattform. 
+
+\begin{figure}[H] 
+    \centering 
+    \includesvg[width=0.35\textwidth]{img/PlantUml/video-entity/video-entity.svg} 
+    \caption{Video-Entität zur Speicherung der Videometadaten. Die Entität enthält die zur Zuordnung und zum Auffinden eines gespeicherten Videos benötigten Attribute.} 
+    \label{fig:video-entity} 
+\end{figure} 
+
+Die Entität besitzt eine eindeutige \textit{id}, über die jeder Datensatz innerhalb der Datenbank identifiziert werden kann. Momentan wird in \textit{name} nur die PlayerId vom Dart gespeichert da es für den Prototypen nicht notwendig war ein Benennungsschema für die Videos zu erstellen. 
+In einer richtigen Implementierung sollten dann passende Namen vergeben werden, und die PlayerId kann in ein eigenes Attribut wandern. Der Wert \textit{path} beschreibt den Pfad der gespeicherten Videodatei beziehungsweise der HLS-Playlist. Ergänzend dazu enthält das Attribut \textit{throws}.
+Dieser wert kann entweder als Statistik zum sortieren verwendet werden, oder im Fall das man die Videolänge angeben möchte können wir diese mit den Würfen berechnen da wir wissen ein Wurf entspricht genau 3 sek. 
+
+Der Erstellungszeitpunkt wird über \textit{date} gespeichert. Dieser Wert ist notwendig, um mehrere Videos eines Spielers zeitlich einordnen und in einer nachvollziehbaren Reihenfolge anzeigen zu können. Das Attribut \textit{tournament} beschreibt das zugehörige Turnier des Videos. 
+Um später den Nutzern zu ermöglichen alle Videos zu einem bestimmten Turnier anzuschauen.
+
+Das Datenmodell bleibt damit bewusst klein gehalten. Für den Prototypen reicht diese Struktur aus, da zunächst nur der Upload, die Speicherung, die Zuordnung und der Abruf der Videos umgesetzt werden müssen. Eine spätere Erweiterung wäre dennoch möglich. 
+So könnten zusätzliche Attribute wie eine Spiel-ID oder weitere Informationen zum Spiel ergänzt werden, falls die Videofunktion stärker in das bestehende Dart-Ökosystem eingebunden wird. Für die aktuelle Umsetzung ist die einzelne Tabelle jedoch ausreichend, 
+da sie alle für die Serverlogik benötigten Metadaten enthält und gleichzeitig die Trennung zwischen Datenbank und Dateisystem beibehält.
+
 \section{API-Endpunkte}
 
 \begin{figure}[H]
@@ -153,5 +177,80 @@ Da die Anwendungsfälle dieser Arbeit jedoch auf einen regional begrenzten Einsa
 
 Insgesamt wurde die Architektur bewusst einfach gehalten, um die Kernfunktionalität der Videoübertragung, Speicherung und Bereitstellung zu evaluieren. Gleichzeitig erlaubt die gewählte Serverstruktur eine spätere Erweiterung hin zu einer verteilten und hochverfügbaren Infrastruktur, 
 falls ein produktiver Einsatz höhere Leistungs- und Skalierungsanforderungen mit sich bringt.
+
+\section{Datenschutz und Zugriffskontrolle} 
+
+Da durch die Videofunktion des HB10 Bilddaten aus dem Spielumfeld aufgezeichnet, gespeichert und über eine Webplattform bereitgestellt werden, entstehen zusätzliche Anforderungen an Datenschutz und Zugriffskontrolle. Die aufgenommenen Videos können personenbezogene Daten enthalten, 
+sobald eine natürliche Person anhand des Bildmaterials direkt oder indirekt erkennbar ist. Dies betrifft nicht nur den Spieler selbst, sondern auch Personen, die sich während der Aufnahme im Hintergrund befinden. Für das System ist deshalb zu unterscheiden, 
+welche Personen für den Zweck der Aufnahme relevant sind und welche Personen lediglich unbeabsichtigt erfasst werden. 
+
+Der Zweck der Videoaufnahme besteht darin, ein asynchron durchgeführtes Spiel nachträglich überprüfen zu können. Für diesen Zweck ist vor allem der Spieler relevant, dessen Würfe und Verhalten während des Spiels nachvollziehbar sein müssen. 
+Die Aufnahme des Spielers ist daher funktional mit dem Spielmodus verbunden. 
+
+\subsection{Datenminimierung und Hintergrundausblendung}
+
+Personen im Hintergrund sind für diesen Zweck dagegen grundsätzlich nicht erforderlich. Aus diesem Grund sollte der Bildausschnitt soweit wie möglich auf den Spieler und die Dartscheibe begrenzt werden. Bereiche, 
+die für die spätere Überprüfung nicht benötigt werden, sollten bereits vor der Speicherung entfernt oder unkenntlich gemacht werden \cref{fig:background}. 
+
+\begin{figure}
+    \centering
+    \includesvg[width=\textwidth]{img/background.svg}
+    \caption{Eine Darstellung wie das unkenntlich Machen von Personen im Hintergrund aussehen könnte.}
+    \label{fig:background}
+\end{figure}
+
+Eine weitere Möglichkeit zur Reduzierung der Datenschutzrisiken besteht darin, nicht nur einzelne Personen im Hintergrund unkenntlich zu machen, sondern den gesamten nicht benötigten Hintergrund der Aufnahme auszublenden. In diesem Fall würde das Videobild so verarbeitet, 
+dass nur der Spieler und die für die Spielüberprüfung notwendigen Bildbereiche sichtbar bleiben. Personen, die sich zufällig im Umfeld des Geräts aufhalten, wären dadurch nicht mehr erkennbar und würden nicht Bestandteil der später bereitgestellten Aufnahme werden. 
+Gegenüber einer nachträglichen Erkennung und Verpixelung einzelner Personen hätte dieses Vorgehen den Vorteil, dass keine zuverlässige Unterscheidung zwischen verschiedenen Hintergrundpersonen erforderlich wäre. Stattdessen würde grundsätzlich nur der Bildbereich erhalten bleiben, 
+der für den Zweck der Aufnahme benötigt wird. 
+
+Durch eine solche Hintergrundausblendung kann das Risiko reduziert werden, dass personenbezogene Daten unbeteiligter Personen gespeichert oder veröffentlicht werden. Die Aufnahme enthält dann im Wesentlichen nur noch den Spieler, dessen Einwilligung vor Beginn des Spiels eingeholt wurde. 
+Dadurch wird die datenschutzrechtliche Bewertung vereinfacht, da die Verarbeitung stärker auf die Person beschränkt wird, die aktiv am videopflichtigen Spielmodus teilnimmt. Voraussetzung dafür ist jedoch, 
+dass die Ausblendung zuverlässig funktioniert und keine erkennbaren Personen oder sonstigen personenbezogenen Informationen im Hintergrund sichtbar bleiben. 
+
+Auch bei einer vollständigen Ausblendung des Hintergrunds sollte jedoch berücksichtigt werden, dass das Video weiterhin personenbezogene Daten des Spielers enthält. Die Einwilligung des Spielers in die Aufnahme bedeutet daher nicht automatisch, 
+dass das Video ohne Einschränkung für alle Personen veröffentlicht werden darf. Soll das Video nicht nur zur späteren Spielüberprüfung genutzt, sondern einem unbegrenzten Nutzerkreis zugänglich gemacht werden, müsste dieser weitergehende Zweck vorab klar beschrieben und gesondert bestätigt werden. 
+Für den in dieser Arbeit betrachteten Anwendungsfall ist eine öffentliche Veröffentlichung jedoch nicht erforderlich. Der Zweck der Videofunktion besteht darin, ein asynchron durchgeführtes Spiel nachträglich überprüfen zu können. Dafür genügt es, 
+die Aufnahme einem beschränkten Kreis berechtigter Nutzer innerhalb des jeweiligen Spiel- oder Turnierkontexts bereitzustellen. 
+
+Die technische Umsetzung sollte daher beide Ansätze kombinieren. Einerseits sollte der sichtbare Bildbereich auf den Spieler und die spielrelevanten Inhalte begrenzt werden, indem der Hintergrund ausgeblendet oder stark unkenntlich gemacht wird. 
+Andererseits sollte der Zugriff auf die gespeicherten Videos weiterhin serverseitig kontrolliert werden. Dadurch wird verhindert, dass auch solche Videos, die nur den Spieler zeigen, unbeabsichtigt oder zweckwidrig abgerufen werden können. 
+Die Hintergrundausblendung reduziert somit die Menge der verarbeiteten personenbezogenen Daten, ersetzt aber nicht die Notwendigkeit einer Berechtigungsprüfung beim Abruf der Videos.
+
+\subsection{Einwilligung und Speicherdauer}
+
+Vor Beginn eines Spiels muss der Spieler darüber informiert werden, dass der gewählte Spielmodus eine Videoaufnahme erfordert. Dazu gehören der Zweck der Aufnahme, die spätere Bereitstellung über die Webplattform, die möglichen Empfänger der Aufnahme und die grundlegende Speicherdauer. 
+Der Spieler sollte den Spielmodus erst starten können, nachdem er der Aufnahme ausdrücklich zugestimmt hat. Ohne diese Zustimmung darf kein Spiel in einem videopflichtigen Modus gestartet werden. Technisch kann dies dadurch umgesetzt werden, 
+dass vor dem Spielstart ein Hinweisdialog angezeigt wird und der Start des Spiels erst nach aktiver Bestätigung freigegeben wird. Die erteilte Zustimmung sollte zusammen mit den Videometadaten gespeichert werden, damit später nachvollziehbar ist, auf welcher Grundlage die Aufnahme erstellt wurde. 
+Für Spielmodi ohne Videoerfordernis kann das Gerät dagegen weiterhin ohne Aufnahme verwendet werden. 
+
+Für die Speicherung der Videos sollte zusätzlich eine Begrenzung der Aufbewahrungsdauer vorgesehen werden. Da die Aufnahmen nur zur nachträglichen Überprüfung eines Spiels benötigt werden, sollten sie nicht unbegrenzt gespeichert bleiben. Eine mögliche Umsetzung besteht darin, 
+eine feste Speicherdauer abhängig vom jeweiligen Turnier oder Wettbewerb zu definieren. Nach Ablauf dieser Frist können die Videodateien und die zugehörigen Metadaten gelöscht oder anonymisiert werden, sofern keine weitere Aufbewahrung erforderlich ist. Dadurch wird verhindert, 
+dass sich über die Zeit unnötig große Mengen personenbezogener Videodaten ansammeln. Die Video-Guidelines des Europäischen Datenschutzausschusses betonen ebenfalls, 
+dass bei Videoverarbeitung sowohl der Zweck als auch die Speicherdauer und der Zugriff auf die Aufnahmen klar begrenzt werden müssen \cite{edpb2019video}. 
+
+\subsection{Technische Zugriffskontrolle und Schutzmaßnahmen}
+
+Neben der Einwilligung ist auch die Zugriffskontrolle ein wichtiger Bestandteil des Datenschutzkonzepts. Die gespeicherten Videos dürfen nicht öffentlich abrufbar sein, sondern nur berechtigten Nutzern zur Verfügung stehen. Für den Prototypen kann hierfür zwischen mehreren Rollen unterschieden werden. 
+Der HB10 benötigt eine technische Berechtigung, um Videos an den Server hochzuladen. Spieler dürfen die eigenen Videos abrufen, sofern sie einem Spiel eindeutig zugeordnet sind. Weitere Nutzer dürfen nur dann Zugriff erhalten, wenn dies für den jeweiligen Wettbewerb vorgesehen ist, 
+beispielsweise zur Überprüfung eines Turniers. Administratoren benötigen erweiterte Rechte zur Verwaltung des Systems, sollten gespeicherte Videos jedoch ebenfalls nur im notwendigen Umfang einsehen können. 
+
+Die Zugriffskontrolle sollte serverseitig umgesetzt werden. Die Webplattform darf also nicht nur einzelne Schaltflächen ausblenden, sondern der Server muss bei jeder Anfrage prüfen, ob der anfragende Nutzer für das jeweilige Video berechtigt ist. 
+Dies betrifft sowohl die Metadatenabfrage als auch den Zugriff auf die HLS-Playlist und die einzelnen Videosegmente. Andernfalls könnte ein Nutzer durch direkte Kenntnis eines Dateipfads auf Videos zugreifen, obwohl diese nicht für ihn vorgesehen sind. 
+Für die vorhandenen Endpunkte bedeutet dies, dass insbesondere der Abruf über \texttt{GET /video/playerId/filename} und die Liste über\texttt{GET /video/videos} nicht ohne Authentifizierung und Berechtigungsprüfung bereitgestellt werden sollten. 
+Die Dateipfade der Videos sollten außerdem nicht direkt aus Benutzereingaben gebildet werden, sondern über die in der Datenbank gespeicherten Metadaten aufgelöst werden. Dadurch kann der Server kontrollieren, welches Video zu welchem Spieler, Turnier und Zugriffsrecht gehört. 
+
+Auch die technische Absicherung der Verarbeitung ist zu berücksichtigen. Die Übertragung der Videodaten zwischen HB10, Server und Webplattform sollte verschlüsselt erfolgen. Zusätzlich sollten Zugriffe protokolliert werden, 
+damit nachvollziehbar bleibt, wann ein Video hochgeladen oder abgerufen wurde. Solche Protokolle sind besonders dann hilfreich, wenn später geprüft werden muss, ob ein Zugriff berechtigt war.
+Die gespeicherten Videodaten und Metadaten sollten außerdem durch geeignete technische und organisatorische Maßnahmen geschützt werden. Dazu gehören unter anderem beschränkte Benutzerrechte auf dem Server, getrennte Berechtigungen für Anwendung, 
+Datenbank und Dateisystem sowie eine regelmäßige Überprüfung der Zugriffsmöglichkeiten. Die DSGVO nennt in diesem Zusammenhang unter anderem die Vertraulichkeit, Integrität, Verfügbarkeit und Belastbarkeit der Systeme sowie die regelmäßige Bewertung der getroffenen Maßnahmen \cite{eu2016gdpr}. 
+
+Für das Datenmodell ergibt sich daraus, dass die reine Speicherung von Dateiname, Pfad und Spielerzuordnung langfristig nicht ausreicht. Für eine produktive Umsetzung sollten zusätzliche Informationen aufgenommen werden. Dazu zählen ein Status der Einwilligung, 
+der Zeitpunkt der Einwilligung, eine Zuordnung zu einem Spiel oder Turnier, eine Sichtbarkeitsstufe sowie ein Ablaufdatum für die Löschung. Dadurch kann der Server nicht nur erkennen, wo ein Video gespeichert ist, 
+sondern auch, ob es überhaupt bereitgestellt werden darf und welche Nutzer darauf zugreifen können. Der Prototyp kann diese Anforderungen zunächst vereinfacht abbilden, sollte die Trennung von Videodatei, Metadaten und Berechtigungsinformationen jedoch bereits in der Architektur berücksichtigen. 
+
+Insgesamt muss die Videofunktion so gestaltet werden, dass nur die für die Spielüberprüfung notwendigen Inhalte erfasst und bereitgestellt werden. Der Spieler kann im Rahmen des videopflichtigen Spielmodus aufgenommen werden, nachdem er vor Spielbeginn aktiv zugestimmt hat. 
+Personen im Hintergrund sind dagegen für den Zweck der Aufnahme nicht relevant und sollten möglichst nicht erfasst oder nachträglich unkenntlich gemacht werden. Zusammen mit einer serverseitigen Zugriffskontrolle, verschlüsselter Übertragung, 
+begrenzter Speicherdauer und nachvollziehbarer Protokollierung entsteht dadurch ein Datenschutzkonzept, das zur bestehenden Serverarchitektur passt und die spätere produktive Erweiterung vorbereitet.
 
 \newpage
