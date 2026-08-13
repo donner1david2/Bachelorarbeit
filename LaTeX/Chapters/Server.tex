@@ -1,4 +1,4 @@
-\chapter{Server}
+\chapter{Server} \label{sec:server}
 
 Für das Speichern und Bereitstellen der Videos wird ein Server benötigt, der die empfangenen Videodaten und deren Metadaten speichert und auf Anfrage eines Nutzers bereitstellt. Dieser muss dabei in der Lage sein, eine große Anzahl an Nutzern gleichzeitig zu bedienen.
 
@@ -163,7 +163,13 @@ Zusammenfassend bietet HLS gegenüber RTMP entscheidende Vorteile hinsichtlich K
 Alternativ zu HLS wäre auch MPEG-DASH \parencite{Saini2026} eine Option, sie basieren auf einem ähnlichen Prinzip, und für die Implementierung gäbe es wahrscheinlich keine großen Unterschiede, jedoch verwendet Apple ausschließlich HLS auf seinen Geräten.
 Somit müsste für die Integration von Apple Geräten ohnehin HLS verwendet werden, zusätzlich dazu noch MPEG-DASH einzubauen würde keinen Mehrwert bringen.
 
-\section{Integration in die Dart Umgebung} \todo{abschnitt schreiben oder löschen}
+\section{Integration in die LÖWEN-Dart Umgebung} \todo{abschnitt schreiben oder löschen}
+
+Es bestehen verschiedene Möglichkeiten, wie der Server in die Dart-Umgebung integriert werden kann. Auf der einen Seite besteht die Möglichkeit, einen eigenständigen Server aufzubauen, genau wie in diesem Kapitel beschrieben,
+und anschließend alle Daten die von anderen Komponenten der Dart-Umgebung stammen, welche für die Darstellung benötigt wird, direkt vom HB10 zu erhalten, oder es dem Server erlauben mit dem Bereits bestehenden Dart-Server zu kommunizieren.
+Auf er anderen Seite, besteht auch die Möglichkeit die Funktionalität in den bestehenden Dart-Server zu integrieren. Da der Dart-Server bereits über eine Angebundene PostgreSQL Datenbank, und verschiedene REST-API-Endpunkte verfügt, sollte sich diese Integration relativ simpel gestalten.
+In diesem Fall müsste man jedoch untersuchen, ob der Dart-Server ohne Probleme in der Lage ist, zusätzlich zu seinen bestehenden aufgaben die Video-Übertragung zu übernehmen.
+
 
 \section{Skalierbarkeit des Servers} 
 

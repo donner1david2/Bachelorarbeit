@@ -1,12 +1,12 @@
 % !TEX root =  master.tex
-\chapter{HB10}
+\chapter{HB10} \label{sec:dart}
 
-Als Videoquelle dient der Löwen-DART HB10, dieser erstellt kurze Videoschnipsel für jeden Wurf, aus einem Spiel des Zukünftigen Turnier Modus. Nach Abschluss des Spiels werden alle Videoschnipsel zu einem Video zusammengeführt, und für das Streaming vorbereitet.
+Als Videoquelle und Spielgerät dient der Löwen-DART HB10, dieser erstellt kurze Videoschnipsel für jeden Wurf, aus einem Spiel des Zukünftigen Turnier Modus. Nach Abschluss des Spiels werden alle Videoschnipsel zu einem Video zusammengeführt, und für das Streaming vorbereitet.
 
 \section{Aufbau}
 
-Der HB10  besteht aus einer Hauptanwendung in welcher der normale Spielbetrieb abläuft, und mehreren "Satellit"-Anwendungen welche sich auf eine bestimmte Funktionalität spezialisiert sind. Zum Beispiel der Update-Server, welcher dafür zuständig ist, das Gesamte System zu updaten.
-Für die Aufnahme-Funktion des HB10 würde eine solche Anwendung erstellt (siehe Video App in \cref{fig:dartaufbau}).
+Die Software des HB10  besteht aus einer Hauptanwendung in welcher der normale Spielbetrieb abläuft, und mehreren \enquote{Satellit}-Anwendungen welche sich auf eine bestimmte Funktionalität spezialisiert sind. Zum Beispiel der Update-Server, welcher dafür zuständig ist, das gesamte System zu updaten.
+Für die Videoaufnahme-Funktion des HB10 würde eine solche Anwendung erstellt (siehe Video App in \cref{fig:dartaufbau}).
 
 \begin{figure}[H]
     \centering
@@ -28,6 +28,7 @@ sowie das Abschließende übertragen an den Server. Die zweite Anwendung, ist ve
 \end{figure}
 
 \subsection{Kamera}
+
 Die Kamera dient als Videoquelle für die Aufnahmen des Spielers und der Dartscheibe. Die angewandte Kamera bietet verschiedene Videoformate in Verschiedenen Auflösungen und Bildwiederholfrequenzen an. Für die Videoaufnahme am HB10 wurde das einzige unkomprimierte Format der Kamera gewählt, 
 da vorgesehen ist, die Videos vor dem Absenden zu Bearbeiten, durch beispielsweise das Abschneiden der Ränder, Bei der Spieler-Aufnahme. Des weiteren erleichtert ein unkomprimiertes Format das Puffern einer Bestimmten Videolänge, da die Größe der einzelnen Frames bekannt ist.
 
@@ -36,6 +37,7 @@ und bietet eine vergleichsweise geringe Dateigröße. Dies trägt dazu bei, dass
 und wird in dieser Arbeit nicht weiter behandelt.
 
 \subsection{Dart\_App}
+
 Die Dart\_App bildet die zentrale Anwendung für den eigentlichen Spielbetrieb des HB10 (s. \cref{fig:dartaufbau}). Sie verwaltet die Spiellogik, verarbeitet spielbezogene Eingaben und stellt die für den Betrieb des Geräts notwendigen Funktionen bereit. 
 Im Kontext der Videofunktion übernimmt sie dabei nicht die Verarbeitung der Bilddaten selbst, sondern stellt die Einbindung der Videoaufzeichnung in das bestehende System sicher.
 
