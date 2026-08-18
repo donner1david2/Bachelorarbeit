@@ -75,6 +75,22 @@ um die Videodaten in einer für die spätere Nutzung geeigneten Form bereitzuste
 Die Video-App kann damit als eigenständige technische Verarbeitungseinheit verstanden werden. Ihre Aufgabe besteht darin, Rohdaten der Kamera aufzunehmen und innerhalb einer separaten Anwendung so zu verwalten, dass sie für die weiteren Schritte des Systems verfügbar sind. 
 Durch diese Auslagerung videobezogener Funktionen bleibt die Gesamtarchitektur übersichtlich und die Hauptanwendung wird von medienspezifischen Aufgaben entlastet.
 
+\subsection{Kommunikation zwischen Dart-App und Video-App}
+
+Bei jedem Austausch zwischen Dart-App und Video-App findet folgender Ablauf statt. Beide Anwendungen können als Beide Rollen vorkommen.
+
+\begin{figure}[h!]
+    \centering
+    \includesvg[width=0.75\textwidth]{img/PlantUml/socket/socket.svg}
+    \caption{Ablauf der Nachrichtenübertragung zwischen zwei Anwendungen, in unserem Fall die Dart-App und Video-App, über die Socket-Verbindung. Der Sender serialisiert zunächst die zu übertragenden Daten, übermittelt anschließend die Länge des erzeugten Bytestreams und sendet danach die eigentlichen Nutzdaten. 
+    Der Empfänger liest zuerst die angegebene Datenlänge aus, empfängt darauf basierend den vollständigen Bytestream und rekonstruiert daraus die ursprüngliche Datenstruktur durch Deserialisierung.}
+    \label{fig:dartsocket}
+\end{figure}
+
+Für die Kommunikation zwischen Dart-App und Video-App wird eine Socket Verbindung verwendet (s. \cref{fig:dartsocket}). Die Video-App wartet auf eine Verbindung der Dart-App, und ist Anschließend bereit Ereignisse mit zusätzlichen Daten zu erhalten.
+Als Daten werden Datenstrukturen verwendet, die in beiden Anwendungen definiert wurden, welche zuerst benötigte Daten in einen Seriellen Bytestream schreiben anschließend die Länge des Bytestreams, und darauf den eigentlicher Stream übertragen.
+Der Empfänger kann den empfangenen Stream dann deserealisieren, um alle Daten zu erhalten die er benötigt.
+
 \section{Ablauf} \label{sec:dart-ablauf}
 
 Der Ablauf der Videoaufnahme und Komprimierung lässt sich grob in drei Bereiche unterteilen: 
@@ -136,7 +152,7 @@ Deutlich wird hierbei vor allem die Trennung zwischen dem Spielbetrieb selbst un
 
 \begin{figure}[h!]
     \centering
-    \includesvg[width=0.75\textwidth]{img/PlantUml/DartSequenz3/DartSequenz3.svg}
+    \includesvg[width=0.8\textwidth]{img/PlantUml/DartSequenz3/DartSequenz3.svg}
     \caption{Ablauf der Videoverarbeitung von einem registrierten Dartwurf bis zur Bereitstellung des fertigen Videos. Während des Spiels sendet die Dart-App Trefferereignisse an die VideoMain-Komponente, die daraufhin die zugehörigen Rohdaten im Dateisystem speichert. 
     Nach Spielende werden die gespeicherten Rohdaten eingelesen, komprimiert und als verarbeitetes Video abgelegt, bevor die Dart-App das Ergebnis abruft und an den Server überträgt.}
     \label{fig:dartsequenz3}
@@ -145,7 +161,7 @@ Deutlich wird hierbei vor allem die Trennung zwischen dem Spielbetrieb selbst un
 Während das Spiel läuft, werden Trefferereignisse aus der \texttt{Dart-App} an die Videokomponente weitergegeben. Die Videokomponente reagiert auf diese Ereignisse, indem die zugehörigen Bilddaten gesichert und als eigenständige Dateien im Dateisystem abgelegt werden. 
 Dadurch werden relevante Spielsituationen unmittelbar festgehalten, ohne dass bereits während des Spiels eine vollständige Videobearbeitung erforderlich ist.
 
-Die Struktur dieses Ablaufs zeigt, dass das System einzelne Würfe zunächst als Rohdaten behandelt. Diese Vorgehensweise entlastet den laufenden Spielprozess, da die rechenintensiven Verarbeitungsschritte in eine spätere Phase verschoben werden. Gleichzeitig bleibt jede Spielsituation in einer Form erhalten, 
+Die Struktur dieses Ablaufs zeigt, dass das System die Videos einzelner Würfe zunächst als Rohdaten behandelt. Diese Vorgehensweise entlastet den laufenden Spielprozess, da die rechenintensiven Verarbeitungsschritte in eine spätere Phase verschoben werden. Gleichzeitig bleibt jede Spielsituation in einer Form erhalten, 
 aus der sich nachträglich ein zusammenhängendes Video erzeugen lässt.
 
 Nach dem Ende des Spiels beginnt die zweite Phase des Ablaufs. Die zuvor abgelegten Rohdaten werden erneut eingelesen, in eine konsistente Reihenfolge gebracht und zu einem verarbeiteten Ergebnis zusammengeführt. Dadurch entsteht aus mehreren einzelnen Wurfsequenzen ein zusammenhängendes Video,
@@ -153,47 +169,33 @@ das die relevanten Spielsituationen nachvollziehbar aufzeichnet.
 
 Im weiteren Verlauf wird das aufbereitete Material in ein nutzbares Ausgabeformat überführt und für den Abruf bereitgestellt. Die \texttt{Dart-App} erhält die Information, dass die Videoerzeugung abgeschlossen ist, kann das Ergebnis abrufen und anschließend an den Server weiterreichen.
 
-\subsection{Kommunikation zwischen Dart-App und Video-App}
+\section{Kompression des Videomaterials}
 
-Bei jedem Austausch zwischen Dart-App und Video-App findet folgender Ablauf statt. Beide Anwendungen können als Beide Rollen vorkommen.
-
-\begin{figure}[h!]
-    \centering
-    \includesvg[width=0.5\textwidth]{img/PlantUml/socket/socket.svg}
-    \caption{Ablauf der Nachrichtenübertragung zwischen zwei Anwendungen über die Socket-Verbindung. Der Sender serialisiert zunächst die zu übertragenden Daten, übermittelt anschließend die Länge des erzeugten Bytestreams und sendet danach die eigentlichen Nutzdaten. 
-    Der Empfänger liest zuerst die angegebene Datenlänge aus, empfängt darauf basierend den vollständigen Bytestream und rekonstruiert daraus die ursprüngliche Datenstruktur durch Deserialisierung.}
-    \label{fig:dartsocket}
-\end{figure}
-
-Für die Kommunikation zwischen Dart-App und Video-App wird eine Socket Verbindung verwendet (s. \cref{fig:dartsocket}). Die Video-App wartet auf eine Verbindung der Dart-App, und ist Anschließend bereit Ereignisse mit zusätzlichen Daten zu erhalten.
-Als Daten werden von beiden Anwendungen bekannte Datenstrukturen verwendet, die benötigte Daten in einen Seriellen Bytestream schreiben, anschließend wird zunächst die Länge des Bytestreams übertragen, und darauf wird der eigentlicher Stream übertragen.
-Der Empfänger kann im den Empfangenen Stream dann deserealisieren um alle Daten zu erhalten die er benötigt.
-
-\section{Kompression}
-
-Da der HB10 oft an Orten mit niedriger Bandbreite betrieben wird, ist es notwendig, die Videodaten vor dem Absenden zu komprimieren.
+Da der HB10 oft an Orten mit langsamer Internetverbindung betrieben wird, ist es notwendig, die Videodaten vor dem Absenden zu komprimieren.
 Dabei soll die Videofunktionalität den Hauptbetrieb des HB10 nicht beeinträchtigen, deshalb war es vorgesehen, die Videodaten mittels hardware Komprimierung zu komprimieren. Dazu wurde bereits ermittelt, dass die APU des HB10 die Hardware Komprimierung für H.264 und H.265 unterstützt.
+Mittels Software-Kompression ist praktisch möglich jeden Codec einzubinden, über diesen Weg gäbe es noch weitere vergleichbare Codecs (s. \cref{tab:codec_vergleich}) welche verwendet werden könnten.
 
-\subsection{Codec Lizenz}
+\begin{table}[ht] 
+    \centering 
+    \caption{Vergleich ausgewählter Videocodecs \cite{Grois2013, webm_vp8}} 
+    \label{tab:codec_vergleich} 
+    \begin{tabular}{|l|l|l|l|} 
+        \hline 
+        \textbf{Codec} & \textbf{Kompressionseffizienz} & \textbf{Kodieraufwand}* \\ 
+        \hline 
+        H.264 & Basisniveau & Mittel \\ 
+        \hline 
+        VP8 & Ähnlich zu H.264 & Mittel \\ 
+        \hline 
+        H.265 & ca. 39\,\% geringere Bitrate als H.264 bei gleicher Qualität & Hoch \\ 
+        \hline 
+        VP9 & Ähnlich zu H.265, deutlich effizienter als H.264 & Hoch \\
+        \hline 
+    \end{tabular} 
+    \caption*{*Kodieraufwand ist auf viele gängige Codecs bezogen. Gering könnte beispielsweise MPEG-2 zugeordnet werden.}
+\end{table}
 
-\todo{quellen einbauen}
-
-Es bestehen für sowohl H.264 als auch H.265 patentpools, welche Lizenzgebühren für die Nutzung der Codecs verlangen. Diese Lizenzgebühren fallen sowohl für den Verkauf von Geräten mit Kompression mittels der Codecs, als auch für das Streaming von Videos, welche mittels H.264 oder H.265 komprimiert wurden.
-
-Da H.264 ein deutlich älterer Codec ist, sind bereits der Großteil der Patente abgelaufen, jedoch existieren noch einige wenige aktive Patente. Da nicht 100\% sicher ist, ob die Nutzung von H.264 automatisch diese Patente verletzt, müsste man um sicher zu gehen, 
-für jedes einzelne Patent überprüfen ob dieses für unseren Anwendungsfall relevant ist, oder eine Lizenz für H.264 erwerben. 
-Da aber die Patentpools erkannt haben, dass die Patente für H.264 bald auslaufen, wurde die minimale Lizenzgebühr auf 100000\$ pro Jahr festgelegt, historisch wurde dieser Preis auf eine andere Weise errechnet, wobei Lizenzgebühren von unter 10000\$ pro Jahr erloschen, 
-dies ist seit beginn 2026 nicht mehr der Fall.
-
-Für H.265 bestehen zwei patentpools, welche beide getrennt Lizenzgebühren für die Nutzung des Codecs verlangen. Für den Verkauf von Geräten mit H.265 Kompression, verlangt ein Patentpool 0,4-1,2\$ pro Gerät, aber mit einem Kredit/Freibetrag sollte man unter 50000\$ pro Jahr bleiben. Für das Streaming,
-erhebt einer der patentpools keine Lizenzgebühren, der andere bietet verschiedene Lizenzmodelle an, zum einen gibt es die Möglichkeit einen Prozentsatz der Streaming Einnahmen zu bezahlen, auf der anderen Seite einen Festen abgestimmten Betrag Jährlich zu zahlen, oder man zahlt einen cent Betrag pro Nutzer.
-Ob hierbei die Möglichkeit besteht, keine Lizenzgebühren zu zahlen, solange keine Einnahmen durch das Streaming generiert werden, ist unklar und müsste wahrscheinlich mit dem Patentpool geklärt werden.
-
-Es besteht auch die Möglichkeit, dass für unseren Anwendungsfall, keine lizenzgebühren für die Nutzung von H.264 anfallen, da diese an Plattformen gerichtet sind. Ob die Webseite für das Anschauen der Videos als Platform gilt, ist unklar und müsste mit den Patentpools geklärt werden.
-
-Sollte aus Gründen auf die hardware Komprimierung verzichtet werden und auf Software Komprimierung zurückgegriffen werden, besteht auch die Möglichkeit die Codecs VP8 oder VP9 zu nutzen, da für diese Bisher keine Lizenzgebühren anfallen, bei einer vergleichbaren Kompressionsrate.
-
-\subsection{Treiber Inkompatibilität}
+\subsection{GPU Encoding}
 
 Bei der Implementierung der Hardware Komprimierung wurde festgestellt, dass die Vorhandenen Grafik Treiber des HB10 nicht mit H.264 und H.265 kompatibel sind, dieser Fehler wurde in späteren Versionen der Treiber behoben. Jedoch ist es nicht momentan nicht möglich,
 die Grafiktreiber des HB10 zu aktualisieren, da die Treiber bereits die aktuellste Version sind, die mit der Linux version des HB10 kompatibel sind. Das bedeutet, um die Hardware Komprimierung auf dem HB10 umzusetzen, müsste die Linux version des HB10 aktualisiert werden,
@@ -209,24 +211,52 @@ wie sich das Komprimieren auf den laufenden Spielbetrieb auswirken würde. Der e
     \item Größe des komprimierten Videos: da wie bereits angesprochen verschiedene Aufsteller verschieden schnelle Internet-Anschlüsse besitzen ist es wichtig, dass das fertige Video so klein wie möglich ist.  
 \end{itemize}
 
-Das Benchmark wurde einmal mit dem H.264 hardware Codec der APU des HB10 durchgeführt und ein weiteres mal mit dem x264 Software Codec. Dabei sollten diese ein 78 Sekunden langes Video mit einer Auflösung von 1280x720 bei 10 fps komprimieren. 
-Mit hardware Komprimierung wurde eine durchschnittliche CPU Auslastung von 12,13\% mit einer Standardabweichung von 1,25 erreicht, bei einer durchschnittlichen Dauer von 8,59 Sekunden mit einer Standardabweichung von 0,13. 
-Im gegensatz wurde mit software Komprimierung eine durchschnittliche CPU Auslastung von 97,10\% Prozent mit einer Standardabweichung von 0,42 erreicht, bei einer durchschnittlichen Dauer von 55,13 Sekunden mit einer Standardabweichung von 0,75.
-Die kleinen Schwankungen in der Dauer können auf den scheduler des Betriebssystems zurückgeführt werden.
+Das Benchmark wurde einmal mit dem H.264 hardware Codec der APU des HB10 durchgeführt und ein weiteres mal mit dem x264 Software Codec. Dabei sollten diese ein 78 Sekunden langes Video mit einer Auflösung von 1280x720 bei 10 fps, also eine Größe von etwa 1,44 GB komprimieren.
+Dabei wurden folgende Ergebnisse erzielt: 
+
+\begin{table}[H] 
+    \centering 
+    \begin{tabular}{|l|c|c|} 
+        \hline 
+        \textbf{Komprimierung} & \textbf{$\varnothing$-CPU-Auslastung (\%)} & \textbf{$\varnothing$-Dauer (s)} \\ 
+        \hline 
+        Hardware & $12{,}13 \pm 1{,}25$ & $8{,}59 \pm 0{,}13$ \\ 
+        Software & $97{,}10 \pm 0{,}42$ & $55{,}13 \pm 0{,}75$ \\ 
+        \hline 
+    \end{tabular} 
+    \caption{Vergleich der CPU-Auslastung und Komprimierungsdauer bei Hardware- und Software-Komprimierung (Mittelwert $\pm$ Standardabweichung).} 
+    \label{tab:hardware_software_vergleich} 
+\end{table}
 
 Da die Software Komprimierung die CPU des HB10 komplett auslastet, ist es nicht möglich, die Komprimierung parallel zum normalen Spielbetrieb durchzuführen. Deshalb müsste die Komprimierung nach dem Ende des Spieles durchgeführt werden, was zu einer langen Wartezeit führen würde.
-Bei der Hardware Komprimierung hingegen betrug die Maximale CPU Auslastung im Durchschnitt nur 39,70\% mit einer Standardabweichung von 3,35. Wenn man davon ausgeht, 
-dass im Normalen Spielbetrieb die CPU Auslastung maximal bei 70\% in einem der vier Kerne liegt, sollte die Hardware Komprimierung problemlos parallel zum normalen Spielbetrieb durchgeführt werden können.
+Bei der Hardware Komprimierung hingegen betrug die Maximale CPU Auslastung im Durchschnitt nur 39,70\% $\pm$ 3,35. Wenn man davon ausgeht, 
+dass im Normalen Spielbetrieb die CPU Auslastung maximal bei etwa 17,5\%, sollte die Hardware Komprimierung problemlos parallel zum normalen Spielbetrieb durchgeführt werden können.
 
 Ein Unterschied in der resultierenden Dateigröße scheint keinen merkbaren Einfluss auf die Dauer oder CPU Auslastung der Komprimierung zu haben. Die entstehende Dateigröße der verschiedenen Codecs lag zwar standardmäßig auseinander, beide Codecs konnten jedoch die Dateigröße des anderen Codecs erreichen.
 Änderungen an der Dateigröße scheinen sich hauptsächlich auf die Videoqualität auszuwirken, und nicht auf die Dauer oder CPU Auslastung der Komprimierung. Da die Videoqualität für uns kein entscheidender Faktor ist, solange der Spieler und alle Würfe klar zu erkennen sind, 
-ist die Dateigröße kein entscheidender Faktor für die Wahl des Codecs.
+ist die Dateigröße kein entscheidender Faktor für die Wahl des Codecs.\todo{umschreiben}
 
-Anhand der Ergebnisse des Benchmarks ist zu erkennen, dass die hardware Komprimierung deutlich besser für den Einsatz auf dem HB10 geeignet ist, da die Software Komprimierung die CPU des HB10 komplett auslastet, und somit nicht parallel zum normalen Spielbetrieb durchgeführt werden kann.
-Trotzdem konnte im laufe der Arbeit nur die Software Komprimierung auf einer aktuellen Version des HB10 implementiert werden, da die Hardware Komprimierung aufgrund der Treiber-Inkompatibilität auf dem HB10 nicht möglich ist. Deshalb wurde die Software Komprimierung für die Arbeit verwendet, 
-und die Hardware Komprimierung als mögliche zukünftige Erweiterung verstanden.
+Eine vollständige Implementierung davon hätte jedoch den Umfang dieser Arbeit gesprengt. Ein Update der Betriebssystemversion des HB10 ist jedoch für die Zukunft geplant und dann sollte zwingend die Hardwarekodierung benutzt werden.
 
-\subsection{Entfernungsbestimmung durch Objekterkennung}
+\subsection{Codec Lizenz}
+
+\todo{quellen einbauen}
+
+Es bestehen für sowohl H.264 als auch H.265 patentpools, also Zusammenschlüsse von Patentbesitzern, welche Lizenzgebühren für die Nutzung der Codecs verlangen. Diese Lizenzgebühren fallen sowohl für den Verkauf von Geräten mit Kompression mittels der Codecs, als auch für das Streaming von Videos, 
+welche mittels H.264 oder H.265 komprimiert wurden.
+
+Da H.264 ein deutlich älterer Codec ist, sind bereits der Großteil der Patente abgelaufen, jedoch existieren noch einige wenige aktive Patente. Da nicht 100\% sicher ist, ob die Nutzung von H.264 automatisch diese Patente verletzt, müsste man um sicher zu gehen, 
+für jedes einzelne Patent überprüfen ob dieses für unseren Anwendungsfall relevant ist, oder eine Lizenz für H.264 erwerben. 
+Da aber die Patentpools erkannt haben, dass die Patente für H.264 bald auslaufen, wurde die minimale Lizenzgebühr auf 100000\$ pro Jahr festgelegt, historisch wurde dieser Preis auf eine andere Weise errechnet, wobei Lizenzgebühren von unter 10000\$ pro Jahr erloschen, 
+dies ist seit beginn 2026 nicht mehr der Fall.
+
+Für H.265 bestehen zwei patentpools, welche beide getrennt Lizenzgebühren für die Nutzung des Codecs verlangen. Für den Verkauf von Geräten mit H.265 Kompression, verlangt ein Patentpool 0,4-1,2\$ pro Gerät, aber mit einem Kredit/Freibetrag sollte man unter 50000\$ pro Jahr bleiben. Für das Streaming,
+erhebt einer der patentpools keine Lizenzgebühren, der andere bietet verschiedene Lizenzmodelle an, zum einen gibt es die Möglichkeit einen Prozentsatz der Streaming Einnahmen zu bezahlen, auf der anderen Seite einen Festen abgestimmten Betrag Jährlich zu zahlen, oder man zahlt einen cent Betrag pro Nutzer.
+Ob hierbei die Möglichkeit besteht, keine Lizenzgebühren zu zahlen, solange keine Einnahmen durch das Streaming generiert werden, ist unklar und müsste wahrscheinlich mit dem Patentpool geklärt werden.
+
+Es besteht auch die Möglichkeit, dass für unseren Anwendungsfall, keine lizenzgebühren für die Nutzung von H.264 anfallen, da diese an Plattformen gerichtet sind. Ob die Webseite für das Anschauen der Videos als Platform gilt, ist unklar und müsste mit den Patentpools geklärt werden.
+
+\section{Entfernungsbestimmung durch Objekterkennung}
 
 Eine mögliche Erweiterung der Videofunktion besteht darin, die aufgenommenen Bilddaten zusätzlich zur Abschätzung der Entfernung zwischen Spieler und Gerät zu verwenden. Dabei könnte ein Verfahren zur Objekterkennung eingesetzt werden, um den Spieler innerhalb des Kamerabildes zu lokalisieren.
 Die Kamera würde in diesem Fall nicht nur zur nachträglichen visuellen Überprüfung eines Spiels dienen, sondern zusätzlich als Grundlage für eine automatisierte Abstandsschätzung verwendet werden.

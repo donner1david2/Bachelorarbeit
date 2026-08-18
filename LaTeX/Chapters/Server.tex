@@ -5,13 +5,13 @@ Für das Speichern und Bereitstellen der Videos wird ein Server benötigt, der d
 \section{Wahl des Servertyps}
 
 Für den Server wurde entschieden, auf einen klassischen Webserver kombiniert mit relationaler Datenbank zurückzugreifen, der die Videos auf dem Dateisystem speichert. Ein Alternativer Gedanke wäre es, statt das Dateisystem des Servers zu verwenden, die Videos in einem Object-Storage zu speichern. 
-Dies ist mittlerweile eine empfohlene Praxis bei \ac{VOD} Streaming Plattformen. Object-Storage bringt jedoch viel Komplexität mit sich, die nicht gerechtfertigt werden kann. Denn die Größenordnung der Anzahl an Videos mit denen zu rechnen ist, 
+Dies ist mittlerweile eine empfohlene Praxis bei \ac{VOD} Streaming Plattformen \cite{aws_media_storage}. Object-Storage bringt jedoch viel Komplexität mit sich, die nicht gerechtfertigt werden kann. Denn die Größenordnung der Anzahl an Videos mit denen zu rechnen ist, 
 vermindern stark die Vorteile \todo{Vorteile erklären} die Object-Storage mit sich bringt. Deshalb wurde entschieden, die Videos auf dem Dateisystem des Servers zu speichern. Da die Videos maximal eine Länge von einigen Minuten haben, ist die Dateigröße relativ klein, 
 sodass eine Speicherung auf dem Dateisystem des Servers keine Probleme mit sich bringen sollte, und die Verknüpfung von Metadaten und Videos stark vereinfacht wird.
 
 Als Kommunikationsprotokoll zwischen Server und Clients wird HTTP zusammen mit REST-API verwendet. Da dies eine Simple aber ausreichende Methode ist. Der größte Nachteil ist das abgebrochene Anfragen nicht fortgesetzt werden können. Somit kann die Übertragung von großen Dateien problematisch werden.
-Da wir aber HLS als Streaming Protokoll verwenden (s. \ref{sec:hls}) liegen die Videos nicht als eine einzelne große Datei vor, sondern eine Playlist Datei mit einzelnen Video Segmenten, welche nicht größer als 5MB werden. Deshalb ist die Übertagung der Videos kein Problem.
-Es ist sehr einfach einen REST-Server mittels Spring Boot aufzustellen. Spring Boot übernimmt den großteil der Aufgaben und es müssen nur die Endpunkte für die Clients und die Schnittstellen zur Datenbank definiert werden.
+Da aber HLS als Streaming Protokoll verwendet wird, (s. \ref{sec:hls}) liegen die Videos nicht als eine einzelne große Datei vor, sondern eine Playlist Datei mit einzelnen Video Segmenten, welche nicht größer als 5MB werden. Deshalb ist die Übertagung der Videos kein Problem.
+Es ist sehr einfach einen REST-Server mittels Spring Boot aufzustellen. Spring Boot übernimmt den Großteil der Aufgaben und es müssen nur die Endpunkte für die Clients und die Schnittstellen zur Datenbank definiert werden.
 Um die Metadaten der Videos zu speichern wurde eine relationale Datenbank gewählt.
 
 \subsection{Speicherkonzept für Videodaten} 
@@ -139,7 +139,7 @@ Für die Kommunikation zwischen dem Server und den Clients werden REST-API-Endpu
 
 Für die Bereitstellung des Webclients wird ein statischer Endpunkt mittels SpringBoot bereitgestellt. 
 
-\ac{JPA} kümmert sich um das Handling der Datenbank. Solange man eine passende Entitäts-Klasse definiert, welche bestimmt wie eine Tabelle aussieht. Kann man mit der Datenbank über Listen dieser Entitäten einfach im Code interagieren, 
+\ac{JPA} \cite{springdatajpa_getting_started} kümmert sich um das Handling der Datenbank. Solange man eine passende Entitäts-Klasse definiert, welche bestimmt wie eine Tabelle aussieht. Kann man mit der Datenbank über Listen dieser Entitäten einfach im Code interagieren, 
 und muss nicht selbst sql für die Interaktion mit der Datenbank schreiben.
 
 \section{Wahl des Streaming Protokolls} \label{sec:hls}
@@ -203,7 +203,7 @@ Die Aufnahme des Spielers ist daher funktional mit dem Spielmodus verbunden.
 \subsection{Datenminimierung und Hintergrundausblendung}
 
 Personen im Hintergrund sind für diesen Zweck dagegen grundsätzlich nicht erforderlich. Aus diesem Grund sollte der Bildausschnitt soweit wie möglich auf den Spieler und die Dartscheibe begrenzt werden. Bereiche, 
-die für die spätere Überprüfung nicht benötigt werden, sollten bereits vor der Speicherung entfernt oder unkenntlich gemacht werden \cref{fig:background}. 
+die für die spätere Überprüfung nicht benötigt werden, sollten bereits vor der Speicherung entfernt oder unkenntlich gemacht werden (s. \cref{fig:background}). 
 
 \begin{figure}
     \centering
