@@ -22,7 +22,7 @@ Socket --> RawFiles : DART_HIT
 Buffer --> RawFiles : speichert Ringbuffer
 
 Socket --> Conversion : GAME_END
-RawFiles --> Conversion : liest YUV-Dateien
+RawFiles --> Conversion : liest rohe-Dateien
 
 Conversion --> Encoder
 Encoder --> MP4

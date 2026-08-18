@@ -1,6 +1,6 @@
 @startuml
 
-skinparam defaultFontName "Times New Roman"
+skinparam defaultFontName "Arial"
 skinparam defaultFontSize 12 
 skinparam defaultFontColor black
 

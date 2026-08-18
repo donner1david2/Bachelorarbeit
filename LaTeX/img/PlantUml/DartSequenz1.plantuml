@@ -9,14 +9,14 @@ participant VideoMain
 
 par VideoMain Thread
     activate VideoMain
-    VideoMain -> VideoMain: bindSocket
+    VideoMain -> VideoMain: Socket belegen
 
     loop waiting for connection
-        VideoMain -> VideoMain: listen
+        VideoMain -> VideoMain: auf Socket lauschen
     end
 
-    VideoMain -> : openCameraConnection
-    VideoMain -> : createFrameThread
+    VideoMain -> : Kamera Verbindung öffnen
+    VideoMain -> : Thread für Frames erstellen
     'VideoMain -> VideoFrameThread: create
     deactivate VideoMain
 
@@ -24,10 +24,10 @@ else DartApp Thread
     activate DartApp
 
     loop connecting
-        DartApp -> VideoMain: connect
+        DartApp -> VideoMain: Verbinden
     end
 
-    DartApp -> DartApp: Gamestart
+    DartApp -> DartApp: Spiel Start
     deactivate DartApp
 end
 @enduml

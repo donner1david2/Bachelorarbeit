@@ -1,0 +1,23 @@
+@startuml
+
+skinparam defaultFontName "Arial"
+skinparam defaultFontSize 12
+skinparam defaultFontColor black
+skinparam DefaultTextAlignment center
+
+skinparam nodesep 10
+skinparam ranksep 15
+
+rectangle "HB10\n--\n(erkennt Spieler\nentfernung)" as H
+
+rectangle "Server\n--\nspeichert Videos" as S
+
+rectangle "Nutzer/Website\n--\nschaut Videos\nund meldet Cheating" as U
+
+rectangle "Prüf-Instanz\n--\nentscheidet ob gemeldete\nSpiele legitim sind\noder nicht" as I
+
+H --> S
+S --> U
+U --> I
+
+@enduml

@@ -1,17 +1,142 @@
 \chapter{Webplattform} \label{sec:web}
 
-%Die letzte fehlende Komponente die fehlt um dem Nutzer die Cheating Überprüfung zu ermöglichen, ist eine Presentation Anwendung
-Um dem Nutzer zu ermöglichen die Videos die auf dem Server bereit liegen anzusehen, muss eine Webplattform bereitgestellt werden über welche die Nutzer zugriff auf alle verfügbaren Videos erhalten. 
+Damit die auf dem Server gespeicherten Videoaufnahmen für die spätere Überprüfung genutzt werden können, wird eine Webplattform benötigt. Diese stellt die Schnittstelle zwischen den gespeicherten Spieldaten und den Nutzern dar. Ohne eine solche Anwendung könnten die Videos zwar serverseitig abgelegt werden, 
+wären für die Spieler jedoch nicht in einer geeigneten Form zugänglich. Die Webplattform übernimmt daher die Aufgabe, die vorhandenen Videos übersichtlich bereitzustellen und eine einfache Nutzung der gespeicherten Inhalte zu ermöglichen. 
+
+Im Rahmen des Gesamtsystems bildet die Webplattform somit die Präsentations- und Zugriffsebene. Während andere Komponenten für die Erfassung, Verarbeitung und Speicherung der Daten verantwortlich sind, stellt die Webplattform diese Daten für den Nutzer dar. Dadurch wird es möglich, 
+aufgezeichnete Spiele nachträglich anzusehen und für die Überprüfung auf mögliches Cheating zu verwenden. Der Fokus liegt dabei nicht auf der eigentlichen Analyse der Spieldaten, sondern auf der Bereitstellung einer funktionalen Oberfläche, 
+über welche die vorhandenen Videos gefunden und abgespielt werden können.
 
 \section{Aufgabe der Webplattform} 
 
-Die hauptsächliche Aufgabe der Webplattform ist es den Spielern zu ermöglichen, Spiele in zukünftigen Turnier-Spielen auf Betrug zu Überprüfen. Mit dieser Hauptaufgabe kommen aber mehrere nebensächliche Aufgaben und Anforderungen, welche Erfüllt werden müssen, 
-um dem Nutzer eine "funktionale" Webplattform bieten zu können.
+Die hauptsächliche Aufgabe der Webplattform besteht darin, den Spielern den Zugriff auf die gespeicherten Videoaufnahmen zu ermöglichen. Diese Videos sollen für zukünftige Turnierspiele genutzt werden können, um verdächtige Spielsituationen nachträglich zu überprüfen. 
+Die Plattform dient damit als zentrale Anlaufstelle für die Nutzer, sobald ein Spiel oder ein bestimmter Spielausschnitt erneut betrachtet werden soll. Während die vorherigen Systembestandteile für die Aufnahme, Übertragung, Verarbeitung und Speicherung der Videodaten zuständig sind, 
+stellt die Webplattform diese Daten in einer für den Nutzer zugänglichen Form bereit. 
 
-\section{Aufbau der Benutzeroberfläche} 
+Im Gesamtsystem übernimmt die Webplattform damit keine eigenständige Erfassung oder Analyse der Spieldaten. Ihre Aufgabe liegt vielmehr darin, die auf dem Server vorhandenen Informationen so aufzubereiten, dass sie durch den Nutzer sinnvoll verwendet werden können. Dazu gehört insbesondere, 
+dass gespeicherte Videos auffindbar gemacht werden. Die Plattform muss daher eine Übersicht über vorhandene Aufnahmen bereitstellen und diese mit den zugehörigen Metadaten verbinden. Erst durch diese Zuordnung kann ein Nutzer erkennen, zu welchem Spiel, Spieler oder Zeitpunkt eine bestimmte Aufnahme gehört. 
+Ohne eine solche Oberfläche wären die Videodateien zwar technisch gespeichert, könnten aber nur schwer gezielt gefunden und verwendet werden. 
 
-\section{Kommunikation mit dem Server} 
+Ein weiterer wesentlicher Bestandteil der Webplattform ist die Wiedergabe der gespeicherten Videos. Nachdem ein Nutzer eine Aufnahme ausgewählt hat, soll diese direkt innerhalb der Plattform abgespielt werden können. Dadurch wird vermieden, 
+dass Videodateien manuell heruntergeladen oder außerhalb des Systems geöffnet werden müssen. Die Webplattform bildet somit die Schnittstelle zwischen der serverseitigen Speicherung und der tatsächlichen fachlichen Nutzung der Aufnahmen. Für die Überprüfung einer möglichen Cheating-Situation ist dies wichtig, 
+da der Zugriff auf die relevanten Videos möglichst einfach und nachvollziehbar erfolgen muss. 
 
-\section{Darstellung und Wiedergabe der Videos}
+\begin{figure}[h]
+    \centering
+    \includesvg[width=0.33\textwidth]{img/PlantUml/cheating-detection/cheating-detection.svg}
+    \caption{Darstellung der Abfolge zur Betrugs Erkennung.}
+    \label{fig:cheatdet}
+\end{figure} \todo{beschreibung erweitern}
+
+Die Plattform unterstützt damit den Ablauf der nachträglichen Prüfung. Ein Nutzer kann zunächst nach einer passenden Aufnahme suchen, anschließend die zugehörigen Informationen einsehen und das Video abspielen. 
+Auf diese Weise wird der technische Prozess der Speicherung in einen nutzbaren Arbeitsablauf überführt. Der Fokus liegt dabei nicht auf einer automatischen Bewertung der Spielsituation. Die Entscheidung, ob eine Situation auffällig ist, bleibt weiterhin beim Nutzer beziehungsweise bei den zuständigen Personen. 
+Die Webplattform stellt lediglich die benötigten Informationen und das Videomaterial bereit, damit diese Prüfung durchgeführt werden kann(s. \cref{fig:cheatdet}).
+
+Für den Prototypen bedeutet dies, dass vor allem die grundlegenden Funktionen umgesetzt werden müssen. Dazu zählen das Anzeigen vorhandener Videos, das Bereitstellen einer einfachen Such- oder Filtermöglichkeit sowie das Abspielen einer ausgewählten Aufnahme. 
+Erweiterte Funktionen wie eine detaillierte Benutzerverwaltung, eine vollständig ausgearbeitete Nutzerführung oder eine direkte Integration in spätere Turnierprozesse stehen zunächst nicht im Vordergrund. Der Prototyp soll vor allem zeigen, 
+dass die zuvor gespeicherten Videodaten über eine Weboberfläche praktisch nutzbar gemacht werden können. 
+
+Zusammengefasst ist die Webplattform dafür verantwortlich, die serverseitig gespeicherten Videos für den Nutzer zugänglich, auffindbar und abspielbar zu machen. Sie stellt damit die letzte notwendige Komponente dar, um die zuvor erfassten und gespeicherten Daten praktisch nutzbar zu machen. 
+Die Plattform bildet somit die Verbindung zwischen der technischen Speicherung der Aufnahmen und der tatsächlichen Überprüfung durch die Spieler.
+
+\section{Aufbau der Benutzeroberfläche} \label{sec:web-ui} 
+
+Die Benutzeroberfläche der Webplattform wurde im Rahmen des Prototypen bewusst einfach umgesetzt. Ziel der Entwicklung war nicht die Erstellung einer finalen Benutzeroberfläche, sondern die Bereitstellung einer Oberfläche, mit der die grundlegenden Funktionen der Anwendung getestet werden können. 
+Der Schwerpunkt lag daher auf der technischen Nutzbarkeit. Funktionen wie das Anzeigen der gespeicherten Videos, das Filtern der Einträge und das Abspielen einzelner Aufnahmen standen im Vordergrund. Eine vollständig ausgearbeitete Nutzerführung, 
+ein produktionsreifes Design oder eine detaillierte Anpassung an spätere Turnierabläufe wurden in dieser Phase nicht umgesetzt. 
+
+Diese Einschränkung ist für die Bewertung der Oberfläche wichtig. Die im Prototyp verwendete Benutzeroberfläche ist nicht als endgültige Lösung zu verstehen, sondern als Testoberfläche. Sie soll zeigen, dass die notwendigen Funktionen grundsätzlich über eine Webanwendung bedienbar sind. 
+Für eine spätere tatsächliche Implementierung müsste die Oberfläche neu entworfen werden. Dabei wären insbesondere eine klarere Informationsarchitektur, eine bessere visuelle Gewichtung der Inhalte und eine gezieltere Unterstützung des Prüfprozesses erforderlich. 
+Allgemeine Usability-Kriterien wie Konsistenz, Sichtbarkeit des Systemzustands und eine nachvollziehbare Interaktion werden in der Forschung als wichtige Bewertungsaspekte von Benutzeroberflächen beschrieben \cite{quinones2018methodology}. Diese Aspekte wurden im Prototyp nur so weit berücksichtigt, 
+wie es für das Testen der Kernfunktionen notwendig war. 
+
+\subsection{Startseite und Navigation}
+
+Die Startseite der Anwendung bildet den Einstiegspunkt in die Webplattform. Wie in Abbildung~\ref{fig:web-startseite} zu sehen ist, enthält diese Seite im Prototyp lediglich eine einfache Begrüßung sowie die Navigationsleiste im oberen Bereich. 
+Die Startseite besitzt damit keine umfangreiche fachliche Funktion. Sie dient vor allem dazu, einen initialen Zustand der Anwendung bereitzustellen und die Navigation zu ermöglichen. Der reduzierte Aufbau verdeutlicht, dass die Oberfläche nicht als endgültige Nutzeroberfläche angelegt wurde, 
+sondern zunächst nur den Zugriff auf die prototypischen Funktionen ermöglichen soll. 
+
+\begin{figure}[h] 
+    \centering 
+    \includegraphics[width=0.9\textwidth]{Images/starting-page.png} 
+    \caption{Startseite des Webplattform-Prototypen } 
+    \label{fig:web-startseite} 
+\end{figure} 
+
+Im oberen Bereich der Oberfläche befindet sich eine Navigationsleiste, die in den gezeigten Ansichten dauerhaft sichtbar ist. Diese enthält ein Symbol für die Startseite, Navigationspfeile sowie ein Suchfeld beziehungsweise ein Suchsymbol. Dadurch werden grundlegende Bedienelemente bereitgestellt, 
+die für den Testbetrieb ausreichend sind. Eine umfangreiche Menüstruktur wurde nicht umgesetzt, da der Prototyp nur einen begrenzten Funktionsumfang besitzt. Die Navigationsleiste erfüllt daher vor allem den Zweck, 
+zwischen den einfachen Ansichten der Anwendung zu wechseln und eine grundlegende Orientierung innerhalb der Webplattform zu ermöglichen. 
+
+\subsection{Videoübersicht und Suche}
+
+Der wichtigste Bereich der Benutzeroberfläche ist die Übersicht der verfügbaren Videos. Diese Ansicht ist in Abbildung~\ref{fig:web-videos-suche} dargestellt. Die gespeicherten Aufnahmen werden dort in einer tabellarischen Struktur angezeigt. Die Tabelle enthält die Spalten \enquote{Name}, 
+\enquote{Würfe} und \enquote{Datum}. Über den Namen beziehungsweise die Kennung kann eine Aufnahme unterschieden werden. Die Anzahl der Würfe stellt eine zusätzliche Information zum aufgezeichneten Spiel bereit, während das Datum die zeitliche Einordnung der Aufnahme ermöglicht. 
+Dadurch kann geprüft werden, ob die vom Server gelieferten Metadaten korrekt in der Weboberfläche angezeigt werden. 
+
+\begin{figure}[h] 
+    \centering 
+    \includegraphics[width=0.9\textwidth]{Images/videos_search.png} 
+    \caption{Übersicht und Suche der verfügbaren Videos} 
+    \label{fig:web-videos-suche} 
+\end{figure} 
+
+Die tabellarische Darstellung ist für den Prototypen ausreichend, da sie eine einfache und nachvollziehbare Struktur für die vorhandenen Daten bietet. Gleichzeitig zeigt sie aber auch die Grenzen der aktuellen Oberfläche. 
+Für eine produktive Anwendung wäre eine solche reduzierte Darstellung nur bedingt geeignet. In einem tatsächlichen Turnierkontext könnten zusätzliche Informationen erforderlich sein, beispielsweise der zugehörige Spieler, die konkrete Spielpaarung, eine Turnierkennung, 
+der Status einer Überprüfung oder Hinweise auf bereits betrachtete Aufnahmen. Diese Informationen wurden im Prototyp nicht umgesetzt, da zunächst nur die grundlegende technische Funktionalität getestet werden sollte. 
+
+Zusätzlich zur Tabelle besitzt die Videoübersicht ein Suchfeld. Dieses ermöglicht es, die angezeigten Einträge zu filtern und dadurch gezielt nach bestimmten Aufnahmen zu suchen. Für den Prototypen ist diese Funktion besonders relevant, da sie zeigt, dass die Oberfläche nicht nur statische Daten anzeigen kann, 
+sondern auch einfache Nutzerinteraktionen unterstützt. Die Suche dient damit als Test, ob die geladenen Videometadaten innerhalb der Oberfläche verarbeitet und eingeschränkt dargestellt werden können. Erweiterte Such- und Filterfunktionen wurden nicht implementiert.
+Eine spätere Version könnte beispielsweise nach Datum, Spieler, Turnier, Status oder weiteren Metadaten filtern. 
+
+\subsection{Videowiedergabe}
+
+Nach der Auswahl eines Videos wird die entsprechende Aufnahme in einer eigenen Ansicht geöffnet. Diese Ansicht ist in Abbildung~\ref{fig:web-video-player} dargestellt. Im Mittelpunkt steht der Videoplayer, über den die gespeicherte Aufnahme direkt im Browser abgespielt werden kann. 
+Der Player bietet die üblichen Steuerelemente des Browsers, darunter das Starten und Pausieren des Videos, die Anzeige der Wiedergabeposition, die Lautstärkeregelung und die Vollbildfunktion. Dadurch kann überprüft werden, 
+ob die gespeicherten Videodateien korrekt ausgeliefert und vom Browser wiedergegeben werden. 
+
+\begin{figure}[h] 
+    \centering 
+    \includegraphics[width=0.9\textwidth]{Images/Video-Player.png} 
+    \caption{Wiedergabe eines gespeicherten Videos innerhalb der Webplattform} 
+    \label{fig:web-video-player} 
+\end{figure} 
+
+Die Videowiedergabe ist für die Webplattform besonders wichtig, da die gespeicherten Aufnahmen nur dann für eine nachträgliche Überprüfung geeignet sind, wenn sie zuverlässig betrachtet werden können. Im Prototypen wurde dafür auf die Standardfunktionen des Browsers zurückgegriffen. 
+Eine Erweiterung des Videoplayers um zusätzliche Analysefunktionen wurde nicht vorgenommen. Denkbar wären in einer späteren Implementierung beispielsweise Markierungen auffälliger Stellen, Kommentare, Zeitstempel oder eine Verknüpfung mit einzelnen Würfen. 
+Diese Funktionen liegen jedoch außerhalb des prototypischen Umfangs und wurden deshalb nicht umgesetzt. 
+
+Für die hier entwickelte Oberfläche bedeutet dies, dass die Funktionsfähigkeit des Prototypen nicht automatisch mit einer für den produktiven Einsatz geeigneten Benutzeroberfläche gleichzusetzen ist. Der Prototyp zeigt lediglich, dass die grundlegenden Funktionen technisch umgesetzt werden können. Ob die Oberfläche für reale Nutzer in einem Turnierumfeld verständlich, effizient und ausreichend auf den Prüfprozess abgestimmt ist, müsste in einer späteren Entwicklungsphase gesondert untersucht werden.
+
+Zusammenfassend besteht die Benutzeroberfläche des Prototypen aus drei zentralen Bereichen. Die Startseite stellt einen einfachen Einstiegspunkt bereit, die Videoübersicht zeigt die gespeicherten Aufnahmen mit grundlegenden Metadaten an und die Wiedergabeansicht ermöglicht das Abspielen einzelner Videos. 
+Diese Struktur ist für den Nachweis der technischen Funktionalität ausreichend. Für eine spätere tatsächliche Implementierung sollte die Benutzeroberfläche jedoch neu gestaltet werden. Dabei sollte die Oberfläche nicht nur die vorhandenen Funktionen abbilden, 
+sondern gezielt auf den Ablauf einer Cheating-Überprüfung ausgelegt werden. Die im Prototyp verwendete Oberfläche ist daher als funktionale Testoberfläche zu verstehen, nicht als finale Lösung für den produktiven Einsatz. 
+
+\section{Kommunikation mit dem Server} \label{sec:web-kommunikation} 
+
+Die Webplattform ist auf die Kommunikation mit dem Server angewiesen, da die benötigten Videodaten nicht lokal in der Oberfläche gespeichert werden. Stattdessen werden die Metadaten und Videodateien serverseitig bereitgestellt und durch die Webanwendung abgerufen. 
+Die Oberfläche stellt damit keine eigenständige Datenhaltung dar, sondern greift auf die vom Server bereitgestellten Informationen zu. 
+
+Für die Videoübersicht werden zunächst die vorhandenen Metadaten der gespeicherten Aufnahmen geladen. Diese Daten werden anschließend in der Tabelle dargestellt. Dadurch kann der Nutzer erkennen, welche Videos verfügbar sind und welche grundlegenden Eigenschaften diese besitzen. 
+Die Webplattform übernimmt hierbei die Aufgabe, die vom Server gelieferten Daten in eine für den Nutzer lesbare Darstellung zu überführen. 
+
+Wird ein Video ausgewählt, muss die Anwendung die zugehörige Videodatei beziehungsweise den entsprechenden Videostream vom Server abrufen. Die Wiedergabe erfolgt anschließend im Browser über den eingebundenen Videoplayer. Für den Nutzer ist dieser technische Ablauf nicht direkt sichtbar. 
+Aus Nutzersicht wird lediglich ein Video ausgewählt und anschließend abgespielt. Die Kommunikation mit dem Server bildet jedoch die Grundlage dafür, dass die gespeicherten Inhalte in der Oberfläche verfügbar sind. 
+
+Im Prototypen wurde diese Kommunikation so einfach wie möglich gehalten. Ziel war es, den grundlegenden Ablauf vom gespeicherten Video bis zur Wiedergabe in der Webplattform zu validieren. Erweiterte Mechanismen wie Benutzerrollen, 
+detaillierte Berechtigungen oder komplexe Zugriffskonzepte wurden in der Oberfläche nicht umgesetzt. Für eine spätere produktive Version wären solche Erweiterungen jedoch notwendig, da gespeicherte Videoaufnahmen nur berechtigten Personen zugänglich gemacht werden sollten. 
+
+\section{Darstellung und Wiedergabe der Videos} \label{sec:web-darstellung} 
+
+Die Darstellung und Wiedergabe der Videos bildet den zentralen praktischen Nutzen der Webplattform. Die Aufnahmen werden zunächst in der Übersicht angezeigt und können dort anhand ihrer Metadaten unterschieden werden. Nach der Auswahl einer Aufnahme erfolgt die Wiedergabe in einer eigenen Ansicht. 
+Dadurch entsteht ein einfacher Ablauf, bei dem der Nutzer zuerst ein Video sucht und anschließend direkt betrachten kann. 
+
+Die Umsetzung im Prototypen beschränkt sich auf die grundlegende Wiedergabe. Der Videoplayer ermöglicht die Betrachtung der Aufnahme und stellt die üblichen Funktionen zur Steuerung bereit. Dies reicht aus, um zu prüfen, ob die serverseitig gespeicherten Videodaten korrekt im Browser abgespielt werden können. 
+Die Webplattform stellt damit sicher, dass die zuvor erzeugten Daten nicht nur gespeichert, sondern auch tatsächlich verwendet werden können. 
+
+Für eine spätere Implementierung müsste die Darstellung der Videos weiterentwickelt werden. Insbesondere bei einer Nutzung zur Cheating-Überprüfung könnten zusätzliche Funktionen sinnvoll sein. Dazu zählen beispielsweise eine genauere Verknüpfung zwischen Würfen und Videopositionen, eine Kommentarfunktion, 
+eine Kennzeichnung bereits überprüfter Videos oder eine bessere Darstellung relevanter Spielinformationen. Diese Erweiterungen wurden im Prototypen nicht umgesetzt, da zunächst die technische Machbarkeit der grundlegenden Darstellung und Wiedergabe im Vordergrund stand. 
+
+Insgesamt zeigt die Webplattform, dass die gespeicherten Aufnahmen über eine browserbasierte Oberfläche zugänglich gemacht werden können. Die prototypische Umsetzung erfüllt damit ihren Zweck als Testoberfläche. Gleichzeitig wird deutlich, 
+dass für einen produktiven Einsatz eine neue Benutzeroberfläche erforderlich wäre, die stärker auf die tatsächlichen Abläufe und Anforderungen der Nutzer ausgerichtet ist.
 
 \newpage

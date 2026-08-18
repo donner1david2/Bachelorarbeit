@@ -6,18 +6,18 @@ skinparam defaultFontColor black
 participant VideoFramesThread
 participant Kamera
 
--> VideoFramesThread: create()
+-> VideoFramesThread: Erstellen
 activate VideoFramesThread
 
 loop reading frames
-    VideoFramesThread -> Kamera: receiveframe()
+    VideoFramesThread -> Kamera: Frames anfragen
     deactivate VideoFramesThread
     activate Kamera
-    Kamera -> VideoFramesThread: deliver frame
+    Kamera -> VideoFramesThread: Frame übertragen
     deactivate Kamera
     activate VideoFramesThread
 
-    VideoFramesThread -> VideoFramesThread: bufferframes
+    VideoFramesThread -> VideoFramesThread: Frames in Ringbuffer schreiben
     deactivate VideoFramesThread
 end
 @enduml

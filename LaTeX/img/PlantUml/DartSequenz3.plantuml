@@ -12,53 +12,53 @@ loop player playing Dart
 
     loop not game ended
         activate DartApp
-        DartApp -> VideoMain: sendHit
+        DartApp -> VideoMain: treffer senden
         deactivate DartApp
         activate VideoMain
 
-        VideoMain -> FileSystem: saveRaw
+        VideoMain -> FileSystem: Rohdaten speichern
         activate FileSystem
 
-        FileSystem -> FileSystem: save
+        FileSystem -> FileSystem: speichern
         deactivate FileSystem
 
         deactivate VideoMain
     end
     
-    DartApp -> DartApp: gameFinished
+    DartApp -> DartApp: Spiel Ende
     activate DartApp
 
-    DartApp -> VideoMain: sendGameFinished    
+    DartApp -> VideoMain: Spiel Ende senden    
     deactivate DartApp
     activate VideoMain
 
-    VideoMain -> FileSystem: readRaw
+    VideoMain -> FileSystem: Rohdaten lesen
     activate FileSystem
 
-    FileSystem --> VideoMain: data
+    FileSystem --> VideoMain: Daten
     deactivate FileSystem
 
-    VideoMain -> VideoMain: compressVideo
+    VideoMain -> VideoMain: Video komprimieren
 
-    VideoMain -> FileSystem: saveCompressed
+    VideoMain -> FileSystem: Video speichern
     activate FileSystem
 
-    FileSystem -> FileSystem: save
+    FileSystem -> FileSystem: speichern
     deactivate FileSystem
 
-    VideoMain -> DartApp: sendVideoFinished(path)
+    VideoMain -> DartApp: 'Video fertig' senden
     deactivate VideoMain
     activate DartApp
 
-    DartApp -> FileSystem: getVideo
+    DartApp -> FileSystem: Video Datei lesen
     deactivate DartApp
     activate FileSystem
 
-    FileSystem -> DartApp: video
+    FileSystem -> DartApp: Video
     deactivate FileSystem
     activate DartApp
 
-    DartApp -> Server: uploadVideo
+    DartApp -> Server: Video hochladen
     deactivate DartApp
     activate Server
 end

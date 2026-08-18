@@ -1,5 +1,5 @@
 @startuml
-skinparam defaultFontName "Times New Roman"
+skinparam defaultFontName "Arial"
 skinparam defaultFontSize 12 
 skinparam defaultFontColor black
 
@@ -7,16 +7,16 @@ participant Sender
 participant Receiver
 
 activate Sender
-Sender -> Sender: serializeData()
-Sender -> Receiver: sendDataLength()
+Sender -> Sender: Daten serialisieren
+Sender -> Receiver: Daten Länge senden
 
 activate Receiver
-Receiver -> Receiver: readLength()
-Sender -> Receiver: sendData()
+Receiver -> Receiver: Länge lesen
+Sender -> Receiver: Daten senden
 deactivate Sender
 
-Receiver -> Receiver: readDataOfSizeLength()
-Receiver -> Receiver: DeserializeData()
+Receiver -> Receiver: Daten anhand der länge lesen
+Receiver -> Receiver: Daten deserialisieren
 deactivate Receiver
 
 @enduml
