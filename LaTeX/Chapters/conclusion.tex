@@ -1,11 +1,65 @@
 % !TEX root =  master.tex
-\chapter{Fazit und Ausblick} 
-\label{cha:fazit_ausblick} 
+\chapter{Fazit und Ausblick}  \label{cha:fazit_ausblick} 
+Die im Rahmen dieser Arbeit verfolgte Zielsetzung konnte weitgehend erreicht werden. Mit der entwickelten Plattform steht ein Prototyp zur Verfügung, der die Bereitstellung von Videoaufzeichnungen zur Unterstützung der Spielüberprüfung ermöglicht.
 
 \section{Zusammenfassung} 
 
+Ziel dieser Bachelorarbeit war es, eine Video-Streaming-Lösung für das \textit{LÖWEN DART HB10} zu entwickeln und prototypisch umzusetzen. Der Hintergrund dafür ist die Erweiterung des bestehenden Dart-Systems um Spiel- und Turnierformen, 
+bei denen eine spätere Überprüfung einzelner Spiele notwendig werden kann. Dafür sollte ein System entstehen, das relevante Spielsituationen aufzeichnet, speichert und anschließend über eine Webplattform abrufbar macht. 
+
+Im Verlauf der Arbeit wurde dazu eine Architektur entwickelt, die aus mehreren Komponenten besteht. Auf dem HB10 übernimmt eine eigenständige Video-App die Aufnahme und Verarbeitung der Videodaten. 
+Die bestehende Dart-App bleibt weiterhin für den Spielablauf zuständig und teilt der Video-App relevante Ereignisse über eine Socket-Verbindung mit. Dadurch konnte die Videofunktion vom eigentlichen Spielbetrieb getrennt werden, ohne den Zusammenhang zwischen Spielereignis und Aufnahme zu verlieren. 
+
+Die aufgenommenen Videodaten werden zunächst lokal verarbeitet und anschließend an einen Server übertragen. Dort werden die Videodateien gespeichert und die zugehörigen Metadaten in einer Datenbank abgelegt. Über eine REST-Schnittstelle können diese Daten von der Webplattform abgerufen werden. 
+Die Webplattform stellt die gespeicherten Videos dar und ermöglicht deren Wiedergabe im Browser. 
+
+Zusammenfassend konnte gezeigt werden, dass eine Video-on-Demand-Lösung für HB10 Dart Geräte grundsätzlich technisch realisierbar ist. Der entwickelte Prototyp bildet den vollständigen Ablauf von der Aufnahme über die Speicherung bis zur späteren Wiedergabe ab. Gleichzeitig wurde deutlich, 
+dass für einen produktiven Einsatz noch mehrere technische und organisatorische Punkte weiter untersucht werden müssen. 
+
 \section{Ergebnis des Prototypen} 
+
+Das Ergebnis der Arbeit ist ein funktionierender Prototyp, der die grundlegenden Bestandteile der geplanten Video-Streaming-Lösung umsetzt. Auf dem HB10 können Videodaten aufgenommen und mit Spielereignissen verknüpft werden. 
+Die Trennung zwischen Dart-App und Video-App ermöglicht dabei eine klare Aufteilung der Aufgaben. Während die Dart-App den Spielablauf steuert, ist die Video-App für die Aufnahme und Verarbeitung der Bilddaten verantwortlich. 
+
+Ein wichtiger Bestandteil des Prototypen ist die Zwischenspeicherung der Videodaten. Durch den Einsatz eines Ringpuffers können auch Bilddaten berücksichtigt werden, die kurz vor einem gemeldeten Spielereignis entstanden sind. Dadurch wird nicht nur der Zeitpunkt des Ereignisses selbst, 
+sondern auch der direkte zeitliche Kontext aufgezeichnet. Für eine spätere Überprüfung von Spielsituationen ist dies besonders relevant. 
+
+Auf Serverseite wurde eine Lösung umgesetzt, bei der Videodateien im Dateisystem und Metadaten in einer relationalen Datenbank gespeichert werden. Die Videos werden über HLS bereitgestellt, wodurch sie in kleinere Segmente aufgeteilt und über HTTP übertragen werden können. 
+Die Webplattform kann diese Daten abrufen, anzeigen und im Browser wiedergeben. 
+
+Der Prototyp erfüllt damit seine Aufgabe als Machbarkeitsnachweis. Es konnte gezeigt werden, dass der Ablauf von der Aufnahme am HB10 bis zur Wiedergabe über eine Webplattform grundsätzlich funktioniert. Besonders der Vergleich zwischen Software- und Hardware-Komprimierung hat jedoch gezeigt, 
+dass die aktuell verwendete Software-Komprimierung keine geeignete Grundlage für einen produktiven Betrieb darstellt. Für eine spätere Umsetzung wäre daher eine funktionierende Hardware-Komprimierung notwendig. 
 
 \section{Limitationen} 
 
-\section{Ausblick}
+Trotz der erfolgreichen Umsetzung bestehen mehrere Einschränkungen. Die wichtigste technische Limitation betrifft die Videokomprimierung auf dem HB10. Ursprünglich war vorgesehen, die vorhandene Hardware-Unterstützung für die Komprimierung zu nutzen. 
+Aufgrund der vorhandenen Betriebssystem- und Treiberversion konnte diese jedoch nicht wie geplant eingesetzt werden. Daher wurde im Prototypen auf Software-Komprimierung zurückgegriffen. 
+
+Diese Software-Komprimierung ist zwar grundsätzlich funktionsfähig, belastet das System aber stark. Die Messungen haben gezeigt, dass die CPU-Auslastung deutlich höher ist und die Komprimierung wesentlich länger dauert als bei der Hardware-Komprimierung. 
+Für den produktiven Einsatz ist dieser Ansatz daher nur eingeschränkt geeignet, da der normale Spielbetrieb dadurch beeinträchtigt werden könnte. 
+
+Eine weitere Einschränkung betrifft die Kameralösung. Im Prototypen wurde nur ein grundlegender Aufbau umgesetzt. Für eine spätere Überprüfung realer Spielsituationen müsste genauer untersucht werden, 
+welche Kameraperspektiven notwendig sind und ob Spieler sowie Dartscheibe ausreichend zuverlässig erfasst werden können. Auch Lichtverhältnisse, Blickwinkel und Bewegungen können die Aussagekraft der Aufnahmen beeinflussen. 
+
+Auch die Serverarchitektur und die Webplattform sind als prototypische Umsetzung zu verstehen. Der Server zeigt, dass Upload, Speicherung und Abruf der Videos möglich sind. Für eine größere Anzahl von Geräten und Nutzern müsste jedoch geprüft werden, ob die Architektur ausreichend skalierbar ist. 
+Die Webplattform bietet ebenfalls nur die grundlegenden Funktionen zur Anzeige und Wiedergabe der Videos. Erweiterte Funktionen für eine tatsächliche Spielüberprüfung wurden noch nicht umgesetzt. 
+
+Zusätzlich wurden Datenschutz und Zugriffskontrolle im Rahmen dieser Arbeit nicht abschließend gelöst. Da Videoaufnahmen personenbezogene Daten enthalten können, müsste vor einem produktiven Einsatz genau festgelegt werden, wer aufgenommen werden darf, 
+wer Zugriff auf die Videos erhält und wie lange diese gespeichert werden. Besonders Personen im Hintergrund stellen dabei einen wichtigen Punkt dar. 
+
+\section{Ausblick} 
+
+Für eine Weiterentwicklung des Prototypen ist zunächst die vollständige Umsetzung der Hardware-Komprimierung auf dem HB10 notwendig. Erst wenn diese zuverlässig funktioniert, kann beurteilt werden, ob die Videofunktion ohne spürbare Beeinträchtigung des Spielbetriebs eingesetzt werden kann. 
+In diesem Zusammenhang sollte auch geprüft werden, welcher Videocodec für eine produktive Nutzung technisch und rechtlich geeignet ist. 
+
+Ein weiterer wichtiger Schritt wäre die Erweiterung der Kameralösung. Dabei müsste untersucht werden, wie Spieler und Dartscheibe sinnvoll aufgenommen werden können und welche Bildqualität für eine spätere Überprüfung erforderlich ist. 
+Auch die Positionierung der Kameras und der Umgang mit schlechten Lichtverhältnissen müssten dabei berücksichtigt werden. 
+
+Die Serverarchitektur könnte in zukünftigen Arbeiten ebenfalls weiterentwickelt werden. Für einen produktiven Einsatz mit vielen HB10-Geräten wäre zu prüfen, ob eine horizontale Skalierung, ein externer Videospeicher oder eine stärkere Integration in bestehende Dart-Systeme sinnvoll ist. 
+Besonders die zusätzliche Last durch Video-Uploads und Streaming müsste dabei berücksichtigt werden. 
+
+Auch die Webplattform bietet mehrere Erweiterungsmöglichkeiten. Für eine tatsächliche Spielüberprüfung wären Funktionen sinnvoll, mit denen Videos konkreten Spielen, Spielern oder Turnieren zugeordnet werden können. Zusätzlich könnten Markierungen, Kommentare oder ein Prüfstatus ergänzt werden, 
+damit auffällige Spielsituationen besser dokumentiert werden können. 
+
+Abschließend müsste vor einem produktiven Einsatz ein vollständiges Datenschutz- und Zugriffskonzept erstellt werden. Nutzer müssten über die Aufnahme informiert werden und dieser zustimmen können. Außerdem müsste sichergestellt werden, 
+dass nur berechtigte Personen Zugriff auf die gespeicherten Videos erhalten. Der entwickelte Prototyp bildet damit eine technische Grundlage, auf der weitere Arbeiten aufbauen können.

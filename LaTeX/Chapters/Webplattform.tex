@@ -1,4 +1,4 @@
-\chapter{Webplattform} \label{sec:web}
+\chapter{Webplattform} \label{sec:web} \todo{bilder zurecht schneiden}
 
 Damit die auf dem Server gespeicherten Videoaufnahmen für die spätere Überprüfung genutzt werden können, wird eine Webplattform benötigt. Diese stellt die Schnittstelle zwischen den gespeicherten Spieldaten und den Nutzern dar. Ohne eine solche Anwendung könnten die Videos zwar serverseitig abgelegt werden, 
 wären für die Spieler jedoch nicht in einer geeigneten Form zugänglich. Die Webplattform übernimmt daher die Aufgabe, die vorhandenen Videos übersichtlich bereitzustellen und eine einfache Nutzung der gespeicherten Inhalte zu ermöglichen. 
@@ -39,6 +39,29 @@ dass die zuvor gespeicherten Videodaten über eine Weboberfläche praktisch nutz
 Zusammengefasst ist die Webplattform dafür verantwortlich, die serverseitig gespeicherten Videos für den Nutzer zugänglich, auffindbar und abspielbar zu machen. Sie stellt damit die letzte notwendige Komponente dar, um die zuvor erfassten und gespeicherten Daten praktisch nutzbar zu machen. 
 Die Plattform bildet somit die Verbindung zwischen der technischen Speicherung der Aufnahmen und der tatsächlichen Überprüfung durch die Spieler.
 
+\section{Aufbau als browserbasierte Single-Page-Application} 
+
+Die Webplattform wurde im Prototypen als browserbasierte Single-Page-Application umgesetzt. Darunter wird in diesem Zusammenhang eine Webanwendung verstanden, bei der die grundlegende Oberfläche einmalig im Browser geladen wird und weitere Inhalte anschließend innerhalb dieser Oberfläche aktualisiert werden. 
+Der Nutzer muss dadurch nicht für jede Ansicht eine vollständig neue Seite vom Server laden. Stattdessen bleibt die Anwendung im Browser aktiv und ruft nur die jeweils benötigten Daten oder Videoinhalte vom Server ab. 
+
+Für den vorliegenden Prototypen ist dieser Aufbau naheliegend, da die Webplattform nur einen begrenzten Funktionsumfang besitzt. Die wesentlichen Ansichten bestehen aus der Startseite, der Übersicht der vorhandenen Videos und der Wiedergabeansicht. 
+Diese Bereiche können innerhalb einer gemeinsamen Oberfläche dargestellt werden, ohne dass für jede Funktion eine eigene serverseitig gerenderte Seite notwendig ist. Dadurch bleibt die Struktur der Anwendung übersichtlich und der Wechsel zwischen den einzelnen Ansichten kann direkt im Browser erfolgen. 
+
+Ein Vorteil dieses Ansatzes liegt darin, dass die Darstellung der Oberfläche stärker von der Bereitstellung der Daten getrennt werden kann. Der Server stellt die benötigten Videometadaten und Videodateien über definierte Schnittstellen bereit, während die Webplattform diese Informationen im Browser darstellt. 
+Damit übernimmt der Server vor allem die Speicherung, Verwaltung und Bereitstellung der Daten, während die Client-Anwendung für die Anzeige und einfache Nutzerinteraktion zuständig ist. Diese Trennung passt zur übrigen Architektur des Prototypen, 
+da auch die Videodateien und Metadaten getrennt verwaltet werden und die Webplattform lediglich auf die vom Server bereitgestellten Informationen zugreift. 
+
+Alternativ hätte die Webplattform auch als klassische Multi-Page-Application umgesetzt werden können. In diesem Fall würde der Server für verschiedene Ansichten jeweils eigene HTML-Seiten ausliefern. 
+Eine solche Lösung kann insbesondere bei statischen oder stark serverseitig geprägten Anwendungen sinnvoll sein, da die Darstellung stärker auf dem Server vorbereitet wird. Für den hier betrachteten Prototypen hätte dies jedoch den Nachteil, 
+dass selbst einfache Interaktionen wie das Wechseln zwischen Übersicht und Wiedergabe oder das Aktualisieren einer gefilterten Liste stärker an serverseitige Seitenwechsel gebunden wären. Dadurch würde die Oberfläche weniger flexibel auf Nutzeraktionen reagieren. 
+
+Eine weitere Alternative wäre eine vollständig serverseitig gerenderte Oberfläche, bei der auch die Videoliste und die Suchergebnisse direkt auf dem Server erzeugt werden. Dies würde die Logik im Browser reduzieren, allerdings auch die Kopplung zwischen Darstellung und Server erhöhen. 
+Für den Prototypen steht jedoch nicht die serverseitige Erzeugung fertiger Webseiten im Vordergrund, sondern die Überprüfung, ob gespeicherte Videodaten über eine Weboberfläche geladen, angezeigt und abgespielt werden können. Eine browserbasierte Single-Page-Application eignet sich dafür, 
+da sie die nötigen Funktionen mit einer vergleichsweise einfachen Struktur abbilden kann. 
+
+Gleichzeitig ist die Umsetzung als Single-Page-Application nicht automatisch mit einer produktionsreifen Oberfläche gleichzusetzen. Für eine spätere tatsächliche Nutzung müssten zusätzliche Aspekte betrachtet werden. Dazu gehören insbesondere eine klarere Nutzerführung, eine belastbare Rechteverwaltung, 
+eine bessere Fehlerbehandlung bei nicht verfügbaren Videos und eine stärkere Einbindung in den späteren Prüfprozess. Im Rahmen des Prototypen überwiegt jedoch der Vorteil, dass die grundlegenden Funktionen in einer einfachen, zusammenhängenden Benutzeroberfläche getestet werden können. 
+
 \section{Aufbau der Benutzeroberfläche} \label{sec:web-ui} 
 
 Die Benutzeroberfläche der Webplattform wurde im Rahmen des Prototypen bewusst einfach umgesetzt. Ziel der Entwicklung war nicht die Erstellung einer finalen Benutzeroberfläche, sondern die Bereitstellung einer Oberfläche, mit der die grundlegenden Funktionen der Anwendung getestet werden können. 
@@ -53,8 +76,7 @@ wie es für das Testen der Kernfunktionen notwendig war.
 \subsection{Startseite und Navigation}
 
 Die Startseite der Anwendung bildet den Einstiegspunkt in die Webplattform. Wie in Abbildung~\ref{fig:web-startseite} zu sehen ist, enthält diese Seite im Prototyp lediglich eine einfache Begrüßung sowie die Navigationsleiste im oberen Bereich. 
-Die Startseite besitzt damit keine umfangreiche fachliche Funktion. Sie dient vor allem dazu, einen initialen Zustand der Anwendung bereitzustellen und die Navigation zu ermöglichen. Der reduzierte Aufbau verdeutlicht, dass die Oberfläche nicht als endgültige Nutzeroberfläche angelegt wurde, 
-sondern zunächst nur den Zugriff auf die prototypischen Funktionen ermöglichen soll. 
+Die Startseite besitzt damit keine umfangreiche fachliche Funktion. Sie dient vor allem als Einstiegspunkt der Anwendung  und soll die Navigation ermöglichen. 
 
 \begin{figure}[h] 
     \centering 
@@ -63,14 +85,13 @@ sondern zunächst nur den Zugriff auf die prototypischen Funktionen ermöglichen
     \label{fig:web-startseite} 
 \end{figure} 
 
-Im oberen Bereich der Oberfläche befindet sich eine Navigationsleiste, die in den gezeigten Ansichten dauerhaft sichtbar ist. Diese enthält ein Symbol für die Startseite, Navigationspfeile sowie ein Suchfeld beziehungsweise ein Suchsymbol. Dadurch werden grundlegende Bedienelemente bereitgestellt, 
-die für den Testbetrieb ausreichend sind. Eine umfangreiche Menüstruktur wurde nicht umgesetzt, da der Prototyp nur einen begrenzten Funktionsumfang besitzt. Die Navigationsleiste erfüllt daher vor allem den Zweck, 
-zwischen den einfachen Ansichten der Anwendung zu wechseln und eine grundlegende Orientierung innerhalb der Webplattform zu ermöglichen. 
+Im oberen Bereich der Oberfläche befindet sich eine Navigationsleiste, die in den gezeigten Ansichten dauerhaft sichtbar ist. Diese enthält ein Symbol für die Startseite, Navigationspfeile sowie ein Suchfeld. Dadurch werden grundlegende Bedienelemente bereitgestellt, 
+die für den Testbetrieb ausreichend sind.  Die Navigationsleiste erfüllt daher vor allem den Zweck, zwischen den einfachen Ansichten der Anwendung zu wechseln und eine grundlegende Orientierung innerhalb der Webplattform zu ermöglichen. 
 
 \subsection{Videoübersicht und Suche}
 
 Der wichtigste Bereich der Benutzeroberfläche ist die Übersicht der verfügbaren Videos. Diese Ansicht ist in Abbildung~\ref{fig:web-videos-suche} dargestellt. Die gespeicherten Aufnahmen werden dort in einer tabellarischen Struktur angezeigt. Die Tabelle enthält die Spalten \enquote{Name}, 
-\enquote{Würfe} und \enquote{Datum}. Über den Namen beziehungsweise die Kennung kann eine Aufnahme unterschieden werden. Die Anzahl der Würfe stellt eine zusätzliche Information zum aufgezeichneten Spiel bereit, während das Datum die zeitliche Einordnung der Aufnahme ermöglicht. 
+\enquote{Würfe} und \enquote{Datum}. Über den Namen kann eine Aufnahme unterschieden werden. Die Anzahl der Würfe stellt eine zusätzliche Information zum aufgezeichneten Spiel bereit, während das Datum die zeitliche Einordnung der Aufnahme ermöglicht. 
 Dadurch kann geprüft werden, ob die vom Server gelieferten Metadaten korrekt in der Weboberfläche angezeigt werden. 
 
 \begin{figure}[h] 
@@ -86,7 +107,39 @@ der Status einer Überprüfung oder Hinweise auf bereits betrachtete Aufnahmen. 
 
 Zusätzlich zur Tabelle besitzt die Videoübersicht ein Suchfeld. Dieses ermöglicht es, die angezeigten Einträge zu filtern und dadurch gezielt nach bestimmten Aufnahmen zu suchen. Für den Prototypen ist diese Funktion besonders relevant, da sie zeigt, dass die Oberfläche nicht nur statische Daten anzeigen kann, 
 sondern auch einfache Nutzerinteraktionen unterstützt. Die Suche dient damit als Test, ob die geladenen Videometadaten innerhalb der Oberfläche verarbeitet und eingeschränkt dargestellt werden können. Erweiterte Such- und Filterfunktionen wurden nicht implementiert.
-Eine spätere Version könnte beispielsweise nach Datum, Spieler, Turnier, Status oder weiteren Metadaten filtern. 
+
+Die Videoübersicht dient nicht nur der Darstellung vorhandener Aufnahmen, sondern überprüft zugleich, ob die serverseitig gespeicherten Metadaten durch die Webplattform nutzbar gemacht werden können. 
+Für den Prototypen ist eine tabellarische Darstellung ausreichend, da der Schwerpunkt auf dem technischen Nachweis der Datenbereitstellung liegt. Eine produktive Oberfläche müsste diesen Bereich stärker an den tatsächlichen Prüfprozess anpassen. Dazu könnten beispielsweise weitere Filtermöglichkeiten, 
+eine Statusanzeige oder eine direktere Zuordnung zu einzelnen Spielen ergänzt werden. Diese Funktionen sind für den Nachweis der grundlegenden Videoübertragung und Wiedergabe jedoch nicht erforderlich.
+
+\subsection{Filterung und Sortierung der Videometadaten} 
+
+Damit gespeicherte Videos durch den Nutzer sinnvoll gefunden werden können, reicht die reine Wiedergabe einzelner Dateien nicht aus. Zusätzlich müssen die vorhandenen Videometadaten so dargestellt werden, dass eine bestimmte Aufnahme gezielt ausgewählt werden kann. 
+Zu diesen Metadaten gehören im Prototypen unter anderem der Name beziehungsweise die Kennung des Videos, die Anzahl der Würfe und der Erstellungszeitpunkt. Diese Informationen werden in der Webplattform in einer Übersicht angezeigt,
+ und bilden die Grundlage für die Filterung und Sortierung der vorhandenen Aufnahmen. 
+
+Die Filterung der Videometadaten dient dazu, die angezeigte Anzahl an Einträgen einzuschränken. Dies ist vor allem dann relevant, wenn ein Nutzer nicht alle vorhandenen Videos betrachten möchte, sondern nach einer bestimmten Aufnahme sucht. Im Prototypen wird hierfür eine einfache Suchfunktion bereitgestellt. 
+Dadurch kann geprüft werden, ob die vom Server gelieferten Metadaten nicht nur statisch angezeigt, sondern auch innerhalb der Oberfläche verarbeitet werden können. Für die grundlegende Funktionsprüfung ist eine solche einfache Filterung ausreichend, da zunächst gezeigt werden soll, 
+dass gespeicherte Videos anhand ihrer beschreibenden Informationen auffindbar sind. 
+
+Die Sortierung ergänzt diese Funktion, indem die vorhandenen Einträge in eine nachvollziehbare Reihenfolge gebracht werden können. Besonders der Erstellungszeitpunkt ist hierfür relevant, da ein Spieler mehrere Spiele durchführen kann und die zugehörigen Videos zeitlich unterscheidbar bleiben müssen. 
+Eine Sortierung nach Datum ermöglicht es, neuere oder ältere Aufnahmen gezielt zu finden. Auch die Anzahl der Würfe kann als Sortierkriterium verwendet werden, wenn Videos anhand ihres Umfangs verglichen oder eingeordnet werden sollen. Dadurch wird die Übersicht nicht nur zu einer einfachen Liste, 
+sondern zu einem Werkzeug, mit dem die vorhandenen Aufnahmen gezielter genutzt werden können. 
+
+Für den Prototypen ist es sinnvoll, Filterung und Sortierung zunächst auf Basis der bereits geladenen Metadaten in der Webplattform umzusetzen. Da die erwartete Datenmenge begrenzt ist, können die Metadaten vom Server geladen und anschließend im Browser eingeschränkt oder sortiert dargestellt werden. 
+Diese Lösung reduziert die Anzahl zusätzlicher Serveranfragen und hält die Serverlogik einfach. Gleichzeitig bleibt die Umsetzung gut nachvollziehbar, da der Server lediglich die vorhandenen Metadaten bereitstellt und die Webplattform deren Darstellung übernimmt. 
+
+Eine Alternative wäre eine serverseitige Filterung und Sortierung. Dabei würde der Client nicht mehr die vollständige Liste der verfügbaren Videos laden, sondern dem Server Such- und Sortierparameter übergeben. Der Server würde daraufhin nur die passenden Ergebnisse zurückgeben. 
+Dieser Ansatz wäre insbesondere dann sinnvoll, wenn die Anzahl der gespeicherten Videos deutlich wächst oder wenn komplexere Suchkriterien verwendet werden sollen. Außerdem könnten Zugriffsbeschränkungen und fachliche Regeln stärker direkt auf dem Server berücksichtigt werden. 
+Für den aktuellen Prototypen ist diese zusätzliche Komplexität jedoch nicht notwendig, da zunächst die grundlegende Nutzbarkeit der Webplattform im Vordergrund steht. 
+
+Eine weitere Möglichkeit wäre die Kombination aus serverseitiger Vorfilterung und clientseitiger Nachbearbeitung. Dabei könnte der Server beispielsweise nur Videos eines bestimmten Spielers oder Turniers bereitstellen,
+ während die Webplattform innerhalb dieser Teilmenge weitere Filter oder Sortierungen anwendet. Ein solcher Ansatz wäre für eine spätere produktive Version sinnvoll, da die Datenmenge reduziert und gleichzeitig eine schnelle Interaktion in der Oberfläche ermöglicht werden könnte. 
+ Im Prototypen wurde diese Erweiterung jedoch nicht benötigt, da noch keine vollständige Integration in spätere Turnier- oder Benutzerkonzepte umgesetzt wurde. 
+
+Die Filterung und Sortierung der Videometadaten zeigt damit eine wichtige Grenze zwischen Prototyp und produktiver Anwendung. Für den Prototypen genügt eine einfache Verarbeitung der angezeigten Metadaten, um die technische Machbarkeit der Übersicht zu demonstrieren. 
+Für einen späteren Einsatz müsste die Funktion erweitert werden. Denkbar wären zusätzliche Filter nach Spieler, Turnier, Spielmodus, Prüfstatus oder Zeitraum. Ebenso könnte eine serverseitige Begrenzung der Ergebnisse notwendig werden, wenn sehr viele Videos gespeichert werden. 
+Die aktuelle Umsetzung bildet somit eine einfache Grundlage, auf der spätere Such- und Verwaltungsfunktionen aufbauen können.
 
 \subsection{Videowiedergabe}
 
@@ -119,11 +172,22 @@ Die Oberfläche stellt damit keine eigenständige Datenhaltung dar, sondern grei
 Für die Videoübersicht werden zunächst die vorhandenen Metadaten der gespeicherten Aufnahmen geladen. Diese Daten werden anschließend in der Tabelle dargestellt. Dadurch kann der Nutzer erkennen, welche Videos verfügbar sind und welche grundlegenden Eigenschaften diese besitzen. 
 Die Webplattform übernimmt hierbei die Aufgabe, die vom Server gelieferten Daten in eine für den Nutzer lesbare Darstellung zu überführen. 
 
-Wird ein Video ausgewählt, muss die Anwendung die zugehörige Videodatei beziehungsweise den entsprechenden Videostream vom Server abrufen. Die Wiedergabe erfolgt anschließend im Browser über den eingebundenen Videoplayer. Für den Nutzer ist dieser technische Ablauf nicht direkt sichtbar. 
+Wird ein Video ausgewählt, muss die Anwendung die zugehörige Videodatei  vom Server abrufen. Die Wiedergabe erfolgt anschließend im Browser über den eingebundenen Videoplayer. Für den Nutzer ist dieser technische Ablauf nicht direkt sichtbar. 
 Aus Nutzersicht wird lediglich ein Video ausgewählt und anschließend abgespielt. Die Kommunikation mit dem Server bildet jedoch die Grundlage dafür, dass die gespeicherten Inhalte in der Oberfläche verfügbar sind. 
 
 Im Prototypen wurde diese Kommunikation so einfach wie möglich gehalten. Ziel war es, den grundlegenden Ablauf vom gespeicherten Video bis zur Wiedergabe in der Webplattform zu validieren. Erweiterte Mechanismen wie Benutzerrollen, 
-detaillierte Berechtigungen oder komplexe Zugriffskonzepte wurden in der Oberfläche nicht umgesetzt. Für eine spätere produktive Version wären solche Erweiterungen jedoch notwendig, da gespeicherte Videoaufnahmen nur berechtigten Personen zugänglich gemacht werden sollten. 
+detaillierte Berechtigungen oder komplexe Zugriffskonzepte wurden in der Oberfläche nicht umgesetzt. Für eine spätere produktive Version wären solche Erweiterungen jedoch notwendig, da gespeicherte Videoaufnahmen nur berechtigten Personen zugänglich gemacht werden sollten.
+
+\section{Datenfluss innerhalb der Webplattform} 
+
+Die Webplattform bildet die Schnittstelle zwischen dem Nutzer und den vom Server bereitgestellten Videodaten. Beim Aufruf der Videoübersicht werden zunächst nicht die eigentlichen Videodateien geladen, sondern die zugehörigen Metadaten vom Server angefordert. 
+Dadurch kann die Oberfläche eine Übersicht der vorhandenen Aufnahmen darstellen, ohne bereits große Mediendateien übertragen zu müssen. Erst wenn der Nutzer eine konkrete Aufnahme auswählt, wird die zugehörige Videodatei beziehungsweise die entsprechende \ac{HLS}-Playlist vom Server abgerufen. 
+
+Dieser Ablauf entspricht der in Kapitel~\ref{sec:server} beschriebenen Trennung zwischen Metadaten und Videodateien. Die Webplattform nutzt die Metadaten zur Suche, Anzeige und Auswahl der Aufnahmen. Die eigentliche Mediendatei wird dagegen erst für die Wiedergabe benötigt. 
+Dadurch bleibt die Videoübersicht unabhängig von der Größe der gespeicherten Videodaten und kann auch dann geladen werden, wenn mehrere Aufnahmen auf dem Server vorhanden sind. 
+
+Aus Sicht des Nutzers besteht der Ablauf lediglich aus dem Öffnen der Übersicht, der Auswahl eines Videos und der anschließenden Wiedergabe. Technisch betrachtet werden dabei jedoch zwei unterschiedliche Serverzugriffe ausgeführt. 
+Zunächst werden strukturierte Informationen zu den gespeicherten Videos abgerufen. Anschließend wird für die ausgewählte Aufnahme der eigentliche Videoinhalt geladen. Die Webplattform übernimmt damit die Aufgabe, diese technischen Zugriffe in einen einfachen Bedienablauf zu überführen.
 
 \section{Darstellung und Wiedergabe der Videos} \label{sec:web-darstellung} 
 

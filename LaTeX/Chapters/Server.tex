@@ -1,6 +1,6 @@
 \chapter{Server} \label{sec:server}
 
-Für das Speichern und Bereitstellen der Videos wird ein Server benötigt, der die empfangenen Videodaten und deren Metadaten speichert und auf Anfrage eines Nutzers bereitstellt. Dieser muss dabei in der Lage sein, eine große Anzahl an Nutzern gleichzeitig zu bedienen.
+Für das Speichern und Bereitstellen der Videos wird ein Server benötigt, der die empfangenen Videodaten und deren Metadaten speichert und auf Anfrage eines Nutzers bereitstellt. Dieser muss dabei in der Lage sein, eine größere Menge Anzahl an Nutzern gleichzeitig zu bedienen.
 
 \section{Wahl des Servertyps}
 
@@ -11,8 +11,8 @@ sodass eine Speicherung auf dem Dateisystem des Servers keine Probleme mit sich 
 
 Als Kommunikationsprotokoll zwischen Server und Clients wird HTTP zusammen mit REST-API verwendet. Da dies eine Simple aber ausreichende Methode ist. Der größte Nachteil ist das abgebrochene Anfragen nicht fortgesetzt werden können. Somit kann die Übertragung von großen Dateien problematisch werden.
 Da aber HLS als Streaming Protokoll verwendet wird, (s. \ref{sec:hls}) liegen die Videos nicht als eine einzelne große Datei vor, sondern eine Playlist Datei mit einzelnen Video Segmenten, welche nicht größer als 5MB werden. Deshalb ist die Übertagung der Videos kein Problem.
-Es ist sehr einfach einen REST-Server mittels Spring Boot aufzustellen. Spring Boot übernimmt den Großteil der Aufgaben und es müssen nur die Endpunkte für die Clients und die Schnittstellen zur Datenbank definiert werden.
-Um die Metadaten der Videos zu speichern wurde eine relationale Datenbank gewählt.
+Es braucht deutlich reduzierten Aufwand einen REST-Server mittels Spring Boot aufzustellen. Spring Boot übernimmt den Großteil der Aufgaben und es müssen nur die Endpunkte für die Clients, die Schnittstellen zur Datenbank und wie Erhaltene Anfragen bearbeitet werden müssen definiert werden.
+Da eine große Menge strukturierter Video-Metadaten gespeichert werden, wurde eine relationale Datenbank zur effizienten Verwaltung dieser Daten eingesetzt.
 
 \subsection{Speicherkonzept für Videodaten} 
 
