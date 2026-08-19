@@ -41,7 +41,7 @@ Die Plattform bildet somit die Verbindung zwischen der technischen Speicherung d
 
 \section{Aufbau als browserbasierte Single-Page-Application} 
 
-Die Webplattform wurde im Prototypen als browserbasierte Single-Page-Application umgesetzt. Darunter wird in diesem Zusammenhang eine Webanwendung verstanden, bei der die grundlegende Oberfläche einmalig im Browser geladen wird und weitere Inhalte anschließend innerhalb dieser Oberfläche aktualisiert werden. 
+Die Webplattform wurde im Prototypen als browserbasierte Single-Page-Application \cite{mdn_spa_2025} umgesetzt. Darunter wird in diesem Zusammenhang eine Webanwendung verstanden, bei der die grundlegende Oberfläche einmalig im Browser geladen wird und weitere Inhalte anschließend innerhalb dieser Oberfläche aktualisiert werden. 
 Der Nutzer muss dadurch nicht für jede Ansicht eine vollständig neue Seite vom Server laden. Stattdessen bleibt die Anwendung im Browser aktiv und ruft nur die jeweils benötigten Daten oder Videoinhalte vom Server ab. 
 
 Für den vorliegenden Prototypen ist dieser Aufbau naheliegend, da die Webplattform nur einen begrenzten Funktionsumfang besitzt. Die wesentlichen Ansichten bestehen aus der Startseite, der Übersicht der vorhandenen Videos und der Wiedergabeansicht. 
@@ -55,7 +55,7 @@ Alternativ hätte die Webplattform auch als klassische Multi-Page-Application um
 Eine solche Lösung kann insbesondere bei statischen oder stark serverseitig geprägten Anwendungen sinnvoll sein, da die Darstellung stärker auf dem Server vorbereitet wird. Für den hier betrachteten Prototypen hätte dies jedoch den Nachteil, 
 dass selbst einfache Interaktionen wie das Wechseln zwischen Übersicht und Wiedergabe oder das Aktualisieren einer gefilterten Liste stärker an serverseitige Seitenwechsel gebunden wären. Dadurch würde die Oberfläche weniger flexibel auf Nutzeraktionen reagieren. 
 
-Eine weitere Alternative wäre eine vollständig serverseitig gerenderte Oberfläche, bei der auch die Videoliste und die Suchergebnisse direkt auf dem Server erzeugt werden. Dies würde die Logik im Browser reduzieren, allerdings auch die Kopplung zwischen Darstellung und Server erhöhen. 
+Eine weitere Alternative wäre eine vollständig serverseitig gerenderte Oberfläche \cite{osmani_miller_rendering_2026}, bei der auch die Videoliste und die Suchergebnisse direkt auf dem Server erzeugt werden. Dies würde die Logik im Browser reduzieren, allerdings auch die Kopplung zwischen Darstellung und Server erhöhen. 
 Für den Prototypen steht jedoch nicht die serverseitige Erzeugung fertiger Webseiten im Vordergrund, sondern die Überprüfung, ob gespeicherte Videodaten über eine Weboberfläche geladen, angezeigt und abgespielt werden können. Eine browserbasierte Single-Page-Application eignet sich dafür, 
 da sie die nötigen Funktionen mit einer vergleichsweise einfachen Struktur abbilden kann. 
 
