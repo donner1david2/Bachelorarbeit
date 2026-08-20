@@ -1,0 +1,18 @@
+@startuml
+title Serverstruktur
+
+actor HB10
+actor Browser
+
+component "Videoserver\n\nPOST /api/v1/video/{playerId}/{filename}\nGET /api/v1/video/{playerId}/{filename}\nGET /api/v1/video/videos\n\nIndex.html" as Server
+
+database "PostgreSQL\nMetadaten" as DB
+component "Dateisystem\nHLS-Dateien" as FS
+
+HB10 --> Server : Upload
+Browser --> Server : Abruf
+
+Server --> DB
+Server --> FS
+
+@enduml

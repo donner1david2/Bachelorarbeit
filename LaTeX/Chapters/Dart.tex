@@ -1,15 +1,14 @@
 % !TEX root =  master.tex
 \chapter{HB10} \label{sec:dart}
 
-Als Videoquelle und Spielgerät dient der Löwen-DART HB10, dieser erstellt kurze Videoschnipsel für jeden Wurf, aus einem Spiel des Zukünftigen Turnier Modus. Nach Abschluss des Spiels werden alle Videoschnipsel zu einem Video zusammengeführt, und für das Streaming vorbereitet.
+Als Videoquelle und Spielgerät dient der Löwen-DART HB10, dieser muss kurze Videoaufnahmen für jeden Wurf erstellen, aus einem Spiel des zukünftigen Turnier Modus. Nach Abschluss des Spiels werden alle Videoaufnahmen zu einem Video zusammengeführt, und für das Streaming vorbereitet.
 
 \todo{mehr zum HB10 schreiben}
 
 \section{Aufbau}
-Der HB10 besitzt eine Ryzen R1600 Serie embedded APU, und verwendet das Ubuntu Betriebssystem. Darauf aufbauend wurde die Software des HB10 bestehend aus einer Hauptanwendung in welcher der normale Spielbetrieb abläuft, 
-und mehreren \enquote{Satellit}-Anwendungen welche auf eine bestimmte Funktionalität spezialisiert sind entwickelt. Zum Beispiel der Update-Server, welcher dafür zuständig ist, das gesamte System zu updaten.
-Für die Videoaufnahme-Funktion des HB10 würde eine solche Anwendung erstellt (s. Video-App in \cref{fig:dartaufbau}).
-
+Der HB10 besitzt eine AMD Ryzen R1600 Serie embedded APU, und verwendet das Ubuntu Betriebssystem. Darauf aufbauend wurde die Software des HB10 bestehend aus einer Hauptanwendung in welcher der normale Spielbetrieb abläuft, 
+und mehreren \enquote{Satellit}-Anwendungen welche auf eine bestimmte Funktionalität spezialisiert sind entwickelt. Ein Beispiel dafür ist der sogenannte "Update-Server", welcher dafür zuständig ist, das gesamte System zu updaten.
+%Für die Videoaufnahme-Funktion des HB10 würde eine solche Anwendung erstellt (s. Video-App in \cref{fig:dartaufbau}).
 \begin{figure}[h]
     \centering
     \includesvg[width=\textwidth]{img/Dart_Apps.svg}
@@ -18,13 +17,14 @@ Für die Videoaufnahme-Funktion des HB10 würde eine solche Anwendung erstellt (
     \label{fig:dartaufbau}
 \end{figure}
 
-Der Grund für diesen Aufbau ist, dass der HB10 auf den Geldspielgeräten basiert. Diese bestehen aus gründen der Sicherheit und Wartbarkeit aus zwei Computern, einem Secure-Modul welches für die Spiele-Logik verantwortlich ist, und einem zweiten Rechner welcher für den Rest, zum Beispiel die Grafik, 
-zuständig ist. Da nur der Teil auf dem Secure-Modul relevant für Prüfungen der \ac{PTB} ist, können die anderen Komponenten auf dem zweiten Rechner deutlich einfacher geupdatet werden. Da von diesem Aufbau ausgehend ohnehin eine Kommunikation über Sockets besteht, ist es sinnvoll Funktionalitäten welche
-hauptsächlich unabhängig vom eigentlichen Spielbetrieb ablaufen in eine gesonderte Anwendung zu verschieben.
+Der Grund für diesen Aufbau ist, dass die Software des HB10 auf den Geldspielgeräten von Löwen Entertainment basiert. Diese bestehen aus Gründen der Sicherheit und Wartbarkeit aus zwei Computern, einem leistungsschwachen, aber besonders geschützten, Secure-Modul, 
+welches für die Spiele-Logik und Geldverarbeitung verantwortlich ist, und einem zweiten Rechner welcher für den anspruchsvollere Anwendungen, wie zum Beispiel die Grafik, zuständig ist. Da nur der Teil auf dem Secure-Modul relevant für Prüfungen der \ac{PTB}\cite{https://www.ptb.de/cms/ptb/fachabteilungen/abt8/fb-85/ag-853.html} ist, 
+können die anderen Komponenten auf dem zweiten Rechner deutlich einfacher im Fehlerfall aktualisiert werden. Die Kommunikation der einzelnen Komponenten geschieht dabei über Sockets  über Ethernet. Beim HB10 laufen alle Komponenten auf dem AMD Ryzen System, sodass die Ethernetverbindung an dieser Stelle entfällt. 
+Gemäß des beschriebenen Konzepts wurde eine eigene Anwendung für die Videoaufnahmefunktion erstellt (s. Video-App in \cref{fig:dartaufbau}).
 
-Die Neuimplementierung der Videofunktion des HB10 erstreckt sich über zwei Anwendungen, welche miteinander kommunizieren (s. \cref{fig:videoaufbau}). Die erste ist die eigentliche DART-Anwendung, diese ist dafür zuständig die zweite Anwendung über Ereignisse wie Treffer, Spiel Start und Ende zu Informieren,
-sowie das Abschließende übertragen an den Server. Die zweite Anwendung, ist verantwortlich für das Zwischenspeichern, das Zusammenschneiden, das Komprimieren der Videodaten, sowie das anschließende Erstellen der Playlist. Im folgenden wird der Aufbau der einzelnen Komponenten kurz dargestellt,
-die Abläufe in und zwischen diesen Komponenten folgt anschließend in \cref{sec:dart-ablauf}
+Somit erstreckt sich die neuimplementiere Videofunktion des HB10 über zwei Anwendungen (s. \cref{fig:videoaufbau}). Die erste ist die eigentliche DART-Anwendung, diese ist dafür zuständig die zweite Anwendung über Ereignisse wie Treffer, Spiel-Start und Ende zu Informieren,
+sowie das abschließende Übertragen an den Server. Die zweite Anwendung, ist verantwortlich für das Zwischenspeichern, das Zusammenschneiden, das Komprimieren der Videodaten, sowie das anschließende Erstellen der Playlist. Im Folgenden wird der Aufbau der einzelnen Komponenten kurz dargestellt,
+die Abläufe in und zwischen diesen Komponenten folgt anschließend in \cref{sec:dart-ablauf} \todo{itemizeation}
 
 \begin{figure}[h]
     \centering
@@ -36,13 +36,13 @@ die Abläufe in und zwischen diesen Komponenten folgt anschließend in \cref{sec
 
 \subsection{Kamera}
 
-Die Kamera(Modell:  ELP-USB3MP01HL29) dient als Videoquelle für die Aufnahmen des Spielers und der Dartscheibe. Für den Prototypen gibt es zunächst eine Kamera, später wird der HB10 jeweils eine Kamera für den Spieler und die Dartscheibe besitzen. 
-Die angewandte Kamera bietet verschiedene Videoformate in Verschiedenen Auflösungen und Bildwiederholfrequenzen an. Für die Videoaufnahme am HB10 wurde das einzige unkomprimierte Format der Kamera gewählt, 
-da vorgesehen ist, die Videos vor dem Absenden zu bearbeiten, oder Objekte darin zu erkennen und so ein zusätzliches dekodieren dazu gespart werden kann. Des weiteren erleichtert ein unkomprimiertes Format das Puffern einer Bestimmten Videolänge, da die Größe der einzelnen Frames bekannt ist.
+Die Kamera (Modell:  ELP-USB3MP01HL29)\cite{https://www.elpcctv.com/3mp-h264-ar0331-cmos-wdr-camera-module-usb-with-29mm-wide-angle-lens-for-vehicle-video-surveillanc-p-283.html } dient als Videoquelle für die Aufnahmen des Spielers und der Dartscheibe. Für den Prototypen gibt es zunächst eine Kamera, 
+später wird der HB10 jeweils eine Kamera für den Spieler und die Dartscheibe besitzen. Die angewandte Kamera bietet verschiedene Videoformate in Verschiedenen Auflösungen und Bildwiederholfrequenzen an. Für die Videoaufnahme am HB10 wurde das einzige unkomprimierte Format der Kamera gewählt, 
+da vorgesehen ist, die Videos vor dem Absenden zu bearbeiten, oder Objekte darin zu erkennen und so ein zusätzliches dekodieren gespart werden kann. Des Weiteren erleichtert ein unkomprimiertes Format das Puffern einer bestimmten Videolänge, da die Größe der einzelnen Frames bekannt ist.
 
-Für das Testen wurden eine Auflösung von 1280x720 pixel und eine Bildwiederholfrequenz von 10 fps gewählt, da dies eine gute Balance zwischen Qualität und Dateigröße bietet. Auf den ersten Blick erscheint diese Wahl für die Erkennung von Betrugsversuchen als Ausreichend, 
+Für den Test wurden eine Auflösung von 1280x720 pixel und eine Bildwiederholfrequenz von 10 fps gewählt, da dies eine gute Balance zwischen Qualität und Dateigröße bietet. Auf den ersten Blick erscheint diese Wahl für die Erkennung von Betrugsversuchen als Ausreichend, 
 und bietet eine vergleichsweise geringe Dateigröße. Dies trägt dazu bei, dass die Funktionalität auch an Orten mit niedriger Bandbreite zu gewährleisten ist. Welche Auflösung und Bildwiederholfrequenz schließlich gewählt werden sollte, muss weiter untersucht werden, 
-und wird in dieser Arbeit nicht weiter behandelt.
+und wird in dieser Arbeit nicht abschließend behandelt.
 
 \paragraph{Integration der Kamera}
 
@@ -61,12 +61,12 @@ Diese Trennung reduziert die Komplexität innerhalb der Hauptanwendung und erlei
 \begin{figure}[h]
     \centering
     \includesvg[width=\textwidth]{img/Video_App.svg}
-    \caption{Architektur und Datenfluss der Videoaufnahme-Anwendung. Die Anwendung verarbeitet von der Kamera bereitgestellte rohe(YUYV) Videodaten, speichert diese zunächst in einem Ringpuffer und erzeugt daraus ereignisbasierte Videoausschnitte sowie fertige Videos. 
+    \caption{Architektur und Datenfluss der Video-App. Die Anwendung verarbeitet von der Kamera bereitgestellte rohe(YUYV) Videodaten, speichert diese zunächst in einem Ringpuffer und erzeugt daraus ereignisbasierte Videoausschnitte sowie fertige Videos. 
     Die Steuerung erfolgt über Ereignisse und Antworten im Austausch mit der Dart-App; die erzeugten Videodateien werden im Dateisystem abgelegt.}
     \label{fig:videoapp}
 \end{figure} \todo{referenz auf abschnitt/quelle für YUYV}
 
-Die Video-App (s. \cref{fig:videoapp}) ist die eigenständige Komponente zur Verarbeitung der im HB10 anfallenden Videodaten. Während die Dart-App den Spielbetrieb steuert, konzentriert sich die Video-App ausschließlich auf Aufgaben der Videoaufnahme und -aufbereitung. 
+Die Video-App (s. \cref{fig:videoapp}) ist die eigenständige Komponente zur Verarbeitung der im HB10 anfallenden Videodaten. Während die Dart-App den Spielbetrieb steuert, konzentriert sich die Video-App ausschließlich auf Aufgaben der Videoaufnahme und \mbox{-aufbereitung}. 
 Sie ist damit funktional klar von der Hauptanwendung getrennt und erweitert das Gesamtsystem um die technische Umsetzung der Videofunktion.l
 
 Über die Schnittstelle zur Dart-App wird die Video-App in das Gesamtsystem eingebunden, während die Kamera die eigentliche Quelle der Bilddaten darstellt. Ergänzt wird dies durch interne Puffer- und Verarbeitungsstrukturen, die erforderlich sind, 
@@ -77,8 +77,6 @@ Durch diese Auslagerung videobezogener Funktionen bleibt die Gesamtarchitektur �
 
 \subsection{Kommunikation zwischen Dart-App und Video-App}
 
-Bei jedem Austausch zwischen Dart-App und Video-App findet folgender Ablauf statt. Beide Anwendungen können als Beide Rollen vorkommen.
-
 \begin{figure}[h!]
     \centering
     \includesvg[width=0.75\textwidth]{img/PlantUml/socket/socket.svg}
@@ -87,39 +85,42 @@ Bei jedem Austausch zwischen Dart-App und Video-App findet folgender Ablauf stat
     \label{fig:dartsocket}
 \end{figure}
 
-Für die Kommunikation zwischen Dart-App und Video-App wird eine Socket Verbindung verwendet (s. \cref{fig:dartsocket}). Die Video-App wartet auf eine Verbindung der Dart-App, und ist Anschließend bereit Ereignisse mit zusätzlichen Daten zu erhalten.
+Für die Kommunikation zwischen Dart-App und Video-App wird eine Socket Verbindung verwendet (s. \cref{fig:dartsocket}). Die Video-App wartet auf eine Verbindung der Dart-App, und ist anschließend bereit Ereignisse mit zusätzlichen Daten zu erhalten.
 Als Daten werden Datenstrukturen verwendet, die in beiden Anwendungen definiert wurden, welche zuerst benötigte Daten in einen Seriellen Bytestream schreiben anschließend die Länge des Bytestreams, und darauf den eigentlicher Stream übertragen.
-Der Empfänger kann den empfangenen Stream dann deserealisieren, um alle Daten zu erhalten die er benötigt.
+Der Empfänger kann den empfangenen Stream dann deserealisieren, um alle Daten zu erhalten die er benötigt. Da die Kommunikation bidirektional ist, können die Rollen vertauscht werden.
 
-\section{Ablauf} \label{sec:dart-ablauf}
+\section{Struktur} \label{sec:dart-ablauf}
 
-Der Ablauf der Videoaufnahme und Komprimierung lässt sich grob in drei Bereiche unterteilen: 
+Die implementierte Struktur der Videoaufnahme und Komprimierung in den neu entwickelten Komponenten des HB10 lässt sich grob in drei Bereiche unterteilen: 
 
 \begin{itemize}
-    \item die Verarbeitung von Spielereignissen. 
-    \item der Aufbau der Systemkommunikation.
-    \item die fortlaufende Erfassung und Zwischenspeicherung der Videodaten.
+    \item Initialisierung des Systems und Aufbau der Kommunikation 
+    \item Kontinuierliche Erfassung und Zwischenspeicherung der Bilddaten
+    \item Verarbeitung eines Wurfes bis zur Bereitstellung des Videos
 \end{itemize}
 
-Zusammen zeigen die Diagramme, wie aus einzelnen Ereignissen im Spiel schrittweise verwertbare Videoinhalte entstehen.
+Diese werden in den folgenden Abschnitten erläutert.
 
 \subsection{Initialisierung des Systems und Aufbau der Kommunikation}
 
 Im ersten Bereich der Video-App findet der Aufbau der Verbindung zwischen den beteiligten Komponenten sowie die Herstellung der Betriebsbereitschaft für die spätere Videoaufnahme (s. \cref{fig:dartsequenz1}). Sichtbar wird insbesondere, 
 dass das System nicht erst mit dem ersten Wurf aktiv wird, sondern bereits im Vorfeld in einen aufnahmefähigen Zustand überführt werden muss.
 
-\begin{figure}[h]
+Zur grafischen Darstellung der Abläufe und der Kommunikation zwischen den beteiligten Komponenten werden im Folgenden mit PlantUML\cite{https://plantuml.com/de/} erstellte Diagramme verwendet.
+
+\begin{figure}[h!]
     \centering
-    \includesvg[width=0.65\textwidth]{img/PlantUml/DartSequenz1/DartSequenz1.svg}
+    {\small
+    \includesvg[width=0.65\textwidth]{img/PlantUml/DartSequenz1/DartSequenz1.svg}}
     \caption{Initialisierung der Videofunktion vor Beginn der eigentlichen Aufnahme. Die VideoMain-Komponente stellt zunächst eine Socket-Schnittstelle bereit und wartet auf eine Verbindung der Dart-App. 
-    Nach erfolgreichem Verbindungsaufbau wird zusätzlich die Kameraverbindung geöffnet und ein separater Thread für die fortlaufende Verarbeitung der Kamerabilder erzeugt.}
+    Nach erfolgreichem Verbindungsaufbau wird zusätzlich die Kameraverbindung geöffnet und ein separater \mbox{Thread} für die fortlaufende Verarbeitung der Kamerabilder erzeugt.}
     \label{fig:dartsequenz1}
 \end{figure}
 
 Zu Beginn stellt die Videokomponente eine Kommunikationsschnittstelle bereit und wechselt anschließend in einen wartenden Zustand. Diese Wartephase ist notwendig, damit eingehende Verbindungen von außen angenommen werden können. Das Diagramm macht deutlich, dass die Videokomponente zunächst passiv bleibt, 
-bis eine Verbindung von der \texttt{Dart-App} aufgebaut wird.
+bis eine Verbindung von der Dart-App aufgebaut wird.
 
-Parallel dazu versucht die \texttt{Dart-App}, die Verbindung zur Videokomponente herzustellen. Erst wenn dieser Schritt erfolgreich abgeschlossen ist, kann ein geregelter Nachrichtenaustausch stattfinden.
+Parallel dazu versucht die Dart-App, die Verbindung zur Videokomponente herzustellen. Erst wenn dieser Schritt erfolgreich abgeschlossen ist, kann ein geregelter Nachrichtenaustausch stattfinden.
 
 Nach dem erfolgreichen Kommunikationsaufbau folgt die Aktivierung der Kameraanbindung. Damit wird die Grundlage für die spätere laufende Bildaufnahme geschaffen. Dieser Schritt ist ein wichtiger Bestandteil der Initialisierung, 
 da das System bereits vor dem ersten für das Spiel relevanten Ereignis in der Lage sein muss, Videodaten fortlaufend bereitzuhalten.
@@ -129,9 +130,10 @@ da das System bereits vor dem ersten für das Spiel relevanten Ereignis in der L
 Im zweiten Teil finden der periodische Empfang von Bilddaten aus der Kamera sowie deren Zwischenspeicherung innerhalb des Systems statt (s. \cref{fig:dartsequenz2}). Anders als im ersten Teil, der die Initialisierung zeigt, und der dritte Teil, der sich auf Spielereignisse konzentriert, 
 stellt dieses Diagramm die dauerhafte Laufzeitstruktur der Videoerfassung dar.
 
-\begin{figure}[hbp]%[H]
+\begin{figure}[h!]%[H]
     \centering
-    \includesvg[width=0.5\textwidth]{img/PlantUml/DartSequenz2/DartSequenz2.svg}
+    {\small
+    \includesvg[width=0.7\textwidth]{img/PlantUml/DartSequenz2/DartSequenz2.svg}}
     \caption{Kontinuierliche Erfassung und Zwischenspeicherung der Kamerabilder während des Betriebs. Der VideoFramesThread liest fortlaufend einzelne Frames von der Kamera ein und legt diese in einem internen Puffer ab. 
     Dadurch stehen bei einem später gemeldeten Spielereignis nicht nur aktuelle Bilddaten, sondern auch unmittelbar zuvor aufgenommene Frames zur Verfügung.}
     \label{fig:dartsequenz2}
@@ -147,18 +149,19 @@ Dadurch stellt die Videoerfassung eine permanente Grundlage bereit, auf die ande
 
 \subsection{Verarbeitung eines Wurfes bis zur Bereitstellung des Videos}
 
-Der letzte Teil (s. \cref{fig:dartsequenz3}) ist zuständig für den fachlichen Ablauf, der von einem registrierten Wurf bis zur späteren Bereitstellung des zugehörigen Videos reicht. Im Mittelpunkt steht die Zusammenarbeit zwischen \texttt{Dart-App}, \texttt{Video\_Main}, \texttt{File\_System} und \texttt{Server}. 
+Der letzte Teil (s. \cref{fig:dartsequenz3}) ist zuständig für den fachlichen Ablauf, der von einem registrierten Wurf bis zur späteren Bereitstellung des zugehörigen Videos reicht. Im Mittelpunkt steht die Zusammenarbeit zwischen Dart-App, Video-Main, File-System und Server. 
 Deutlich wird hierbei vor allem die Trennung zwischen dem Spielbetrieb selbst und der nachgelagerten Videoverarbeitung.
 
 \begin{figure}[h!]
     \centering
-    \includesvg[width=0.8\textwidth]{img/PlantUml/DartSequenz3/DartSequenz3.svg}
+    {\scriptsize
+    \includesvg[width=0.7\textwidth]{img/PlantUml/DartSequenz3/DartSequenz3.svg}}
     \caption{Ablauf der Videoverarbeitung von einem registrierten Dartwurf bis zur Bereitstellung des fertigen Videos. Während des Spiels sendet die Dart-App Trefferereignisse an die VideoMain-Komponente, die daraufhin die zugehörigen Rohdaten im Dateisystem speichert. 
     Nach Spielende werden die gespeicherten Rohdaten eingelesen, komprimiert und als verarbeitetes Video abgelegt, bevor die Dart-App das Ergebnis abruft und an den Server überträgt.}
     \label{fig:dartsequenz3}
 \end{figure}
 
-Während das Spiel läuft, werden Trefferereignisse aus der \texttt{Dart-App} an die Videokomponente weitergegeben. Die Videokomponente reagiert auf diese Ereignisse, indem die zugehörigen Bilddaten gesichert und als eigenständige Dateien im Dateisystem abgelegt werden. 
+Während das Spiel läuft, werden Trefferereignisse aus der Dart-App an die Videokomponente weitergegeben. Die Videokomponente reagiert auf diese Ereignisse, indem die zugehörigen Bilddaten gesichert und als eigenständige Dateien im Dateisystem abgelegt werden. 
 Dadurch werden relevante Spielsituationen unmittelbar festgehalten, ohne dass bereits während des Spiels eine vollständige Videobearbeitung erforderlich ist.
 
 Die Struktur dieses Ablaufs zeigt, dass das System die Videos einzelner Würfe zunächst als Rohdaten behandelt. Diese Vorgehensweise entlastet den laufenden Spielprozess, da die rechenintensiven Verarbeitungsschritte in eine spätere Phase verschoben werden. Gleichzeitig bleibt jede Spielsituation in einer Form erhalten, 
@@ -167,17 +170,16 @@ aus der sich nachträglich ein zusammenhängendes Video erzeugen lässt.
 Nach dem Ende des Spiels beginnt die zweite Phase des Ablaufs. Die zuvor abgelegten Rohdaten werden erneut eingelesen, in eine konsistente Reihenfolge gebracht und zu einem verarbeiteten Ergebnis zusammengeführt. Dadurch entsteht aus mehreren einzelnen Wurfsequenzen ein zusammenhängendes Video,
 das die relevanten Spielsituationen nachvollziehbar aufzeichnet.
 
-Im weiteren Verlauf wird das aufbereitete Material in ein nutzbares Ausgabeformat überführt und für den Abruf bereitgestellt. Die \texttt{Dart-App} erhält die Information, dass die Videoerzeugung abgeschlossen ist, kann das Ergebnis abrufen und anschließend an den Server weiterreichen.
+Im weiteren Verlauf wird das aufbereitete Material in ein nutzbares Ausgabeformat überführt und für den Abruf bereitgestellt. Die Dart-App erhält die Information, dass die Videoerzeugung abgeschlossen ist, kann das Ergebnis abrufen und anschließend an den Server weiterreichen.
 
 \section{Kompression des Videomaterials}
 
 Da der HB10 oft an Orten mit langsamer Internetverbindung betrieben wird, ist es notwendig, die Videodaten vor dem Absenden zu komprimieren.
-Dabei soll die Videofunktionalität den Hauptbetrieb des HB10 nicht beeinträchtigen, deshalb war es vorgesehen, die Videodaten mittels hardware Komprimierung zu komprimieren. Dazu wurde bereits ermittelt, dass die APU des HB10 die Hardware Komprimierung für H.264 und H.265 unterstützt.
+Dabei soll die Videofunktionalität den Hauptbetrieb des HB10 nicht beeinträchtigen, deshalb war es vorgesehen, die Videodaten mittels Hardware-Komprimierung zu komprimieren. Dazu wurde bereits ermittelt, dass die APU des HB10 die Hardware Komprimierung für H.264 und H.265 unterstützt.
 Mittels Software-Kompression ist praktisch möglich jeden Codec einzubinden, über diesen Weg gäbe es noch weitere vergleichbare Codecs (s. \cref{tab:codec_vergleich}) welche verwendet werden könnten.
 
 \begin{table}[ht] 
     \centering 
-    \caption{Vergleich ausgewählter Videocodecs \cite{Grois2013, webm_vp8}} 
     \label{tab:codec_vergleich} 
     \begin{tabular}{|l|l|l|l|} 
         \hline 
@@ -192,27 +194,28 @@ Mittels Software-Kompression ist praktisch möglich jeden Codec einzubinden, üb
         VP9 & Ähnlich zu H.265, deutlich effizienter als H.264 & Hoch \\
         \hline 
     \end{tabular} 
-    \caption*{*Kodieraufwand ist auf viele gängige Codecs bezogen. Gering könnte beispielsweise MPEG-2 zugeordnet werden.}
+    \caption{*Kodieraufwand ist auf viele gängige Codecs bezogen. Gering könnte beispielsweise MPEG-2 zugeordnet werden.\\Vergleich ausgewählter Videocodecs \cite{Grois2013, webm_vp8}}
 \end{table}
 
 \subsection{GPU Encoding}
 
-Bei der Implementierung der Hardware Komprimierung wurde festgestellt, dass die Vorhandenen Grafik Treiber des HB10 nicht mit H.264 und H.265 kompatibel sind, dieser Fehler wurde in späteren Versionen der Treiber behoben. Jedoch ist es nicht momentan nicht möglich,
-die Grafiktreiber des HB10 zu aktualisieren, da die Treiber bereits die aktuellste Version sind, die mit der Linux version des HB10 kompatibel sind. Das bedeutet, um die Hardware Komprimierung auf dem HB10 umzusetzen, müsste die Linux version des HB10 aktualisiert werden,
-was vermutlich mit einem hohen Aufwand für Anpassungen an der vorhanden Software, und auf jeden fall mit einem hohen Testaufwand verbunden ist. Deshalb wurde sich dazu entschieden, für die Arbeit vorläufig auf die hardware Komprimierung zu verzichtet, und stattdessen Software Komprimierung
-verwendet.
+Bei der Implementierung der Hardware-Komprimierung wurde festgestellt, dass die vorhandenen Grafiktreiber des HB10 nicht mit H.264 und H.265 kompatibel sind, dieser Fehler wurde in späteren Versionen der Treiber behoben. Jedoch ist es nicht momentan nicht möglich,
+die Grafiktreiber des HB10 zu aktualisieren, da die Treiber bereits die aktuellste Version sind, die mit der Linux-Version des HB10 kompatibel sind. Das bedeutet, um die Hardware Komprimierung auf dem HB10 umzusetzen, müsste die Linux version des HB10 aktualisiert werden,
+was mit einem hohen Aufwand für Anpassungen an der vorhanden Software, und auf jeden fall mit einem hohen Testaufwand verbunden ist. Deshalb wurde sich dazu entschieden, für die Implementierung in der Dartsoftware vorläufig auf die Hardware-Komprimierung zu verzichten, und stattdessen Software Komprimierung
+verwendet. \todo{konsequenzen Software Komprimierung}
 
-Um eine initiale Untersuchung durchzuführen was die Unterschiede zwischen hardware und software Komprimierung sind, wurde ein HB10 mit einem neuen Ubuntu Betriebssystem aufgesetzt. Da die Dart-App nicht auf dieser Version laufen, kann nicht getestet werden, 
-wie sich das Komprimieren auf den laufenden Spielbetrieb auswirken würde. Der entwickelte Benchmark, untersucht folgende Kriterien:
+Um die Unterschiede zwischen hardware und software Komprimierung abzuschätzen, wurde die HB10 Hardware mit einem neuen Ubuntu 26.04 lts Betriebssystem versehen. Diese Version enthält alle notwendigen Treiber um die hardwarebeschleunigte Kodierung zu aktivieren. 
+Da für das Ausführen der Dart-App auf dieser Ubuntu-Version große Änderungen am gesamten System notwendig sind, kann nicht getestet werden, wie sich das Komprimieren auf den laufenden Spielbetrieb auswirken würde. 
+Deshalb ist dieser synthetische Benchmark dazu vorgesehen die theoretischen Verbesserungen durch die Hardwarebeschleunigung zu untersuchen. Dafür gibt es die folgenden Kriterien:
 \begin{itemize}
-    \item Maximale CPU Auslastung: Ist entscheidend um zu erkennen, ob das durchführen der Komprimierung das gesamte System lahmlegen könnte.
+    \item Maximale CPU Auslastung: Ist entscheidend um zu erkennen, ob das durchführen der Komprimierung das gesamte System (kurzfristig) lahmlegen könnte.
     \item Durchschnittliche CPU Auslastung: Ist wichtig um entscheiden zu können, ob die Komprimierung parallel zu dem normalen Betrieb stattfinden kann, oder der HB10 nach dem Ende eines Spieles Zeit reservieren muss, um zu komprimieren.
     \item Dauer der Komprimierung: sollte die Komprimierung nach dem Ende des Spieles stattfinden, sollte diese nicht zu viel Zeit benötigen, sodass der Spieler nicht zu lange warten muss, bis er weiter spielen kann.
     \item Größe des komprimierten Videos: da wie bereits angesprochen verschiedene Aufsteller verschieden schnelle Internet-Anschlüsse besitzen ist es wichtig, dass das fertige Video so klein wie möglich ist.  
 \end{itemize}
 
-Das Benchmark wurde einmal mit dem H.264 hardware Codec der APU des HB10 durchgeführt und ein weiteres mal mit dem x264 Software Codec. Dabei sollten diese ein 78 Sekunden langes Video mit einer Auflösung von 1280x720 bei 10 fps, also eine Größe von etwa 1,44 GB komprimieren.
-Dabei wurden folgende Ergebnisse erzielt: 
+Das Benchmark wurde einmal für 500 Durchläufe mit dem H.264 Hardware Codec der APU des HB10 durchgeführt und ein weiteres mal für 500 Durchläufe mit dem x264 Software Codec. Dabei sollten diese ein 78 Sekunden langes YUYV:422 (eine rohes Videoformat) 
+Video mit einer Auflösung von 1280x720 bei 10 fps, also einer Größe von etwa 1,44 GB komprimieren. Dabei wurden folgende Ergebnisse erzielt: 
 
 \begin{table}[H] 
     \centering 
@@ -220,41 +223,42 @@ Dabei wurden folgende Ergebnisse erzielt:
         \hline 
         \textbf{Komprimierung} & \textbf{$\varnothing$-CPU-Auslastung (\%)} & \textbf{$\varnothing$-Dauer (s)} \\ 
         \hline 
-        Hardware & $12{,}13 \pm 1{,}25$ & $8{,}59 \pm 0{,}13$ \\ 
-        Software & $97{,}10 \pm 0{,}42$ & $55{,}13 \pm 0{,}75$ \\ 
+        Hardware & $12{,}1 \pm 1{,}2$ & $8{,}5 \pm 0{,}1$ \\ 
+        Software & $97{,}1 \pm 0{,}4$ & $55{,}1 \pm 0{,}7$ \\ 
         \hline 
     \end{tabular} 
-    \caption{Vergleich der CPU-Auslastung und Komprimierungsdauer bei Hardware- und Software-Komprimierung (Mittelwert $\pm$ Standardabweichung).} 
+    \caption{Vergleich der durchschnittlichen CPU-Auslastung und Komprimierungsdauer bei Hardware- und Software-Komprimierung (Mittelwert $\pm$ Standardabweichung).} 
     \label{tab:hardware_software_vergleich} 
 \end{table}
 
-Da die Software Komprimierung die CPU des HB10 komplett auslastet, ist es nicht möglich, die Komprimierung parallel zum normalen Spielbetrieb durchzuführen. Deshalb müsste die Komprimierung nach dem Ende des Spieles durchgeführt werden, was zu einer langen Wartezeit führen würde.
-Bei der Hardware Komprimierung hingegen betrug die Maximale CPU Auslastung im Durchschnitt nur 39,70\% $\pm$ 3,35. Wenn man davon ausgeht, 
-dass im Normalen Spielbetrieb die CPU Auslastung maximal bei etwa 17,5\%, sollte die Hardware Komprimierung problemlos parallel zum normalen Spielbetrieb durchgeführt werden können.
+Da die Software Komprimierung die CPU des HB10 über die gesamte Dauer der Komprimierung komplett auslastet, ist es nicht möglich, die Komprimierung parallel zum normalen Spielbetrieb durchzuführen. Deshalb müsste die Komprimierung nach dem Ende des Spieles durchgeführt werden, was zu einer langen Wartezeit führen würde.
+Bei der Hardware Komprimierung hingegen betrug die Maximale CPU Auslastung im Durchschnitt nur 39,7\% $\pm$ 3,3. Wenn man davon ausgeht, 
+dass im Normalen Dart Spielbetrieb die CPU Auslastung maximal bei etwa 17,5\%, sollte die Hardware Komprimierung problemlos parallel dazu durchgeführt werden können.
 
 Ein Unterschied in der resultierenden Dateigröße scheint keinen merkbaren Einfluss auf die Dauer oder CPU Auslastung der Komprimierung zu haben. Die entstehende Dateigröße der verschiedenen Codecs lag zwar standardmäßig auseinander, beide Codecs konnten jedoch die Dateigröße des anderen Codecs erreichen.
 Änderungen an der Dateigröße scheinen sich hauptsächlich auf die Videoqualität auszuwirken, und nicht auf die Dauer oder CPU Auslastung der Komprimierung. Da die Videoqualität für uns kein entscheidender Faktor ist, solange der Spieler und alle Würfe klar zu erkennen sind, 
 ist die Dateigröße kein entscheidender Faktor für die Wahl des Codecs.\todo{umschreiben}
 
-Eine vollständige Implementierung davon hätte jedoch den Umfang dieser Arbeit gesprengt. Ein Update der Betriebssystemversion des HB10 ist jedoch für die Zukunft geplant und dann sollte zwingend die Hardwarekodierung benutzt werden.
+Wie diese Daten zeigen, sollte für die spätere Umsetzung zwingend die Hardwaredekodierung benutzt werden. Da in der Zukunft das Betriebssystem des HB10 aktualisiert werden soll, wird dies dann mit umgesetzt. Dieses Update hätte aber den Umfang dieser Arbeit weit überschritten.
 
 \subsection{Codec Lizenz}
 
 \todo{quellen einbauen}
 
-Es bestehen für sowohl H.264 als auch H.265 patentpools, also Zusammenschlüsse von Patentinhabern, welche Lizenzgebühren für die Nutzung der Codecs verlangen. Diese Lizenzgebühren fallen sowohl für den Verkauf von Geräten mit Kompression mittels der Codecs, als auch für das Streaming von Videos, 
+Es bestehen für sowohl H.264 als auch H.265 Patentpools, also Zusammenschlüsse von Patentinhabern, welche Lizenzgebühren für die Nutzung der Codecs verlangen. Diese Lizenzgebühren fallen sowohl für den Verkauf von Geräten mit Kompression mittels der Codecs, als auch für das Streaming von Videos, 
 welche mittels H.264 oder H.265 komprimiert wurden.
 
 Da H.264 ein deutlich älterer Codec ist, sind bereits der Großteil der Patente abgelaufen, jedoch existieren noch einige wenige aktive Patente. Da nicht 100\% sicher ist, ob die Nutzung von H.264 automatisch diese Patente verletzt, müsste man um sicher zu gehen, 
 für jedes einzelne Patent überprüfen ob dieses für unseren Anwendungsfall relevant ist, oder eine Lizenz für H.264 erwerben. 
-Da aber die Patentpools erkannt haben, dass die Patente für H.264 bald auslaufen, wurde die minimale Lizenzgebühr auf 100000\$ pro Jahr festgelegt, historisch wurde dieser Preis auf eine andere Weise errechnet, wobei Lizenzgebühren von unter 10000\$ pro Jahr erloschen, 
-dies ist seit beginn 2026 nicht mehr der Fall.
+Da aber die Patentpools erkannt haben, dass die Patente für H.264 bald auslaufen, wurde die minimale Lizenzgebühr auf 100000\$ pro Jahr festgelegt.
 
 Für H.265 bestehen zwei patentpools, welche beide getrennt Lizenzgebühren für die Nutzung des Codecs verlangen. Für den Verkauf von Geräten mit H.265 Kompression, verlangt ein Patentpool 0,4-1,2\$ pro Gerät, aber mit einem Kredit/Freibetrag sollte man unter 50000\$ pro Jahr bleiben. Für das Streaming,
 erhebt einer der patentpools keine Lizenzgebühren, der andere bietet verschiedene Lizenzmodelle an, zum einen gibt es die Möglichkeit einen Prozentsatz der Streaming Einnahmen zu bezahlen, auf der anderen Seite einen Festen abgestimmten Betrag Jährlich zu zahlen, oder man zahlt einen cent Betrag pro Nutzer.
 Ob hierbei die Möglichkeit besteht, keine Lizenzgebühren zu zahlen, solange keine Einnahmen durch das Streaming generiert werden, ist unklar und müsste wahrscheinlich mit dem Patentpool geklärt werden.
 
 Es besteht auch die Möglichkeit, dass für unseren Anwendungsfall, keine lizenzgebühren für die Nutzung von H.264 anfallen, da diese an Plattformen gerichtet sind. Ob die Webseite für das Anschauen der Videos als Platform gilt, ist unklar und müsste mit den Patentpools geklärt werden.
+
+Auch das übersteigt den Umfang und die Kompetenzen dieser Arbeit und muss später von der Rechtsabteilung im Details ausgearbeitet werden.
 
 \section{Entfernungsbestimmung durch Objekterkennung}
 
@@ -266,7 +270,7 @@ Aus dieser Position könnte anschließend abgeleitet werden, an welcher Stelle s
 Dazu gehören unter anderem die Position des Spielers im Bild, die Einbauhöhe der Kamera, die Ausrichtung der Kamera sowie die Eigenschaften des verwendeten Kamerabildes.
 
 Entscheidend ist hierbei, dass alle verwendeten Eingangsgrößen mit einer ausreichend hohen Genauigkeit bestimmt werden müssten. Bereits kleine Abweichungen bei der erkannten Position des Spielers könnten dazu führen, dass die berechnete Entfernung deutlich vom tatsächlichen Abstand abweicht.
-Gleiches gilt für Ungenauigkeiten bei der Kameramontage oder bei der Bestimmung des Kamerawinkels. Da die Entfernung aus diesen Messwerten rechnerisch abgeleitet wird, wirken sich Fehler nicht zwangsläufig nur geringfügig auf das Ergebnis aus.
+Gleiches gilt für Ungenauigkeiten bei der Kameramontage oder bei der Bestimmung des EInbauwinkels der Kamera. Da die Entfernung aus diesen Parametern rechnerisch abgeleitet wird, wirken sich Fehler nicht zwangsläufig nur geringfügig auf das Ergebnis aus.
 Stattdessen können sich kleine Messfehler in ungünstigen Situationen verstärken und zu vergleichsweise großen Fehlern in der berechneten Entfernung führen.
 
 Besonders kritisch ist dabei, dass die reale Umgebung nicht vollständig kontrolliert werden kann. Spieler unterscheiden sich in Körpergröße, Kleidung, Haltung und Bewegung während des Wurfs. Dadurch kann es für ein Erkennungsverfahren schwierig sein, 

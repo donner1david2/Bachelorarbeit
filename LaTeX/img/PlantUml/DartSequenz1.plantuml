@@ -11,7 +11,7 @@ par VideoMain Thread
     activate VideoMain
     VideoMain -> VideoMain: Socket belegen
 
-    loop waiting for connection
+    loop wait for connection
         VideoMain -> VideoMain: auf Socket lauschen
     end
 

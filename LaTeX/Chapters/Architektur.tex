@@ -12,15 +12,17 @@ Architektur gegeben, die Details zu den einzelnen Komponenten werden zu einem sp
     \label{fig:architektur}
 \end{figure}
 
-Der HB10 kann seine aufgenommenen Videos mittels HTTP an den Server übertragen. Als Server dient ein einfacher Webserver, welcher zugriff auf eine Datenbank und das Dateisystem hat, um empfangene Videos und deren Metadaten zu speichern. Der Nutzer erhält über den Webserver Zugriff auf eine Webplattform, 
+Der HB10 kann seine aufgenommenen Videos mittels HTTP an den Server übertragen. Als Server dient ein einfacher Webserver, welcher Zugriff auf eine Datenbank und das Dateisystem hat, um empfangene Videos und deren Metadaten zu speichern. Der Nutzer erhält über den Webserver Zugriff auf eine Webplattform, 
 über welche er die Videos ansehen kann.
 
-Der HB10 ist Dafür zuständig, den Spielbetrieb durchzuführen, und die Videos für die Dart-Würfe aufzunehmen, diese zu komprimieren und an den Server zu senden. Der Server speichert die Videos inklusive der zugehörigen Metadaten und stellt diese den Nutzern des HB10 über eine Webseite zum Anschauen und Auffinden bereit.
-Der Nutzer erhält über einen Browser Zugriff auf eine Webseite, die die Metadaten der Videos vom Server anfordert. Damit kann der Nutzer dann sein gewünschtes Video finden, und anschließend auf der Seite anschauen.
+Der HB10 ist dafür zuständig, den Spielbetrieb durchzuführen, und die Videos für die Dart-Würfe aufzunehmen, diese zu komprimieren und an den Server zu senden. Der Server speichert die Videos inklusive der zugehörigen Metadaten und stellt sie den Nutzern des HB10 über eine Webseite bereit. Der Nutzer kann auf dieser Webseite die Metadaten abrufen, ein gewünschtes Video auffinden und anschließend ansehen.
 
-\section{Reverse Proxy}
+\section{Reverse Proxy} \todo{quelle für reverse proxy angeben}
 
 Es besteht auch die Möglichkeit mehrere Instanzen des Servers gleichzeitig laufen zu lassen, und zwischen Server und Client einen Reverse Proxy zu platzieren, welcher den Client (HB10 oder ein Nutzer) zu einem passenden Server weiterleitet. Für den Prototypen wurde entschieden dies auszulassen,
 da es bei der zu erwartenden Menge an Nutzern nicht notwendig ist, mehrere Server aus Gründen des load balancing aufzusetzen. Und da der HB10 momentan hauptsächlich in Deutschland vertreten ist, werden auch keine Regions spezifischen Server benötigt um diese näher am Client zu platzieren.
+
+\section{Nutzungsszenarien}
+
 
 \newpage

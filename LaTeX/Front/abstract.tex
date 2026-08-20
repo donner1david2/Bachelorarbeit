@@ -5,12 +5,15 @@
 \chapter*{Kurzfassung (Abstract)}
 \addcontentsline{toc}{chapter}{Kurzfassung (Abstract)}
 
-Hier können Sie die Kurzfassung (engl.~Abstract) der Arbeit schreiben. Beachten Sie dabei die Hinweise zum Verfassen der Kurzfassung.
+Ziel dieser Bachelorarbeit war es, eine Video-Streaming-Lösung für das \textit{LÖWEN DART HB10} zu entwickeln und prototypisch umzusetzen. Der Hintergrund dafür ist die Erweiterung des bestehenden Dart-Systems um Spiel- und Turnierformen, 
+bei denen eine spätere Überprüfung einzelner Spiele notwendig werden kann. Dafür sollte ein System entstehen, das relevante Spielsituationen aufzeichnet, speichert und anschließend über eine Webplattform abrufbar macht. 
 
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, 
-sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem 
-ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore 
-magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata 
-sanctus est Lorem ipsum dolor sit amet.
+Im Verlauf der Arbeit wurde dazu eine Architektur entwickelt, die aus mehreren Komponenten besteht. Auf dem HB10 übernimmt eine eigenständige Video-App die Aufnahme und Verarbeitung der Videodaten. 
+Die bestehende Dart-App bleibt weiterhin für den Spielablauf zuständig und teilt der Video-App relevante Ereignisse über eine Socket-Verbindung mit. Dadurch konnte die Videofunktion vom eigentlichen Spielbetrieb getrennt werden, ohne den Zusammenhang zwischen Spielereignis und Aufnahme zu verlieren. 
 
+Die aufgenommenen Videodaten werden zunächst lokal verarbeitet und anschließend an einen Server übertragen. Dort werden die Videodateien gespeichert und die zugehörigen Metadaten in einer Datenbank abgelegt. Über eine REST-Schnittstelle können diese Daten von der Webplattform abgerufen werden. 
+Die Webplattform stellt die gespeicherten Videos dar und ermöglicht deren Wiedergabe im Browser. 
+
+Zusammenfassend konnte gezeigt werden, dass eine Video-on-Demand-Lösung für HB10 Dart Geräte grundsätzlich technisch realisierbar ist. Der entwickelte Prototyp bildet den vollständigen Ablauf von der Aufnahme über die Speicherung bis zur späteren Wiedergabe ab. Gleichzeitig wurde deutlich, 
+dass für einen produktiven Einsatz noch mehrere technische und organisatorische Punkte weiter untersucht werden müssen. 
 

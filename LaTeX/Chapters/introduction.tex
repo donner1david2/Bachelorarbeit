@@ -26,12 +26,12 @@ Zusätzlich steht für Aufsteller mit dem LÖWEN DART-Portal ein zentraler Onlin
 
 Ein zentraler Aspekt der Updates der letzten beiden Jahre des HB10 sind vernetzte Turniere, bei denen Spielergebnisse digital verarbeitet und im Anschluss an ein Spiel an einen Server übertragen werden. 
 Diese werden in Kooperation mit 3K Dart \cite{mützner_2026} komfortabel online organisiert und dann vor Ort an HB10 ausgespielt. Über diese Plattform können sowohl Turniere als auch Ligen ausgespielt werden. 
-Das größte Turnier dieser Art fand vor kurzem mit über 4.000 aktivem Spielern und über 250 HB10 statt \cite{2026}. Diese synchronen Turnierformen setzen voraus, dass die Teilnehmer innerhalb eines gemeinsamen zeitlichen Rahmens und am selben HB10 am Wettbewerb teilnehmen. 
+Das größte Turnier dieser Art fand vor kurzem mit über 4.000 aktivem Spielern und über 250 HB10 statt \cite{2026}. Diese synchronen Turnierformen setzen voraus, dass die Teilnehmer innerhalb eines gemeinsamen zeitlichen Rahmens und am selben HB10 einzelne Runden des Wettbewerbs austragen. 
 In Zukunft soll dieses System um asynchrone Turnierformate und Ranglisten ergänzt werden, bei denen die Möglichkeit besteht, Preisgelder zu gewinnen. Im Gegensatz zu den bestehenden Formaten ist hierbei keine gleichzeitige Anwesenheit der Spieler erforderlich. 
 Da die Wettbewerbe ortsungebunden durchgeführt werden können, ist eine spätere visuelle Überprüfung der sportlichen Integrität erforderlich. 
 
 Ein mögliches asynchrones Spiel kann dabei so verstanden werden, dass ein Spieler ein Spiel eigenständig an einem HB10 durchführt, ohne dass andere Teilnehmer zeitgleich anwesend sein müssen. Während des Spielverlaufs werden die einzelnen Würfe 
-durch in das Gerät integrierte Kameras erfasst und als kurze Videosequenzen zwischengespeichert. Nach Abschluss des Spiels werden diese einzelnen Videoschnipsel in eine zeitlich geordnete Form gebracht, zu einem zusammenhängenden Video zusammengefügt und anschließend an einen Server übertragen.
+durch in das Gerät integrierte Kameras erfasst und als kurze Videosequenzen zwischengespeichert. Nach Abschluss des Spiels werden diese einzelnen Videoaufnahmen in eine zeitlich geordnete Form gebracht, zu einem zusammenhängenden Video zusammengefügt und anschließend an einen Server übertragen.
 Dort wird das Video gespeichert und so bereitgestellt, dass andere Spieler oder berechtigte Nutzer es zu einem späteren Zeitpunkt über eine Webplattform abrufen und ansehen können. Dadurch entsteht ein Spielablauf, bei dem die sportliche Leistung nicht nur über das gemeldete Spielergebnis, 
 sondern zusätzlich über eine nachträglich überprüfbare visuelle Dokumentation nachvollzogen werden kann. 
 
@@ -40,11 +40,9 @@ Darüber hinaus müssen die aufgenommenen Videodaten zwischengespeichert, verarb
 einem Zeitpunkt und gegebenenfalls beteiligten Spielern zugeordnet werden können. Zusätzlich muss der Zugriff auf die Videos über eine Webplattform geregelt werden, sodass nur vorgesehene Nutzer die gespeicherten Inhalte abrufen können. 
 Da bei der Aufnahme und Bereitstellung von Videomaterial personenbezogene Informationen entstehen können, sind außerdem Anforderungen an Datenschutz, Zugriffskontrolle und den Umgang mit gespeicherten Aufnahmen zu berücksichtigen.
 
-Diese Arbeit befasst sich mit dem Konzept und der Umsetzung eines Prototypens für eine \ac{VOD}-Streaming-Plattform für das \textit{LÖWEN DART HB10}, 
-die eine Überprüfung vergangener Spiele durch die Nutzer ermöglicht. Um dies zu erreichen, muss zunächst ein Konzept für das Streaming-System entwickelt werden (s. \cref{sec:system}). Daraufhin muss eine Kamera in den HB10 integriert und das Gerät um die Funktion erweitert werden, 
-die von der Kamera aufgenommenen Videos für das \ac{VOD}-Streaming aufzubereiten (s. \cref{sec:dart}). Anschließend ist ein Server zu entwickeln, welcher die Videos des HB10 empfängt, zwischenspeichert und auf Anfrage des Nutzers bereitstellt (s. \cref{sec:server}). Zuletzt wird eine Webplattform erstellt, 
-über welche die Nutzer die gespeicherten Videos ansehen können (s. \cref{sec:web}).
-
-\section{Nutzungsszenarien}
+Diese Arbeit befasst sich mit dem Konzept und der Umsetzung eines Prototypens für eine \ac{VOD}-Streaming-Plattform \todo{alternative suchen} für das \textit{LÖWEN DART HB10}, 
+die eine Überprüfung vergangener Spiele durch die Nutzer ermöglicht. Um dies zu erreichen, wird zunächst in \cref{sec:system} ein Konzept für das Streaming-System entwickelt. Daraufhin wird in \cref{sec:dart} beschrieben, wie eine Kamera in den HB10 integriert und das Gerät um die Funktion erweitert wurde, 
+die von der Kamera aufgenommenen Videos für das \ac{VOD}-Streaming aufzubereiten. Anschließend wurde in \cref{sec:server} ein Server entwickelt, welcher die Videos des HB10 empfängt, zwischenspeichert und auf Anfrage des Nutzers bereitstellt. In \cref{sec:web} wird Beschrieben, 
+wie eine Webplattform erstellt wird, über welche die Nutzer die gespeicherten Videos ansehen können.
 
 \newpage
