@@ -1,18 +1,30 @@
 @startuml
 title Serverstruktur
 
-actor HB10
-actor Browser
+skinparam componentStyle rectangle
+skinparam shadowing false
 
-component "Videoserver\n\nPOST /api/v1/video/{playerId}/{filename}\nGET /api/v1/video/{playerId}/{filename}\nGET /api/v1/video/videos\n\nIndex.html" as Server
+actor "HB10" as HB10
+actor "Browser" as Browser
 
-database "PostgreSQL\nMetadaten" as DB
-component "Dateisystem\nHLS-Dateien" as FS
+package "DartVideoServerApplication :8082" {
+    component "VideoController\n/api/v1/video\n\nPOST /{playerId}/{filename}\nGET /{playerId}/{filename}\nGET /videos" as VC
+    component "SpaController\nWeiterleitung an /index.html" as SPA
+    component "VideoRepository\nJpaRepository" as Repo
+    component "Video\nJPA-Entität" as VideoEntity
 
-HB10 --> Server : Upload
-Browser --> Server : Abruf
+    VC --> Repo : save / findAll
+    Repo --> VideoEntity
+}
 
-Server --> DB
-Server --> FS
+database "PostgreSQL\nvideodb" as DB
+component "Dateisystem\n.m3u8 / .ts" as FS
+
+HB10 --> VC : Upload
+VC --> VC : Metadaten / HLS
+Browser --> SPA : Webanfrage
+
+Repo --> DB : Metadaten
+VC --> FS : Dateien
 
 @enduml
