@@ -5,7 +5,7 @@ skinparam defaultFontSize 12
 skinparam defaultFontColor black
 
 * Video-Api /video
-** /{playerId}/{filename}
+** /\{playerId\}/\{filename\}
 *** GET
 *** POST
 ** /videos
