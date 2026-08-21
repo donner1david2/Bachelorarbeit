@@ -133,7 +133,8 @@ Für die Kommunikation zwischen dem Server und den Clients werden REST-API-Endpu
 \begin{figure}[H]
     \centering
     \includesvg[width=\textwidth]{img/PlantUml/VideoZyklus/VideoZyklus.svg}
-    \caption{Lebenszyklus eines Videos}
+    \caption[Lebenszyklus eines Videos]{Lebenszyklus eines Videos. Nachdem das Video auf dem HB10 fertig ist, und dort aif dem Dateisystem gespeichert. Die Dazugehörigen Metadaten werden in einer Datenbank gespeichert. Wird das Video jetzt vom Webclient abgerufen, fragt dieser zunächst die Liste aller Videos ab und zeigt sie an. 
+    Wird ein Video ausgewählt wird zunächst die dazugehörige HLS Playlist angefragt und danach die zugehörigen Segmente des Videos geladen.}
     \label{fig:videocycle}
 \end{figure}
 
@@ -167,7 +168,7 @@ Somit müsste für die Integration von Apple Geräten ohnehin HLS verwendet werd
 
 Es bestehen verschiedene Möglichkeiten, wie der Server in die Dart-Umgebung integriert werden kann. Auf der einen Seite besteht die Möglichkeit, einen eigenständigen Server aufzubauen, genau wie in diesem Kapitel beschrieben,
 und anschließend alle Daten die von anderen Komponenten der Dart-Umgebung stammen, welche für die Darstellung benötigt wird, direkt vom HB10 zu erhalten, oder es dem Server erlauben mit dem Bereits bestehenden Dart-Server zu kommunizieren.
-Auf er anderen Seite, besteht auch die Möglichkeit die Funktionalität in den bestehenden Dart-Server zu integrieren. Da der Dart-Server bereits über eine Angebundene PostgreSQL Datenbank, und verschiedene REST-API-Endpunkte verfügt, sollte sich diese Integration relativ simpel gestalten.
+Auf der anderen Seite, besteht auch die Möglichkeit die Funktionalität in den bestehenden Dart-Server zu integrieren. Da der Dart-Server bereits über eine Angebundene PostgreSQL Datenbank, und verschiedene REST-API-Endpunkte verfügt, sollte sich diese Integration relativ simpel gestalten.
 In diesem Fall müsste man jedoch untersuchen, ob der Dart-Server ohne Probleme in der Lage ist, zusätzlich zu seinen bestehenden aufgaben die Video-Übertragung zu übernehmen.
 
 
@@ -200,7 +201,7 @@ welche Personen für den Zweck der Aufnahme relevant sind und welche Personen le
 Der Zweck der Videoaufnahme besteht darin, ein asynchron durchgeführtes Spiel nachträglich überprüfen zu können. Für diesen Zweck ist vor allem der Spieler relevant, dessen Würfe und Verhalten während des Spiels nachvollziehbar sein müssen. 
 Die Aufnahme des Spielers ist daher funktional mit dem Spielmodus verbunden. 
 
-\subsection{Datenminimierung und Hintergrundausblendung}
+\subsection{Datenminimierung und Hintergrundausblendung} \label{sec:blurr}
 
 Personen im Hintergrund sind für diesen Zweck dagegen grundsätzlich nicht erforderlich. Aus diesem Grund sollte der Bildausschnitt soweit wie möglich auf den Spieler und die Dartscheibe begrenzt werden. Bereiche, 
 die für die spätere Überprüfung nicht benötigt werden, sollten bereits vor der Speicherung entfernt oder unkenntlich gemacht werden (s. \cref{fig:background}). 

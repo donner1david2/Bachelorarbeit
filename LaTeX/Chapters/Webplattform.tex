@@ -4,7 +4,7 @@ Damit die auf dem Server gespeicherten Videoaufnahmen für die spätere Überpr�
 wären für die Spieler jedoch nicht in einer geeigneten Form zugänglich. Die Webplattform übernimmt daher die Aufgabe, die vorhandenen Videos übersichtlich bereitzustellen und eine einfache Nutzung der gespeicherten Inhalte zu ermöglichen. 
 
 Im Rahmen des Gesamtsystems bildet die Webplattform somit die Präsentations- und Zugriffsebene. Während andere Komponenten für die Erfassung, Verarbeitung und Speicherung der Daten verantwortlich sind, stellt die Webplattform diese Daten für den Nutzer dar. Dadurch wird es möglich, 
-aufgezeichnete Spiele nachträglich anzusehen und für die Überprüfung auf mögliches Cheating zu verwenden. Der Fokus liegt dabei nicht auf der eigentlichen Analyse der Spieldaten, sondern auf der Bereitstellung einer funktionalen Oberfläche, 
+aufgezeichnete Spiele nachträglich anzusehen und für die Überprüfung auf mögliche Betrugsversuche zu verwenden. Der Fokus liegt dabei nicht auf der eigentlichen Analyse der Spieldaten, sondern auf der Bereitstellung einer funktionalen Oberfläche, 
 über welche die vorhandenen Videos gefunden und abgespielt werden können.
 
 \section{Aufgabe der Webplattform} 
@@ -18,13 +18,13 @@ dass gespeicherte Videos auffindbar gemacht werden. Die Plattform muss daher ein
 Ohne eine solche Oberfläche wären die Videodateien zwar technisch gespeichert, könnten aber nur schwer gezielt gefunden und verwendet werden. 
 
 Ein weiterer wesentlicher Bestandteil der Webplattform ist die Wiedergabe der gespeicherten Videos. Nachdem ein Nutzer eine Aufnahme ausgewählt hat, soll diese direkt innerhalb der Plattform abgespielt werden können. Dadurch wird vermieden, 
-dass Videodateien manuell heruntergeladen oder außerhalb des Systems geöffnet werden müssen. Die Webplattform bildet somit die Schnittstelle zwischen der serverseitigen Speicherung und der tatsächlichen fachlichen Nutzung der Aufnahmen. Für die Überprüfung einer möglichen Cheating-Situation ist dies wichtig, 
+dass Videodateien manuell heruntergeladen oder außerhalb des Systems geöffnet werden müssen. Die Webplattform bildet somit die Schnittstelle zwischen der serverseitigen Speicherung und der tatsächlichen fachlichen Nutzung der Aufnahmen. Für die Überprüfung eines möglichen Betrugsversuches ist dies wichtig, 
 da der Zugriff auf die relevanten Videos möglichst einfach und nachvollziehbar erfolgen muss. 
 
 \begin{figure}[h]
     \centering
     \includesvg[width=0.33\textwidth]{img/PlantUml/cheating-detection/cheating-detection.svg}
-    \caption{Darstellung der Abfolge zur Betrugs Erkennung.}
+    \caption{Darstellung der Abfolge zur Betrugserkennung.}
     \label{fig:cheatdet}
 \end{figure} \todo{beschreibung erweitern}
 
@@ -158,11 +158,12 @@ Die Videowiedergabe ist für die Webplattform besonders wichtig, da die gespeich
 Eine Erweiterung des Videoplayers um zusätzliche Analysefunktionen wurde nicht vorgenommen. Denkbar wären in einer späteren Implementierung beispielsweise Markierungen auffälliger Stellen, Kommentare, Zeitstempel oder eine Verknüpfung mit einzelnen Würfen. 
 Diese Funktionen liegen jedoch außerhalb des prototypischen Umfangs und wurden deshalb nicht umgesetzt. 
 
-Für die hier entwickelte Oberfläche bedeutet dies, dass die Funktionsfähigkeit des Prototypen nicht automatisch mit einer für den produktiven Einsatz geeigneten Benutzeroberfläche gleichzusetzen ist. Der Prototyp zeigt lediglich, dass die grundlegenden Funktionen technisch umgesetzt werden können. Ob die Oberfläche für reale Nutzer in einem Turnierumfeld verständlich, effizient und ausreichend auf den Prüfprozess abgestimmt ist, müsste in einer späteren Entwicklungsphase gesondert untersucht werden.
+Für die hier entwickelte Oberfläche bedeutet dies, dass die Funktionsfähigkeit des Prototypen nicht automatisch mit einer für den produktiven Einsatz geeigneten Benutzeroberfläche gleichzusetzen ist. Der Prototyp zeigt lediglich, dass die grundlegenden Funktionen technisch umgesetzt werden können. 
+Ob die Oberfläche für reale Nutzer in einem Turnierumfeld verständlich, effizient und ausreichend auf den Prüfprozess abgestimmt ist, müsste in einer späteren Entwicklungsphase gesondert untersucht und optimiert werden.
 
 Zusammenfassend besteht die Benutzeroberfläche des Prototypen aus drei zentralen Bereichen. Die Startseite stellt einen einfachen Einstiegspunkt bereit, die Videoübersicht zeigt die gespeicherten Aufnahmen mit grundlegenden Metadaten an und die Wiedergabeansicht ermöglicht das Abspielen einzelner Videos. 
 Diese Struktur ist für den Nachweis der technischen Funktionalität ausreichend. Für eine spätere tatsächliche Implementierung sollte die Benutzeroberfläche jedoch neu gestaltet werden. Dabei sollte die Oberfläche nicht nur die vorhandenen Funktionen abbilden, 
-sondern gezielt auf den Ablauf einer Cheating-Überprüfung ausgelegt werden. Die im Prototyp verwendete Oberfläche ist daher als funktionale Testoberfläche zu verstehen, nicht als finale Lösung für den produktiven Einsatz. 
+sondern gezielt auf den Ablauf einer Betrugs-Überprüfung ausgelegt werden. Die im Prototyp verwendete Oberfläche ist daher als funktionale Testoberfläche zu verstehen, nicht als finale Lösung für den produktiven Einsatz. 
 
 \section{Kommunikation mit dem Server} \label{sec:web-kommunikation} 
 
@@ -176,7 +177,7 @@ Wird ein Video ausgewählt, muss die Anwendung die zugehörige Videodatei  vom S
 Aus Nutzersicht wird lediglich ein Video ausgewählt und anschließend abgespielt. Die Kommunikation mit dem Server bildet jedoch die Grundlage dafür, dass die gespeicherten Inhalte in der Oberfläche verfügbar sind. 
 
 Im Prototypen wurde diese Kommunikation so einfach wie möglich gehalten. Ziel war es, den grundlegenden Ablauf vom gespeicherten Video bis zur Wiedergabe in der Webplattform zu validieren. Erweiterte Mechanismen wie Benutzerrollen, 
-detaillierte Berechtigungen oder komplexe Zugriffskonzepte wurden in der Oberfläche nicht umgesetzt. Für eine spätere produktive Version wären solche Erweiterungen jedoch notwendig, da gespeicherte Videoaufnahmen nur berechtigten Personen zugänglich gemacht werden sollten.
+detaillierte Berechtigungen oder komplexe Zugriffskonzepte wurden in der Oberfläche nicht umgesetzt. Für eine spätere produktive Version wären solche Erweiterungen jedoch notwendig, da gespeicherte Videoaufnahmen nur berechtigten Personen zugänglich gemacht werden dürfen.
 
 \section{Datenfluss innerhalb der Webplattform} 
 
@@ -197,10 +198,12 @@ Dadurch entsteht ein einfacher Ablauf, bei dem der Nutzer zuerst ein Video sucht
 Die Umsetzung im Prototypen beschränkt sich auf die grundlegende Wiedergabe. Der Videoplayer ermöglicht die Betrachtung der Aufnahme und stellt die üblichen Funktionen zur Steuerung bereit. Dies reicht aus, um zu prüfen, ob die serverseitig gespeicherten Videodaten korrekt im Browser abgespielt werden können. 
 Die Webplattform stellt damit sicher, dass die zuvor erzeugten Daten nicht nur gespeichert, sondern auch tatsächlich verwendet werden können. 
 
-Für eine spätere Implementierung müsste die Darstellung der Videos weiterentwickelt werden. Insbesondere bei einer Nutzung zur Cheating-Überprüfung könnten zusätzliche Funktionen sinnvoll sein. Dazu zählen beispielsweise eine genauere Verknüpfung zwischen Würfen und Videopositionen, eine Kommentarfunktion, 
+Für eine spätere Implementierung müsste die Darstellung der Videos weiterentwickelt werden. Insbesondere bei einer Nutzung zur Betrugs-Überprüfung könnten zusätzliche Funktionen sinnvoll sein. Dazu zählen beispielsweise eine genauere Verknüpfung zwischen Würfen und Videopositionen, eine Kommentarfunktion, 
 eine Kennzeichnung bereits überprüfter Videos oder eine bessere Darstellung relevanter Spielinformationen. Diese Erweiterungen wurden im Prototypen nicht umgesetzt, da zunächst die technische Machbarkeit der grundlegenden Darstellung und Wiedergabe im Vordergrund stand. 
 
 Insgesamt zeigt die Webplattform, dass die gespeicherten Aufnahmen über eine browserbasierte Oberfläche zugänglich gemacht werden können. Die prototypische Umsetzung erfüllt damit ihren Zweck als Testoberfläche. Gleichzeitig wird deutlich, 
 dass für einen produktiven Einsatz eine neue Benutzeroberfläche erforderlich wäre, die stärker auf die tatsächlichen Abläufe und Anforderungen der Nutzer ausgerichtet ist.
+
+\todo{abschnitt zu Verschiedenen Auflösungen}
 
 \newpage
