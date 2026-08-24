@@ -90,7 +90,7 @@ Diese Trennung reduziert die Komplexität innerhalb der Hauptanwendung und erlei
 \end{figure}
 
 Die Video-App (s. \cref{fig:videoapp}) ist die eigenständige Komponente zur Verarbeitung der im HB10 anfallenden Videodaten. Während die Dart-App den Spielbetrieb steuert, konzentriert sich die Video-App ausschließlich auf Aufgaben der Videoaufnahme und \mbox{-aufbereitung}. 
-Sie ist damit funktional klar von der Hauptanwendung getrennt und erweitert das Gesamtsystem um die technische Umsetzung der Videofunktion.l
+Sie ist damit funktional klar von der Hauptanwendung getrennt und erweitert das Gesamtsystem um die technische Umsetzung der Videofunktion.
 
 Über die Schnittstelle zur Dart-App wird die Video-App in das Gesamtsystem eingebunden, während die Kamera die eigentliche Quelle der Bilddaten darstellt. Ergänzt wird dies durch interne Puffer- und Verarbeitungsstrukturen, die erforderlich sind, 
 um die Videodaten in einer für die spätere Nutzung geeigneten Form bereitzustellen.
@@ -109,7 +109,7 @@ Durch diese Auslagerung videobezogener Funktionen bleibt die Gesamtarchitektur �
 \end{figure}
 
 Für die Kommunikation zwischen Dart-App und Video-App wird eine Socket Verbindung verwendet (s. \cref{fig:dartsocket}). Die Video-App wartet auf eine Verbindung der Dart-App, und ist anschließend bereit Ereignisse mit zusätzlichen Daten zu erhalten.
-Als Daten werden Datenstrukturen verwendet, die in beiden Anwendungen definiert wurden, welche zuerst benötigte Daten in einen Seriellen Bytestream schreiben anschließend die Länge des Bytestreams, und darauf den eigentlicher Stream übertragen.
+Als Daten werden Datenstrukturen verwendet, die in beiden Anwendungen definiert wurden, welche zuerst benötigte Daten in einen Seriellen Bytestream schreiben und anschließend die Länge des Bytestreams, und darauf den eigentlichen Stream übertragen.
 Der Empfänger kann den empfangenen Stream dann deserealisieren, um alle Daten zu erhalten die er benötigt. Da die Kommunikation bidirektional ist, können die Rollen vertauscht werden.
 
 \section{Struktur} \label{sec:dart-ablauf}
