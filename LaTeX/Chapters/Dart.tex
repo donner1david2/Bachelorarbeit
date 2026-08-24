@@ -281,30 +281,174 @@ Es besteht auch die Möglichkeit, dass für unseren Anwendungsfall, keine lizenz
 
 Auch das übersteigt den Umfang und die Kompetenzen dieser Arbeit und muss später von der Rechtsabteilung im Details ausgearbeitet werden.
 
-\section{Entfernungsbestimmung durch Objekterkennung}
+\section{Entfernungsbestimmung durch Objekterkennung} 
 
-Eine mögliche Erweiterung der Videofunktion besteht darin, die aufgenommenen Bilddaten zusätzlich zur Abschätzung der Entfernung zwischen Spieler und Gerät zu verwenden. Dabei könnte ein Verfahren zur Objekterkennung eingesetzt werden, um den Spieler innerhalb des Kamerabildes zu lokalisieren.
-Die Kamera würde in diesem Fall nicht nur zur nachträglichen visuellen Überprüfung eines Spiels dienen, sondern zusätzlich als Grundlage für eine automatisierte Abstandsschätzung verwendet werden.
+Eine mögliche Erweiterung der Videofunktion besteht darin, die aufgenommenen Bilddaten zusätzlich zur Abschätzung der Entfernung zwischen Spieler und Gerät zu verwenden. Hierfür könnte ein Verfahren zur Objekterkennung eingesetzt werden, das den Spieler innerhalb des Kamerabildes lokalisiert. 
+Die Kamera würde in diesem Fall nicht nur zur nachträglichen visuellen Überprüfung eines Spiels dienen, sondern zusätzlich die Bilddaten für eine automatisierte Abstandsschätzung bereitstellen. 
 
-Für ein solches Verfahren müsste zunächst festgelegt werden, welcher Punkt des Spielers als Referenz für die Berechnung genutzt werden soll. Denkbar wäre beispielsweise ein erkannter Bereich am unteren Körper oder eine andere möglichst eindeutig bestimmbare Position im Bild.
-Aus dieser Position könnte anschließend abgeleitet werden, an welcher Stelle sich der Spieler relativ zum Gerät befindet. Die eigentliche Entfernung würde dabei nicht direkt gemessen, sondern aus mehreren bekannten und erkannten Größen berechnet.
-Dazu gehören unter anderem die Position des Spielers im Bild, die Einbauhöhe der Kamera, die Ausrichtung der Kamera sowie die Eigenschaften des verwendeten Kamerabildes.
+Als Referenzpunkt kann die Unterkante der erkannten Bounding-Box des Spielers verwendet werden. Unter der Annahme, dass die Füße des Spielers innerhalb dieser Bounding-Box vollständig erfasst werden, entspricht deren Unterkante näherungsweise der Position des Spielers auf der Bodenebene. 
+Die Entfernung wird dabei nicht direkt gemessen, sondern aus der vertikalen Position dieses Referenzpunktes im Bild, der Einbauhöhe und dem Neigungswinkel der Kamera sowie dem vertikalen Öffnungswinkel des Kamerabildes berechnet. 
 
-Entscheidend ist hierbei, dass alle verwendeten Eingangsgrößen mit einer ausreichend hohen Genauigkeit bestimmt werden müssten. Bereits kleine Abweichungen bei der erkannten Position des Spielers könnten dazu führen, dass die berechnete Entfernung deutlich vom tatsächlichen Abstand abweicht.
-Gleiches gilt für Ungenauigkeiten bei der Kameramontage oder bei der Bestimmung des EInbauwinkels der Kamera. Da die Entfernung aus diesen Parametern rechnerisch abgeleitet wird, wirken sich Fehler nicht zwangsläufig nur geringfügig auf das Ergebnis aus.
-Stattdessen können sich kleine Messfehler in ungünstigen Situationen verstärken und zu vergleichsweise großen Fehlern in der berechneten Entfernung führen.
+Für die folgende Herleitung wird ein Bildkoordinatensystem verwendet, bei dem die vertikale Koordinate \(Y\) vom unteren Bildrand aus gemessen wird. Damit gilt \(Y=0\) am unteren Bildrand und \(Y=H\) am oberen Bildrand, wobei \(H\) die Bildhöhe in Pixeln bezeichnet. Die Bildmitte liegt folglich bei \(H/2\). 
 
-Besonders kritisch ist dabei, dass die reale Umgebung nicht vollständig kontrolliert werden kann. Spieler unterscheiden sich in Körpergröße, Kleidung, Haltung und Bewegung während des Wurfs. Dadurch kann es für ein Erkennungsverfahren schwierig sein, 
-in jedem Bild zuverlässig denselben Referenzpunkt zu bestimmen. Zusätzlich können Beleuchtung, Bewegungsunschärfe, verdeckte Bildbereiche oder eine ungünstige Perspektive die Erkennung beeinflussen. 
-Auch mechanische Toleranzen am Gerät oder minimale Veränderungen der Kameraposition können die Genauigkeit der späteren Berechnung verschlechtern.
- 
-Für eine produktive Nutzung müsste daher zunächst untersucht werden, wie stabil die Erkennung des Spielers unter realen Einsatzbedingungen funktioniert. Außerdem müsste geprüft werden, wie stark sich einzelne Messfehler auf die berechnete Entfernung auswirken.
-Dazu wäre eine Kalibrierung des Systems notwendig, bei der bekannte Abstände mit den berechneten Werten verglichen werden.  Erst wenn die Abweichungen ausreichend klein und reproduzierbar sind, könnte eine solche Funktion als zuverlässige Grundlage für eine automatische Abstandskontrolle verwendet werden.
- 
-Im Rahmen dieser Arbeit ist die Entfernungsbestimmung durch Objekterkennung daher vor allem als mögliche zukünftige Erweiterung zu verstehen. Die vorhandene Videofunktion stellt zwar grundsätzlich Bilddaten bereit, die für eine solche Auswertung genutzt werden könnten.
-Die praktische Umsetzung wäre jedoch anspruchsvoll, da die Genauigkeit der Abstandsschätzung stark von der Qualität der Erkennung, der Kamerakalibrierung und der Stabilität der Messbedingungen abhängt. Aus diesem Grund müsste eine solche Funktion gesondert untersucht und validiert werden, 
-bevor sie für eine verlässliche Bewertung des Spielerabstands eingesetzt werden kann.
+Zunächst wird aus dem vertikalen Öffnungswinkel \(\gamma\) und der Bildhöhe \(H\) die vertikale Brennweite \(f_y\) in Pixeln bestimmt. Aus dem rechtwinkligen Dreieck zwischen der optischen Achse und dem oberen Bildrand folgt 
 
-Die Objekterkennung kann auch für den Datenschutz relevant sein, um Personen im Hintergrund unkenntlich zu machen. Dies wird in \cref{sec:blurr} weiter erläutert.
+\begin{equation} 
+    \tan\left(\frac{\gamma}{2}\right) = \frac{H/2}{f_y}. 
+\end{equation} 
+
+Durch Umstellen ergibt sich 
+
+\begin{equation} 
+    f_y = \frac{H} {2 \cdot \tan\left(\frac{\gamma}{2}\right)}. 
+    \label{eq:vertical_focal_length} 
+\end{equation} 
+
+Der vertikale Pixelabstand \(\Delta Y\) des erkannten Referenzpunktes von der Bildmitte wird so definiert, dass ein Punkt in der unteren Bildhälfte einen positiven Winkel unterhalb der optischen Achse erzeugt. Daraus folgt
+
+\begin{equation} 
+    \Delta Y = \frac{H}{2}-Y = \frac{H}{2} \left( 1-\frac{2Y}{H} \right). 
+    \label{eq:vertical_pixel_offset} 
+\end{equation} 
+
+Der Winkel \(\beta\) beschreibt die vertikale Abweichung des zum erkannten Bildpunkt gehörenden Lichtstrahls von der optischen Achse der Kamera. Für diesen Winkel gilt 
+
+\begin{equation} 
+    \tan(\beta) = \frac{\Delta Y}{f_y}. 
+\end{equation} 
+
+Werden die Gleichungen \ref{eq:vertical_focal_length} und \ref{eq:vertical_pixel_offset} eingesetzt, ergibt sich 
+
+\begin{equation} 
+    \tan(\beta) = \frac{ \frac{H}{2} \left( 1-\frac{2Y}{H} \right) }{ \frac{H} {2\cdot\tan\left(\frac{\gamma}{2}\right)} }. 
+\end{equation} 
+
+Nach dem Kürzen der gemeinsamen Faktoren verbleibt 
+
+\begin{equation} 
+    \tan(\beta) = \left( 1-\frac{2Y}{H} \right) \tan\left(\frac{\gamma}{2}\right). 
+\end{equation} 
+
+Damit kann der relative Winkel des Bildpunktes durch 
+
+\begin{equation} 
+    \beta(Y) = \arctan\left( \left( 1-\frac{2Y}{H} \right) \tan\left(\frac{\gamma}{2}\right) \right) 
+    \label{eq:pixel_angle} 
+\end{equation} 
+
+berechnet werden. Die Kamera ist um den Winkel \(\alpha_{\mathrm{tilt}}\) gegenüber der Horizontalen nach unten geneigt. Der gesamte Winkel \(\theta\) zwischen der Horizontalen und dem zum Referenzpunkt verlaufenden Lichtstrahl ergibt sich daher zu 
+
+\begin{equation} 
+    \theta = \alpha_{\mathrm{tilt}}+\beta(Y). 
+    \label{eq:total_camera_angle} 
+\end{equation} 
+
+Unter der Annahme einer ebenen Bodenfläche entsteht zwischen der Kameraposition, dem senkrechten Lot auf den Boden und der Position des Spielers ein rechtwinkliges Dreieck. Die Kamerahöhe \(h\) bildet dabei die Gegenkathete und die gesuchte horizontale Entfernung \(d\) die Ankathete. Somit gilt 
+
+\begin{equation} 
+    \tan(\theta) = \frac{h}{d}. 
+\end{equation} 
+
+Die horizontale Entfernung kann entsprechend durch 
+
+\begin{equation} 
+    d = \frac{h}{\tan(\theta)} 
+    \label{eq:distance_basic} 
+\end{equation} 
+
+bestimmt werden. Durch Einsetzen der Gleichungen \ref{eq:pixel_angle} und \ref{eq:total_camera_angle} in Gleichung \ref{eq:distance_basic} ergibt sich die vollständige Distanzfunktion 
+
+\begin{equation} 
+    d(h,\alpha_{\mathrm{tilt}},Y) = \frac{h}{ \tan\left( \alpha_{\mathrm{tilt}} + \arctan\left( \left( 1-\frac{2Y}{H} \right) \tan\left(\frac{\gamma}{2}\right) \right) \right) }. 
+    \label{eq:distance_complete} 
+\end{equation} 
+
+Die Richtung des verwendeten Koordinatensystems kann anhand der Randpositionen überprüft werden. Für \(Y=0\) befindet sich der Referenzpunkt am unteren Bildrand. Gleichung \ref{eq:pixel_angle} liefert in diesem Fall 
+
+\begin{equation} 
+    \beta(0) = \arctan\left( \tan\left(\frac{\gamma}{2}\right) \right) = \frac{\gamma}{2}, 
+\end{equation} 
+
+sofern der betrachtete Winkel im eindeutigen Wertebereich des Arkustangens liegt. Der Gesamtwinkel \(\theta\) nimmt dadurch innerhalb des sichtbaren Bildbereiches einen großen Wert an. Der Tangens im Nenner von Gleichung \ref{eq:distance_complete} wird entsprechend größer und die berechnete Entfernung kleiner. 
+Dies entspricht der geometrischen Annahme, dass ein am unteren Bildrand erkannter Bodenpunkt näher an der Kamera liegt als ein weiter oben erkannter Bodenpunkt. 
+
+Die Genauigkeit der berechneten Entfernung hängt von den Unsicherheiten der verwendeten Eingangsgrößen ab. Relevant sind insbesondere die Unsicherheit \(\sigma_h\) der Kamerahöhe, die Unsicherheit \(\sigma_{\alpha}\) des Kameraneigungswinkels und die Unsicherheit \(\sigma_Y\) 
+der durch die Objekterkennung bestimmten Pixelposition. Werden diese Unsicherheiten als voneinander unabhängig angenommen, kann die resultierende Standardunsicherheit der Distanz mithilfe der Gaußschen Fehlerfortpflanzung bestimmt werden: 
+
+\begin{equation} 
+    \sigma_d = \sqrt{ \left( \frac{\partial d}{\partial h} \sigma_h \right)^2 + \left( \frac{\partial d}{\partial \alpha_{\mathrm{tilt}}} \sigma_{\alpha} \right)^2 + \left( \frac{\partial d}{\partial Y} \sigma_Y \right)^2 }. 
+    \label{eq:gaussian_error_propagation} 
+\end{equation} 
+
+Zur übersichtlicheren Darstellung wird 
+
+\begin{equation} 
+    \theta = \alpha_{\mathrm{tilt}} + \arctan\left( \left( 1-\frac{2Y}{H} \right) \tan\left(\frac{\gamma}{2}\right) \right) 
+\end{equation} 
+
+verwendet. Die partielle Ableitung nach der Kamerahöhe lautet 
+
+\begin{equation} 
+    \frac{\partial d}{\partial h} = \frac{1}{\tan(\theta)} = \frac{d}{h}. 
+    \label{eq:distance_derivative_height} 
+\end{equation} 
+
+Für die partielle Ableitung nach dem Kameraneigungswinkel ergibt sich 
+
+\begin{equation} \frac{\partial d} {\partial \alpha_{\mathrm{tilt}}} = -\frac{h}{\sin^2(\theta)}. 
+    \label{eq:distance_derivative_angle} 
+\end{equation} 
+
+Gleichung \ref{eq:distance_derivative_angle} setzt voraus, dass der Winkel und seine Unsicherheit im Bogenmaß eingesetzt werden. Liegt die Winkelunsicherheit \(\sigma_{\alpha,\mathrm{grad}}\) 
+
+in Grad vor, muss sie mit 
+
+\begin{equation} 
+    \sigma_{\alpha} = \frac{\pi}{180} \sigma_{\alpha,\mathrm{grad}} 
+    \label{eq:degree_to_radian} 
+\end{equation} 
+
+in das Bogenmaß umgerechnet werden. 
+
+Die Abhängigkeit der Entfernung von der erkannten Pixelposition wird mit der Kettenregel bestimmt. Hierfür wird zunächst Gleichung \ref{eq:pixel_angle} nach \(Y\) abgeleitet: 
+
+\begin{equation} 
+    \frac{\partial \beta}{\partial Y} = - \frac{ \frac{2}{H} \tan\left(\frac{\gamma}{2}\right) }{ 1+ \left( 1-\frac{2Y}{H} \right)^2 \tan^2\left(\frac{\gamma}{2}\right) }. 
+    \label{eq:pixel_angle_derivative} 
+\end{equation} 
+
+Aus 
+
+\begin{equation} 
+    \frac{\partial d}{\partial Y} = \frac{\partial d}{\partial \theta} \frac{\partial \theta}{\partial \beta} \frac{\partial \beta}{\partial Y} 
+\end{equation} 
+
+und \(\partial\theta/\partial\beta=1\) folgt 
+
+\begin{equation} 
+    \frac{\partial d}{\partial Y} = \frac{h}{\sin^2(\theta)} \cdot \frac{ \frac{2}{H} \tan\left(\frac{\gamma}{2}\right) }{ 1+ \left( 1-\frac{2Y}{H} \right)^2 \tan^2\left(\frac{\gamma}{2}\right) }. 
+    \label{eq:distance_derivative_pixel} 
+\end{equation} 
+
+Durch Einsetzen der Gleichungen \ref{eq:distance_derivative_height}, \ref{eq:distance_derivative_angle}, \ref{eq:degree_to_radian} und \ref{eq:distance_derivative_pixel} in Gleichung \ref{eq:gaussian_error_propagation} ergibt sich für eine in Grad angegebene Winkelunsicherheit die zusammengesetzte Distanzunsicherheit 
+
+\begin{equation} 
+    \begin{split} 
+        \sigma_d = \Bigg[ & \left( \frac{d}{h}\sigma_h \right)^2 + \left( \frac{h}{\sin^2(\theta)} \frac{\pi}{180} \sigma_{\alpha,\mathrm{grad}} \right)^2 \\[0.5em] &+ \left( \frac{h}{\sin^2(\theta)} 
+        \cdot \frac{ \frac{2}{H} \tan\left(\frac{\gamma}{2}\right) }{ 1+ \left( 1-\frac{2Y}{H} \right)^2 \tan^2\left(\frac{\gamma}{2}\right) } \sigma_Y \right)^2 \Bigg]^{\frac{1}{2}}. 
+        \label{eq:distance_error_complete} 
+    \end{split} 
+\end{equation} 
+
+Die Fehlerfortpflanzung zeigt, dass die Kamerahöhe, der Einbauwinkel und die erkannte Pixelposition unterschiedliche Beiträge zur Unsicherheit der Entfernung liefern. Insbesondere enthält sowohl der Beitrag des Winkelfehlers als auch der Beitrag des Pixelfehlers den Faktor \(h/\sin^2(\theta)\). 
+Bei kleinen Gesamtwinkeln kann dieser Faktor stark ansteigen, wodurch geringe Unsicherheiten des Kamerawinkels oder der erkannten Pixelposition zu einer deutlich größeren Unsicherheit der berechneten Entfernung führen können. 
+
+Für eine produktive Nutzung müsste daher untersucht werden, wie zuverlässig die Unterkante des Spielers unter realen Einsatzbedingungen erkannt werden kann. Unterschiedliche Körperhaltungen, Kleidung, Bewegungsunschärfe, verdeckte Bildbereiche und wechselnde Beleuchtungsverhältnisse können die ermittelte Position \(Y\) 
+beeinflussen. Zusätzlich können mechanische Toleranzen bei der Kameramontage oder Veränderungen des Einbauwinkels die Distanzberechnung beeinträchtigen. Eine Kalibrierung mit bekannten Abständen wäre deshalb erforderlich, 
+um die berechneten Werte mit den tatsächlichen Entfernungen zu vergleichen und die Unsicherheiten der einzelnen Eingangsgrößen zu bestimmen. 
+
+Im Rahmen dieser Arbeit ist die Entfernungsbestimmung durch Objekterkennung als mögliche zukünftige Erweiterung zu verstehen. Die vorhandene Videofunktion stellt grundsätzlich die benötigten Bilddaten bereit. Vor einer zuverlässigen automatischen Abstandskontrolle müssten jedoch die Stabilität der Objekterkennung, 
+die Genauigkeit der Kamerakalibrierung und die resultierende Messunsicherheit unter realen Bedingungen untersucht werden. Die Objekterkennung kann darüber hinaus für die Reduzierung nicht benötigter Bildbereiche und die Unkenntlichmachung von Personen im Hintergrund verwendet werden. 
+Dies wird in \cref{sec:datenminimierung} näher erläutert.
 
 \newpage

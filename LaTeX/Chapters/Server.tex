@@ -304,9 +304,9 @@ Insgesamt muss die Videofunktion so gestaltet werden, dass nur die für die Spie
 Personen im Hintergrund sind dagegen für den Zweck der Aufnahme nicht relevant und sollten möglichst nicht erfasst oder nachträglich unkenntlich gemacht werden. Zusammen mit einer serverseitigen Zugriffskontrolle, verschlüsselter Übertragung, 
 begrenzter Speicherdauer und nachvollziehbarer Protokollierung entsteht dadurch ein Datenschutzkonzept, das zur bestehenden Serverarchitektur passt und die spätere produktive Erweiterung vorbereitet.
 
-\section{Reverse Proxy} \todo{quelle für reverse proxy angeben}
+\section{Reverse Proxy}
 
-Es besteht auch die Möglichkeit mehrere Instanzen des Servers gleichzeitig laufen zu lassen, und zwischen Server und Client einen Reverse Proxy zu platzieren, welcher den Client (HB10 oder ein Nutzer) zu einem passenden Server weiterleitet. Für den Prototypen wurde entschieden dies auszulassen,
+Es besteht auch die Möglichkeit mehrere Instanzen des Servers gleichzeitig laufen zu lassen, und zwischen Server und Client einen Reverse Proxy\cite{nginx_reverse_proxy} zu platzieren, welcher den Client (HB10 oder ein Nutzer) zu einem passenden Server weiterleitet. Für den Prototypen wurde entschieden dies auszulassen,
 da es bei der zu erwartenden Menge an Nutzern nicht notwendig ist, mehrere Server aus Gründen des load balancing aufzusetzen. Da der HB10 gegenwärtig überwiegend in Deutschland eingesetzt wird, besteht derzeit keine Notwendigkeit, regionsspezifische Serverinfrastrukturen bereitzustellen, 
 um diese räumlich näher an den Clients zu positionieren.
 
