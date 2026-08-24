@@ -129,7 +129,7 @@ Diese werden in den folgenden Abschnitten erläutert.
 Im ersten Bereich der Video-App findet der Aufbau der Verbindung zwischen den beteiligten Komponenten sowie die Herstellung der Betriebsbereitschaft für die spätere Videoaufnahme (s. \cref{fig:dartsequenz1}). Sichtbar wird insbesondere, 
 dass das System nicht erst mit dem ersten Wurf aktiv wird, sondern bereits im Vorfeld in einen aufnahmefähigen Zustand überführt werden muss.
 
-Zur grafischen Darstellung der Abläufe und der Kommunikation zwischen den beteiligten Komponenten werden im Folgenden mit PlantUML\cite{https://plantuml.com/de/} erstellte Diagramme verwendet.
+Zur grafischen Darstellung der Abläufe und der Kommunikation zwischen den beteiligten Komponenten werden im Folgenden mit PlantUML\cite{plantuml} erstellte Diagramme verwendet.
 
 \begin{figure}[h!]
     \centering
@@ -224,7 +224,7 @@ Mittels Software-Kompression ist praktisch möglich jeden Codec einzubinden, üb
 
 Bei der Implementierung der Hardware-Komprimierung wurde festgestellt, dass die vorhandenen Grafiktreiber des HB10 nicht mit H.264 und H.265 kompatibel sind, dieser Fehler wurde in späteren Versionen der Treiber behoben. Jedoch ist es nicht momentan nicht möglich,
 die Grafiktreiber des HB10 zu aktualisieren, da die Treiber bereits die aktuellste Version sind, die mit der Linux-Version des HB10 kompatibel sind. Das bedeutet, um die Hardware Komprimierung auf dem HB10 umzusetzen, müsste die Linux version des HB10 aktualisiert werden,
-was mit einem hohen Aufwand für Anpassungen an der vorhanden Software, und auf jeden fall mit einem hohen Testaufwand verbunden ist. Deshalb wurde sich dazu entschieden, für die Implementierung in der Dartsoftware vorläufig auf die Hardware-Komprimierung zu verzichten, und stattdessen Software Komprimierung
+was mit einem hohen Aufwand für Anpassungen an der vorhanden Software und zwangsläufig mit einem hohen Testaufwand verbunden ist. Deshalb wurde sich dazu entschieden, für die Implementierung in der Dartsoftware vorläufig auf die Hardware-Komprimierung zu verzichten, und stattdessen Software Komprimierung
 verwendet.
 
 Um die Unterschiede zwischen hardware und software Komprimierung abzuschätzen, wurde die HB10 Hardware mit einem neuen Ubuntu 26.04 lts Betriebssystem versehen. Diese Version enthält alle notwendigen Treiber um die hardwarebeschleunigte Kodierung zu aktivieren. 
@@ -256,7 +256,7 @@ Video mit einer Auflösung von 1280x720 bei 10 fps, also einer Größe von etwa 
 
 Da die Software Komprimierung die CPU des HB10 über die gesamte Dauer der Komprimierung komplett auslastet, ist es nicht möglich, die Komprimierung parallel zum normalen Spielbetrieb durchzuführen. Deshalb müsste die Komprimierung nach dem Ende des Spieles durchgeführt werden, was zu einer langen Wartezeit führen würde.
 Bei der Hardware Komprimierung hingegen betrug die Maximale CPU Auslastung im Durchschnitt nur 39,7\% $\pm$ 3,3. Wenn man davon ausgeht, 
-dass im Normalen Dart Spielbetrieb die CPU Auslastung maximal bei etwa 17,5\%, sollte die Hardware Komprimierung problemlos parallel dazu durchgeführt werden können.
+dass im normalen Dart Spielbetrieb die CPU Auslastung maximal bei etwa 17,5\%, sollte die Hardware Komprimierung problemlos parallel dazu durchgeführt werden können.
 
 Ein Unterschied in der resultierenden Dateigröße scheint keinen merkbaren Einfluss auf die Dauer oder CPU Auslastung der Komprimierung zu haben. Die entstehende Dateigröße der verschiedenen Codecs lag zwar standardmäßig auseinander, beide Codecs konnten jedoch die Dateigröße des anderen Codecs erreichen.
 Änderungen an der Dateigröße scheinen sich hauptsächlich auf die Videoqualität auszuwirken, und nicht auf die Dauer oder CPU Auslastung der Komprimierung. Da die Videoqualität für den Anwendungsfall lediglich ausreichen muss, um den Spieler sowie dessen Würfe eindeutig erkennen zu können, 
@@ -274,7 +274,7 @@ für jedes einzelne Patent überprüfen ob dieses für unseren Anwendungsfall re
 Da aber die Patentpools erkannt haben, dass die Patente für H.264 bald auslaufen, wurde die minimale Lizenzgebühr auf 100000\$ pro Jahr festgelegt.
 
 Für H.265 bestehen zwei patentpools, welche beide getrennt Lizenzgebühren für die Nutzung des Codecs verlangen. Für den Verkauf von Geräten mit H.265 Kompression, verlangt ein Patentpool 0,4-1,2\$ pro Gerät, aber mit einem Kredit/Freibetrag sollte man unter 50000\$ pro Jahr bleiben. Für das Streaming,
-erhebt einer der patentpools keine Lizenzgebühren, der andere bietet verschiedene Lizenzmodelle an, zum einen gibt es die Möglichkeit einen Prozentsatz der Streaming Einnahmen zu bezahlen, auf der anderen Seite einen Festen abgestimmten Betrag Jährlich zu zahlen, oder man zahlt einen cent Betrag pro Nutzer.
+erhebt einer der Patentpools keine Lizenzgebühren, der andere bietet verschiedene Lizenzmodelle an, zum einen gibt es die Möglichkeit einen Prozentsatz der Streaming Einnahmen zu bezahlen, auf der anderen Seite einen Festen abgestimmten Betrag Jährlich zu zahlen, oder man zahlt einen cent Betrag pro Nutzer.
 Ob hierbei die Möglichkeit besteht, keine Lizenzgebühren zu zahlen, solange keine Einnahmen durch das Streaming generiert werden, ist unklar und müsste wahrscheinlich mit dem Patentpool geklärt werden.
 
 Es besteht auch die Möglichkeit, dass für unseren Anwendungsfall, keine lizenzgebühren für die Nutzung von H.264 anfallen, da diese an Plattformen gerichtet sind. Ob die Webseite für das Anschauen der Videos als Platform gilt, ist unklar und müsste mit den Patentpools geklärt werden.
