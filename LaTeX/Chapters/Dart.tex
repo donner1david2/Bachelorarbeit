@@ -443,12 +443,16 @@ Durch Einsetzen der Gleichungen \ref{eq:distance_derivative_height}, \ref{eq:dis
 Die Fehlerfortpflanzung zeigt, dass die Kamerahöhe, der Einbauwinkel und die erkannte Pixelposition unterschiedliche Beiträge zur Unsicherheit der Entfernung liefern. Insbesondere enthält sowohl der Beitrag des Winkelfehlers als auch der Beitrag des Pixelfehlers den Faktor \(h/\sin^2(\theta)\). 
 Bei kleinen Gesamtwinkeln kann dieser Faktor stark ansteigen, wodurch geringe Unsicherheiten des Kamerawinkels oder der erkannten Pixelposition zu einer deutlich größeren Unsicherheit der berechneten Entfernung führen können. 
 
+Zur Veranschaulichung wird eine Entfernung von \(d = 2{,}37\,\mathrm{m}\) bei einer Kamerahöhe von \(h = 1{,}20\,\mathrm{m}\), einem vertikalen Öffnungswinkel von \(\gamma = 110^\circ\) und einer Bildhöhe von \(H = 1280\,\mathrm{Pixel}\) betrachtet. 
+Unter der Annahme von Unsicherheiten von \(0{,}01\,\mathrm{m}\) für die Kamerahöhe, \(0{,}5^\circ\) für den Kamerawinkel und \(3\,\mathrm{Pixel}\) für die erkannte Position ergeben sich einzelne Distanzunsicherheiten von etwa \(0{,}020\,\mathrm{m}\), \(0{,}051\,\mathrm{m}\) beziehungsweise \(0{,}027\,\mathrm{m}\). 
+Daraus folgt eine kombinierte Unsicherheit von ungefähr \(0{,}062\,\mathrm{m}\), wobei der Kamerawinkel in diesem Beispiel den größten Einfluss aufweist.
+
 Für eine produktive Nutzung müsste daher untersucht werden, wie zuverlässig die Unterkante des Spielers unter realen Einsatzbedingungen erkannt werden kann. Unterschiedliche Körperhaltungen, Kleidung, Bewegungsunschärfe, verdeckte Bildbereiche und wechselnde Beleuchtungsverhältnisse können die ermittelte Position \(Y\) 
 beeinflussen. Zusätzlich können mechanische Toleranzen bei der Kameramontage oder Veränderungen des Einbauwinkels die Distanzberechnung beeinträchtigen. Eine Kalibrierung mit bekannten Abständen wäre deshalb erforderlich, 
 um die berechneten Werte mit den tatsächlichen Entfernungen zu vergleichen und die Unsicherheiten der einzelnen Eingangsgrößen zu bestimmen. 
 
 Im Rahmen dieser Arbeit ist die Entfernungsbestimmung durch Objekterkennung als mögliche zukünftige Erweiterung zu verstehen. Die vorhandene Videofunktion stellt grundsätzlich die benötigten Bilddaten bereit. Vor einer zuverlässigen automatischen Abstandskontrolle müssten jedoch die Stabilität der Objekterkennung, 
 die Genauigkeit der Kamerakalibrierung und die resultierende Messunsicherheit unter realen Bedingungen untersucht werden. Die Objekterkennung kann darüber hinaus für die Reduzierung nicht benötigter Bildbereiche und die Unkenntlichmachung von Personen im Hintergrund verwendet werden. 
-Dies wird in \cref{sec:datenminimierung} näher erläutert.
+Dies wird in \cref{sec:blurr} näher erläutert.
 
 \newpage
