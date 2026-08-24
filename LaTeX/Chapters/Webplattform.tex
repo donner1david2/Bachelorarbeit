@@ -34,7 +34,14 @@ Die Plattform unterstützt damit den Ablauf der nachträglichen Prüfung. Ein Nu
 Auf diese Weise wird der technische Prozess der Speicherung in einen nutzbaren Arbeitsablauf überführt. Der Fokus liegt dabei nicht auf einer automatischen Bewertung der Spielsituation. Die Entscheidung, ob eine Situation auffällig ist, bleibt weiterhin beim Nutzer beziehungsweise bei den zuständigen Personen. 
 Die Webplattform stellt lediglich die benötigten Informationen und das Videomaterial bereit, damit diese Prüfung durchgeführt werden kann(s. \cref{fig:cheatdet}).
 
-Für den Prototypen bedeutet dies, dass vor allem die grundlegenden Funktionen umgesetzt werden müssen. Dazu zählen das Anzeigen vorhandener Videos, das Bereitstellen einer einfachen Such- oder Filtermöglichkeit sowie das Abspielen einer ausgewählten Aufnahme. 
+Für den Prototypen bedeutet dies, dass vor allem die grundlegenden Funktionen umgesetzt werden müssen. 
+
+\begin{itemize} 
+    \item das Anzeigen vorhandener Videos, 
+    \item das Bereitstellen einer einfachen Such- oder Filtermöglichkeit und 
+    \item das Abspielen einer ausgewählten Aufnahme. 
+\end{itemize}
+
 Erweiterte Funktionen wie eine detaillierte Benutzerverwaltung, eine vollständig ausgearbeitete Nutzerführung oder eine direkte Integration in spätere Turnierprozesse stehen zunächst nicht im Vordergrund. Der Prototyp soll vor allem zeigen, 
 dass die zuvor gespeicherten Videodaten über eine Weboberfläche praktisch nutzbar gemacht werden können. 
 
@@ -46,7 +53,14 @@ Die Plattform bildet somit die Verbindung zwischen der technischen Speicherung d
 Die Webplattform wurde im Prototypen als browserbasierte Single-Page-Application \cite{mdn_spa_2025} umgesetzt. Darunter wird in diesem Zusammenhang eine Webanwendung verstanden, bei der die grundlegende Oberfläche einmalig im Browser geladen wird und weitere Inhalte anschließend innerhalb dieser Oberfläche aktualisiert werden. 
 Der Nutzer muss dadurch nicht für jede Ansicht eine vollständig neue Seite vom Server laden. Stattdessen bleibt die Anwendung im Browser aktiv und ruft nur die jeweils benötigten Daten oder Videoinhalte vom Server ab. 
 
-Für den vorliegenden Prototypen ist dieser Aufbau naheliegend, da die Webplattform nur einen begrenzten Funktionsumfang besitzt. Die wesentlichen Ansichten bestehen aus der Startseite, der Übersicht der vorhandenen Videos und der Wiedergabeansicht. 
+Für den vorliegenden Prototypen ist dieser Aufbau naheliegend, da die Webplattform nur einen begrenzten Funktionsumfang besitzt. Die wesentlichen Ansichten der Webplattform bestehen aus: 
+
+\begin{itemize} 
+    \item der Startseite, 
+    \item der Übersicht der vorhandenen Videos und 
+    \item der Wiedergabeansicht. 
+\end{itemize} 
+
 Diese Bereiche können innerhalb einer gemeinsamen Oberfläche dargestellt werden, ohne dass für jede Funktion eine eigene serverseitig gerenderte Seite notwendig ist. Dadurch bleibt die Struktur der Anwendung übersichtlich und der Wechsel zwischen den einzelnen Ansichten kann direkt im Browser erfolgen. 
 
 Ein Vorteil dieses Ansatzes liegt darin, dass die Darstellung der Oberfläche stärker von der Bereitstellung der Daten getrennt werden kann. Der Server stellt die benötigten Videometadaten und Videodateien über definierte Schnittstellen bereit, während die Webplattform diese Informationen im Browser darstellt. 
@@ -61,8 +75,16 @@ Eine weitere Alternative wäre eine vollständig serverseitig gerenderte Oberfl�
 Für den Prototypen steht jedoch nicht die serverseitige Erzeugung fertiger Webseiten im Vordergrund, sondern die Überprüfung, ob gespeicherte Videodaten über eine Weboberfläche geladen, angezeigt und abgespielt werden können. Eine browserbasierte Single-Page-Application eignet sich dafür, 
 da sie die nötigen Funktionen mit einer vergleichsweise einfachen Struktur abbilden kann. 
 
-Gleichzeitig ist die Umsetzung als Single-Page-Application nicht automatisch mit einer produktionsreifen Oberfläche gleichzusetzen. Für eine spätere tatsächliche Nutzung müssten zusätzliche Aspekte betrachtet werden. Dazu gehören insbesondere eine klarere Nutzerführung, eine belastbare Rechteverwaltung, 
-eine bessere Fehlerbehandlung bei nicht verfügbaren Videos und eine stärkere Einbindung in den späteren Prüfprozess. Im Rahmen des Prototypen überwiegt jedoch der Vorteil, dass die grundlegenden Funktionen in einer einfachen, zusammenhängenden Benutzeroberfläche getestet werden können. 
+Gleichzeitig ist die Umsetzung als Single-Page-Application nicht automatisch mit einer produktionsreifen Oberfläche gleichzusetzen. Für eine spätere tatsächliche Nutzung müssten zusätzliche Aspekte betrachtet werden. Dazu gehören insbesondere: 
+
+\begin{itemize} 
+    \item eine klarere Nutzerführung, 
+    \item eine belastbare Rechteverwaltung, 
+    \item eine bessere Fehlerbehandlung bei nicht verfügbaren Videos und 
+    \item eine stärkere Einbindung in den späteren Prüfprozess. 
+\end{itemize} 
+
+Im Rahmen des Prototypen überwiegt jedoch der Vorteil, dass die grundlegenden Funktionen in einer einfachen, zusammenhängenden Benutzeroberfläche getestet werden können. 
 
 \section{Aufbau der Benutzeroberfläche} \label{sec:web-ui} 
 
@@ -140,8 +162,17 @@ Eine weitere Möglichkeit wäre die Kombination aus serverseitiger Vorfilterung 
  Im Prototypen wurde diese Erweiterung jedoch nicht benötigt, da noch keine vollständige Integration in spätere Turnier- oder Benutzerkonzepte umgesetzt wurde. 
 
 Die Filterung und Sortierung der Videometadaten zeigt damit eine wichtige Grenze zwischen Prototyp und produktiver Anwendung. Für den Prototypen genügt eine einfache Verarbeitung der angezeigten Metadaten, um die technische Machbarkeit der Übersicht zu demonstrieren. 
-Für einen späteren Einsatz müsste die Funktion erweitert werden. Denkbar wären zusätzliche Filter nach Spieler, Turnier, Spielmodus, Prüfstatus oder Zeitraum. Ebenso könnte eine serverseitige Begrenzung der Ergebnisse notwendig werden, wenn sehr viele Videos gespeichert werden. 
-Die aktuelle Umsetzung bildet somit eine einfache Grundlage, auf der spätere Such- und Verwaltungsfunktionen aufbauen können.
+Für einen späteren Einsatz wären zusätzliche Filter denkbar, beispielsweise nach:
+
+\begin{itemize} 
+    \item Spieler, 
+    \item Turnier, 
+    \item Spielmodus, 
+    \item Prüfstatus oder 
+    \item Zeitraum. 
+\end{itemize} 
+
+Ebenso könnte eine serverseitige Begrenzung der Ergebnisse notwendig werden, wenn sehr viele Videos gespeichert werden. Die aktuelle Umsetzung bildet somit eine einfache Grundlage, auf der spätere Such- und Verwaltungsfunktionen aufbauen können.
 
 \subsection{Videowiedergabe}
 
@@ -157,7 +188,15 @@ ob die gespeicherten Videodateien korrekt ausgeliefert und vom Browser wiedergeg
 \end{figure} 
 
 Die Videowiedergabe ist für die Webplattform besonders wichtig, da die gespeicherten Aufnahmen nur dann für eine nachträgliche Überprüfung geeignet sind, wenn sie zuverlässig betrachtet werden können. Im Prototypen wurde dafür auf die Standardfunktionen des Browsers zurückgegriffen. 
-Eine Erweiterung des Videoplayers um zusätzliche Analysefunktionen wurde nicht vorgenommen. Denkbar wären in einer späteren Implementierung beispielsweise Markierungen auffälliger Stellen, Kommentare, Zeitstempel oder eine Verknüpfung mit einzelnen Würfen. 
+Eine Erweiterung des Videoplayers um zusätzliche Analysefunktionen wurde nicht vorgenommen. In einer späteren Implementierung könnten zusätzliche Funktionen ergänzt werden, beispielsweise: 
+
+\begin{itemize} 
+    \item Markierungen auffälliger Stellen, 
+    \item Kommentare, 
+    \item Zeitstempel oder 
+    \item eine Verknüpfung mit einzelnen Würfen. 
+\end{itemize}
+
 Diese Funktionen liegen jedoch außerhalb des prototypischen Umfangs und wurden deshalb nicht umgesetzt. 
 
 Für die hier entwickelte Oberfläche bedeutet dies, dass die Funktionsfähigkeit des Prototypen nicht automatisch mit einer für den produktiven Einsatz geeigneten Benutzeroberfläche gleichzusetzen ist. Der Prototyp zeigt lediglich, dass die grundlegenden Funktionen technisch umgesetzt werden können. 

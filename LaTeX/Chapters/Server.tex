@@ -26,8 +26,17 @@ Für solche großen Objekte ist eine Speicherung als eigenständige Datei im Dat
 dass Datenbanken insbesondere bei kleineren Objekten Vorteile haben können, während Dateisysteme bei größeren Objekten häufig effizienter sind \cite{sears_van_ingen_gray_2006}. Da die erzeugten Videos nicht als kleine Datensätze, 
 sondern als zusammenhängende Mediendateien beziehungsweise als HLS-Playlist mit Segmentdateien vorliegen, ist eine Speicherung außerhalb der Datenbank für diesen Anwendungsfall naheliegend. 
 
-Die relationale Datenbank übernimmt dagegen die Verwaltung der strukturierten Informationen zu den Videos. Dazu gehören beispielsweise die Spieler-ID, der Dateiname, der Speicherort, der Erstellungszeitpunkt und der aktuelle Status des Videos. Diese Daten müssen gezielt durchsucht, 
-gefiltert und über die Webplattform angezeigt werden können. Eine relationale Datenbank eignet sich hierfür, da die Metadaten in einer festen Struktur abgelegt und über Abfragen ausgewertet werden können. Die Videodatei selbst wird in diesem Modell nicht direkt in der Datenbank gespeichert, 
+Die relationale Datenbank übernimmt dagegen die Verwaltung der strukturierten Informationen zu den Videos. Dazu gehören beispielsweise: 
+
+\begin{itemize} 
+    \item die Spieler-ID, 
+    \item der Dateiname, 
+    \item der Speicherort, 
+    \item der Erstellungszeitpunkt und 
+    \item der aktuelle Status des Videos. 
+\end{itemize} 
+
+Diese Daten müssen gezielt durchsucht, gefiltert und über die Webplattform angezeigt werden können. Eine relationale Datenbank eignet sich hierfür, da die Metadaten in einer festen Struktur abgelegt und über Abfragen ausgewertet werden können. Die Videodatei selbst wird in diesem Modell nicht direkt in der Datenbank gespeichert, 
 sondern über einen gespeicherten Dateipfad mit dem Datenbankeintrag verknüpft. Dadurch entsteht eine eindeutige Beziehung zwischen dem physischen Speicherort der Datei und dem logischen Eintrag im System. 
 
 Ein Videoeintrag in der Datenbank kann somit als zentrale Referenz auf eine gespeicherte Aufnahme verstanden werden. Der Datenbankeintrag enthält die fachlichen Informationen, während der Dateipfad auf die konkrete Datei oder den Ordner mit den HLS-Segmenten verweist. 
@@ -49,7 +58,13 @@ Jedes Objekt besitzt einen eindeutigen Schlüssel und kann über eine Schnittste
 
 Ein wesentlicher Vorteil von Object Storage liegt in der Skalierbarkeit. Die Videodaten sind nicht an das Dateisystem eines einzelnen Servers gebunden, sondern können unabhängig von der Anwendung gespeichert werden.
 Dadurch kann ein System mit mehreren Serverinstanzen einfacher auf denselben Datenbestand zugreifen. Für große produktive Videoplattformen ist dies ein wichtiger Vorteil, da Speicherplatz und Serverkapazität getrennt voneinander erweitert werden können. 
-Außerdem bieten Object-Storage-Systeme häufig zusätzliche Funktionen wie Replikation, Lebenszyklus-Regeln und Zugriffskontrollen. 
+Object-Storage-Systeme bieten häufig zusätzliche Funktionen wie: 
+
+\begin{itemize} 
+    \item Replikation, 
+    \item Lebenszyklus-Regeln und 
+    \item Zugriffskontrollen. 
+\end{itemize}
 
 Demgegenüber steht jedoch eine höhere Komplexität. Für den Einsatz eines Object Storage muss eine zusätzliche Speicherkomponente eingebunden werden. Die Anwendung muss nicht mehr nur lokale Dateien schreiben und lesen, sondern über eine externe Schnittstelle mit dem Speichersystem kommunizieren. 
 Dabei müssen Aspekte wie Authentifizierung, Berechtigungen, Bucket-Strukturen, Objektpfade und Fehlerbehandlung berücksichtigt werden. Für einen Prototypen erhöht dies den Entwicklungsaufwand deutlich. 
@@ -80,7 +95,16 @@ Ein weiterer relevanter Wert ist der Erstellungszeitpunkt. Dieser ermöglicht es
 um die Videos in eine nachvollziehbare Reihenfolge zu bringen. Zusätzlich könnte ein Videostatus gespeichert werden. Dieser beschreibt, ob ein Video beispielsweise gerade hochgeladen, vollständig gespeichert, verarbeitet oder bereits für den Abruf verfügbar ist. Dadurch kann verhindert werden, 
 dass ein Nutzer ein Video anfordert, das noch nicht vollständig bereitgestellt wurde. 
 
-Die Metadaten können außerdem um Spielinformationen erweitert werden. Dazu zählen beispielsweise eine Spiel-ID, eine Turnier-ID, der Spielmodus oder Informationen zum Ergebnis. Für den Prototypen ist eine minimale Struktur ausreichend, die den Upload, die Speicherung und den Abruf ermöglicht. 
+Die Metadaten können außerdem um weitere Spielinformationen ergänzt werden. Dazu zählen beispielsweise: 
+
+\begin{itemize} 
+    \item eine Spiel-ID, 
+    \item eine Turnier-ID, 
+    \item der Spielmodus und 
+    \item Informationen zum Ergebnis. 
+\end{itemize}
+
+Für den Prototypen ist eine minimale Struktur ausreichend, die den Upload, die Speicherung und den Abruf ermöglicht. 
 Für eine spätere stärkere Integration in das Dart-Ökosystem wäre eine Erweiterung jedoch sinnvoll. Dann könnten Videos nicht nur einem Spieler, sondern auch einem konkreten Spiel oder Wettbewerb zugeordnet werden. 
 
 Die getrennte Speicherung von Metadaten und Videodateien hat den Vorteil, dass die Datenbank nur strukturierte und vergleichsweise kleine Datensätze enthält. Bei einer Anfrage an die Webplattform müssen dadurch nicht die großen Videodaten geladen werden. 
@@ -261,12 +285,26 @@ damit nachvollziehbar bleibt, wann ein Video hochgeladen oder abgerufen wurde. S
 Die gespeicherten Videodaten und Metadaten sollten außerdem durch geeignete technische und organisatorische Maßnahmen geschützt werden. Dazu gehören unter anderem beschränkte Benutzerrechte auf dem Server, getrennte Berechtigungen für Anwendung, 
 Datenbank und Dateisystem sowie eine regelmäßige Überprüfung der Zugriffsmöglichkeiten. Die DSGVO nennt in diesem Zusammenhang unter anderem die Vertraulichkeit, Integrität, Verfügbarkeit und Belastbarkeit der Systeme sowie die regelmäßige Bewertung der getroffenen Maßnahmen \cite{eu2016gdpr}. 
 
-Für das Datenmodell ergibt sich daraus, dass die reine Speicherung von Dateiname, Pfad und Spielerzuordnung langfristig nicht ausreicht. Für eine produktive Umsetzung sollten zusätzliche Informationen aufgenommen werden. Dazu zählen ein Status der Einwilligung, 
-der Zeitpunkt der Einwilligung, eine Zuordnung zu einem Spiel oder Turnier, eine Sichtbarkeitsstufe sowie ein Ablaufdatum für die Löschung. Dadurch kann der Server nicht nur erkennen, wo ein Video gespeichert ist, 
+Für das Datenmodell ergibt sich daraus, dass die reine Speicherung von Dateiname, Pfad und Spielerzuordnung langfristig nicht ausreicht. Für eine produktive Umsetzung sollten daher zusätzliche Informationen aufgenommen werden. Dazu zählen: 
+
+\begin{itemize} 
+    \item der Status und der Zeitpunkt der Einwilligung, 
+    \item die Zuordnung zu einem Spiel oder Turnier, 
+    \item eine Sichtbarkeitsstufe und 
+    \item ein Ablaufdatum für die Löschung. 
+\end{itemize} 
+
+Dadurch kann der Server nicht nur erkennen, wo ein Video gespeichert ist, 
 sondern auch, ob es überhaupt bereitgestellt werden darf und welche Nutzer darauf zugreifen können. Der Prototyp kann diese Anforderungen zunächst vereinfacht abbilden, sollte die Trennung von Videodatei, Metadaten und Berechtigungsinformationen jedoch bereits in der Architektur berücksichtigen. 
 
 Insgesamt muss die Videofunktion so gestaltet werden, dass nur die für die Spielüberprüfung notwendigen Inhalte erfasst und bereitgestellt werden. Der Spieler kann im Rahmen des videopflichtigen Spielmodus aufgenommen werden, nachdem er vor Spielbeginn aktiv zugestimmt hat. 
 Personen im Hintergrund sind dagegen für den Zweck der Aufnahme nicht relevant und sollten möglichst nicht erfasst oder nachträglich unkenntlich gemacht werden. Zusammen mit einer serverseitigen Zugriffskontrolle, verschlüsselter Übertragung, 
 begrenzter Speicherdauer und nachvollziehbarer Protokollierung entsteht dadurch ein Datenschutzkonzept, das zur bestehenden Serverarchitektur passt und die spätere produktive Erweiterung vorbereitet.
+
+\section{Reverse Proxy} \todo{quelle für reverse proxy angeben}
+
+Es besteht auch die Möglichkeit mehrere Instanzen des Servers gleichzeitig laufen zu lassen, und zwischen Server und Client einen Reverse Proxy zu platzieren, welcher den Client (HB10 oder ein Nutzer) zu einem passenden Server weiterleitet. Für den Prototypen wurde entschieden dies auszulassen,
+da es bei der zu erwartenden Menge an Nutzern nicht notwendig ist, mehrere Server aus Gründen des load balancing aufzusetzen. Da der HB10 gegenwärtig überwiegend in Deutschland eingesetzt wird, besteht derzeit keine Notwendigkeit, regionsspezifische Serverinfrastrukturen bereitzustellen, 
+um diese räumlich näher an den Clients zu positionieren.
 
 \newpage

@@ -17,12 +17,6 @@ Der HB10 kann seine aufgenommenen Videos mittels HTTP an den Server übertragen.
 
 Der HB10 ist dafür zuständig, den Spielbetrieb durchzuführen, und die Videos für die Dart-Würfe aufzunehmen, diese zu komprimieren und an den Server zu senden. Der Server speichert die Videos inklusive der zugehörigen Metadaten und stellt sie den Nutzern des HB10 über eine Webseite bereit. Der Nutzer kann auf dieser Webseite die Metadaten abrufen, ein gewünschtes Video auffinden und anschließend ansehen.
 
-\section{Reverse Proxy} \todo{quelle für reverse proxy angeben}
-
-Es besteht auch die Möglichkeit mehrere Instanzen des Servers gleichzeitig laufen zu lassen, und zwischen Server und Client einen Reverse Proxy zu platzieren, welcher den Client (HB10 oder ein Nutzer) zu einem passenden Server weiterleitet. Für den Prototypen wurde entschieden dies auszulassen,
-da es bei der zu erwartenden Menge an Nutzern nicht notwendig ist, mehrere Server aus Gründen des load balancing aufzusetzen. Da der HB10 gegenwärtig überwiegend in Deutschland eingesetzt wird, besteht derzeit keine Notwendigkeit, regionsspezifische Serverinfrastrukturen bereitzustellen, 
-um diese räumlich näher an den Clients zu positionieren.
-
 \section{Nutzungsszenarien}
 
 Das zentrale Nutzungsszenario besteht in der nachträglichen Überprüfung eines asynchron durchgeführten Turnierspiels. Der Spieler führt das Spiel am HB10 durch, während die relevanten Spielsituationen durch Videoaufnahmen dokumentiert werden. 

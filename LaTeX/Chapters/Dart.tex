@@ -3,6 +3,9 @@
 
 Als Videoquelle und Spielgerät dient der Löwen-DART HB10, dieser muss kurze Videoaufnahmen für jeden Wurf erstellen, aus einem Spiel des zukünftigen Turnier Modus. Nach Abschluss des Spiels werden alle Videoaufnahmen zu einem Video zusammengeführt, und für das Streaming vorbereitet.
 
+Die bestehende Software des HB10 sowie die im Rahmen dieser Arbeit erweiterte Dart-Anwendung sind in C++ implementiert. Für die Verarbeitung der Videodaten wurde zusätzlich FFmpeg (s. \cref{sec:ffmpeg}) eingebunden. 
+Die hierfür benötigten Zugriffe auf die FFmpeg-Bibliotheken wurden unmittelbar über deren in C bereitgestellte Programmierschnittstelle umgesetzt.
+
 \paragraph{Allgemeiner Spielablauf} 
 
 Vor dem Beginn eines Spiels wählen die Spieler am HB10 zunächst den gewünschten Spielmodus aus. Anschließend wird die Anzahl der teilnehmenden Spieler festgelegt. Abhängig vom ausgewählten Spiel können die Teilnehmer außerdem zu Teams zusammengefasst werden. Die Spieler haben dabei die Möglichkeit, 
@@ -42,7 +45,7 @@ Gemäß des beschriebenen Konzepts wurde eine eigene Anwendung für die Videoauf
 
 Somit erstreckt sich die neuimplementiere Videofunktion des HB10 über zwei Anwendungen (s. \cref{fig:videoaufbau}). Die erste ist die eigentliche DART-Anwendung. Diese ist dafür zuständig die zweite Anwendung über Ereignisse wie Treffer, Spiel-Start und Ende zu Informieren,
 sowie das abschließende Übertragen an den Server. Die zweite Anwendung, ist verantwortlich für das Zwischenspeichern, das Zusammenschneiden und das Komprimieren der Videodaten, sowie das anschließende Erstellen der Playlist. Im Folgenden wird der Aufbau der einzelnen Komponenten kurz dargestellt,
-die Abläufe in und zwischen diesen Komponenten folgt anschließend in \cref{sec:dart-ablauf} \todo{itemizeation}
+die Abläufe in und zwischen diesen Komponenten folgt anschließend in \cref{sec:dart-ablauf}
 
 \begin{figure}[h]
     \centering
@@ -51,9 +54,6 @@ die Abläufe in und zwischen diesen Komponenten folgt anschließend in \cref{sec
     Nach der Verarbeitung werden die erzeugten Videodateien für die spätere Bereitstellung an den Storage-Server übertragen.}
     \label{fig:videoaufbau}
 \end{figure}
-
-Die bestehende Software des HB10 sowie die im Rahmen dieser Arbeit erweiterte Dart-Anwendung sind in C++ implementiert. Für die Verarbeitung der Videodaten wurde zusätzlich FFmpeg eingebunden. 
-Die hierfür benötigten Zugriffe auf die FFmpeg-Bibliotheken wurden unmittelbar über deren in C bereitgestellte Programmierschnittstelle umgesetzt.
 
 \subsection{Kamera}
 
@@ -84,10 +84,10 @@ Diese Trennung reduziert die Komplexität innerhalb der Hauptanwendung und erlei
 \begin{figure}[h]
     \centering
     \includesvg[width=\textwidth]{img/Video_App.svg}
-    \caption{Architektur und Datenfluss der Video-App. Die Anwendung verarbeitet von der Kamera bereitgestellte rohe(YUYV) Videodaten, speichert diese zunächst in einem Ringpuffer und erzeugt daraus ereignisbasierte Videoausschnitte sowie fertige Videos. 
+    \caption{Architektur und Datenfluss der Video-App. Die Anwendung verarbeitet von der Kamera bereitgestellte rohe(YUYV\cite{theKernel2020YUYV}) Videodaten, speichert diese zunächst in einem Ringpuffer und erzeugt daraus ereignisbasierte Videoausschnitte sowie fertige Videos. 
     Die Steuerung erfolgt über Ereignisse und Antworten im Austausch mit der Dart-App; die erzeugten Videodateien werden im Dateisystem abgelegt.}
     \label{fig:videoapp}
-\end{figure} \todo{referenz auf abschnitt/quelle für YUYV}
+\end{figure}
 
 Die Video-App (s. \cref{fig:videoapp}) ist die eigenständige Komponente zur Verarbeitung der im HB10 anfallenden Videodaten. Während die Dart-App den Spielbetrieb steuert, konzentriert sich die Video-App ausschließlich auf Aufgaben der Videoaufnahme und \mbox{-aufbereitung}. 
 Sie ist damit funktional klar von der Hauptanwendung getrennt und erweitert das Gesamtsystem um die technische Umsetzung der Videofunktion.l
@@ -225,7 +225,7 @@ Mittels Software-Kompression ist praktisch möglich jeden Codec einzubinden, üb
 Bei der Implementierung der Hardware-Komprimierung wurde festgestellt, dass die vorhandenen Grafiktreiber des HB10 nicht mit H.264 und H.265 kompatibel sind, dieser Fehler wurde in späteren Versionen der Treiber behoben. Jedoch ist es nicht momentan nicht möglich,
 die Grafiktreiber des HB10 zu aktualisieren, da die Treiber bereits die aktuellste Version sind, die mit der Linux-Version des HB10 kompatibel sind. Das bedeutet, um die Hardware Komprimierung auf dem HB10 umzusetzen, müsste die Linux version des HB10 aktualisiert werden,
 was mit einem hohen Aufwand für Anpassungen an der vorhanden Software, und auf jeden fall mit einem hohen Testaufwand verbunden ist. Deshalb wurde sich dazu entschieden, für die Implementierung in der Dartsoftware vorläufig auf die Hardware-Komprimierung zu verzichten, und stattdessen Software Komprimierung
-verwendet. \todo{konsequenzen Software Komprimierung}
+verwendet.
 
 Um die Unterschiede zwischen hardware und software Komprimierung abzuschätzen, wurde die HB10 Hardware mit einem neuen Ubuntu 26.04 lts Betriebssystem versehen. Diese Version enthält alle notwendigen Treiber um die hardwarebeschleunigte Kodierung zu aktivieren. 
 Da für das Ausführen der Dart-App auf dieser Ubuntu-Version große Änderungen am gesamten System notwendig sind, kann nicht getestet werden, wie sich das Komprimieren auf den laufenden Spielbetrieb auswirken würde. 
@@ -259,8 +259,8 @@ Bei der Hardware Komprimierung hingegen betrug die Maximale CPU Auslastung im Du
 dass im Normalen Dart Spielbetrieb die CPU Auslastung maximal bei etwa 17,5\%, sollte die Hardware Komprimierung problemlos parallel dazu durchgeführt werden können.
 
 Ein Unterschied in der resultierenden Dateigröße scheint keinen merkbaren Einfluss auf die Dauer oder CPU Auslastung der Komprimierung zu haben. Die entstehende Dateigröße der verschiedenen Codecs lag zwar standardmäßig auseinander, beide Codecs konnten jedoch die Dateigröße des anderen Codecs erreichen.
-Änderungen an der Dateigröße scheinen sich hauptsächlich auf die Videoqualität auszuwirken, und nicht auf die Dauer oder CPU Auslastung der Komprimierung. Da die Videoqualität für uns kein entscheidender Faktor ist, solange der Spieler und alle Würfe klar zu erkennen sind, 
-ist die Dateigröße kein entscheidender Faktor für die Wahl des Codecs.\todo{umschreiben}
+Änderungen an der Dateigröße scheinen sich hauptsächlich auf die Videoqualität auszuwirken, und nicht auf die Dauer oder CPU Auslastung der Komprimierung. Da die Videoqualität für den Anwendungsfall lediglich ausreichen muss, um den Spieler sowie dessen Würfe eindeutig erkennen zu können, 
+stellt die Dateigröße kein maßgebliches Kriterium bei der Wahl des Codecs dar.
 
 Wie diese Daten zeigen, sollte für die spätere Umsetzung zwingend die Hardwaredekodierung benutzt werden. Da in der Zukunft das Betriebssystem des HB10 aktualisiert werden soll, wird dies dann mit umgesetzt. Dieses Update hätte aber den Umfang dieser Arbeit weit überschritten.
 
