@@ -1,13 +1,13 @@
 % !TEX root =  master.tex
 \chapter{Systemarchitektur} \label{sec:system}
 
-Für das System musste eine Gesamte Architektur entwickelt werden, welche die Komponenten HB10, Nutzer (Webseite) und Server miteinander verbindet (s. \ref{fig:architektur}). Die einzige bereits vorhandene Komponente ist der HB10, welcher allerdings noch keine Kamera enthält. In diesem Kapitel gibt wird ein grober Überblick über die 
-Architektur gegeben, die Details zu den einzelnen Komponenten werden zu einem späterem Zeitpunkt erläutert. 
+Für das System musste eine Gesamte Architektur entwickelt werden, welche die Komponenten HB10, Nutzer (Webseite) und Server miteinander verbindet (s. \ref{fig:architektur}). Die einzige bereits vorhandene Komponente ist der HB10, welcher allerdings noch keine Kamera enthält. 
+In diesem Kapitel gibt wird ein grober Überblick über die Architektur gegeben, die Details zu den einzelnen Komponenten werden zu einem späterem Zeitpunkt erläutert. 
 
 \begin{figure}[H]
     \centering
     \includesvg[width=\textwidth]{img/System.svg}
-    \caption{Gesamtarchitektur der entwickelten Video-on-Demand-Lösung. Der HB10 erfasst und überträgt die aufgenommenen Videodaten an einen Spring-Boot-Server, der die Videos im Dateisystem und die zugehörigen Metadaten in einer Datenbank speichert. 
+    \caption[Gesamtarchitektur der Video-on-Demand-Lösung]{Gesamtarchitektur der entwickelten Video-on-Demand-Lösung. Der HB10 erfasst und überträgt die aufgenommenen Videodaten an einen Spring-Boot-Server, der die Videos im Dateisystem und die zugehörigen Metadaten in einer Datenbank speichert. 
     Nutzer greifen über einen Browser auf die Webplattform zu und können die bereitgestellten Videos über den Server abrufen.}
     \label{fig:architektur}
 \end{figure}
@@ -15,7 +15,8 @@ Architektur gegeben, die Details zu den einzelnen Komponenten werden zu einem sp
 Der HB10 kann seine aufgenommenen Videos mittels HTTP an den Server übertragen. Als Server dient ein einfacher Webserver, welcher Zugriff auf eine Datenbank und das Dateisystem hat, um empfangene Videos und deren Metadaten zu speichern. Der Nutzer erhält über den Webserver Zugriff auf eine Webplattform, 
 über welche er die Videos ansehen kann.
 
-Der HB10 ist dafür zuständig, den Spielbetrieb durchzuführen, und die Videos für die Dart-Würfe aufzunehmen, diese zu komprimieren und an den Server zu senden. Der Server speichert die Videos inklusive der zugehörigen Metadaten und stellt sie den Nutzern des HB10 über eine Webseite bereit. Der Nutzer kann auf dieser Webseite die Metadaten abrufen, ein gewünschtes Video auffinden und anschließend ansehen.
+Der HB10 ist dafür zuständig, den Spielbetrieb durchzuführen, und die Videos für die Dart-Würfe aufzunehmen, diese zu komprimieren und an den Server zu senden. Der Server speichert die Videos inklusive der zugehörigen Metadaten und stellt sie den Nutzern des HB10 über eine Webseite bereit. 
+Der Nutzer kann auf dieser Webseite die Metadaten abrufen, ein gewünschtes Video auffinden und anschließend ansehen.
 
 \section{Nutzungsszenarien}
 

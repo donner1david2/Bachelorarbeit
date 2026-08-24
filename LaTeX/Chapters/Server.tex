@@ -8,7 +8,7 @@ Die Serveranwendung wurde in Kotlin auf Grundlage von Spring Boot implementiert.
 
 Für den Server wurde entschieden, auf einen klassischen Webserver kombiniert mit relationaler Datenbank zurückzugreifen, der die Videos auf dem Dateisystem speichert. Ein Alternativer Gedanke wäre es, statt das Dateisystem des Servers zu verwenden, die Videos in einem Object-Storage zu speichern. 
 Dies ist mittlerweile eine empfohlene Praxis bei \ac{VOD} Streaming Plattformen \cite{2021}. Object-Storage bringt jedoch viel Komplexität mit sich, die nicht gerechtfertigt werden kann. Denn die relativ geringe Menge an Videos mit denen zu rechnen ist, 
-vermindern stark die Vorteile \todo{Vorteile erklären} die Object-Storage mit sich bringt. Deshalb wurde entschieden, die Videos auf dem Dateisystem des Servers zu speichern. Da die Videos maximal eine Länge von einigen Minuten haben, ist die Dateigröße relativ klein, 
+vermindern stark die Vorteile die Object-Storage mit sich bringt. Deshalb wurde entschieden, die Videos auf dem Dateisystem des Servers zu speichern. Da die Videos maximal eine Länge von einigen Minuten haben, ist die Dateigröße relativ klein, 
 sodass eine Speicherung auf dem Dateisystem des Servers keine Probleme mit sich bringen sollte, und die Verknüpfung von Metadaten und Videos stark vereinfacht wird.
 
 Als Kommunikationsprotokoll zwischen Server und Clients wird HTTP zusammen mit REST-API verwendet. Da dies eine simple aber ausreichende Methode ist. Der größte Nachteil ist das abgebrochene Anfragen nicht fortgesetzt werden können. Somit kann die Übertragung von großen Dateien problematisch werden.
@@ -125,7 +125,8 @@ bildet diese Tabelle die zentrale Verbindung zwischen den gespeicherten Videodat
 \begin{figure}[H] 
     \centering 
     \includesvg[width=0.35\textwidth]{img/PlantUml/video-entity/video-entity.svg} 
-    \caption{Video-Entität zur Speicherung der Videometadaten. Die Entität enthält die zur Zuordnung und zum Auffinden eines gespeicherten Videos benötigten Attribute.} 
+    \caption[Video-Entität des Datenmodells]{Video-Entität zur Speicherung der Videometadaten. Die eindeutige ID identifiziert den jeweiligen Datenbankeintrag. Die Attribute name und path beschreiben die Zuordnung und den Speicherort des Videos. throws enthält die Anzahl der aufgezeichneten Würfe,
+    date den Erstellungszeitpunkt und tournament die Kennung des zugehörigen Turniers. Die eigentliche Videodatei wird nicht in der Datenbank, sondern unter dem durch path referenzierten Speicherort im Dateisystem abgelegt.}
     \label{fig:video-entity} 
 \end{figure} 
 
@@ -145,10 +146,12 @@ da sie alle für die Serverlogik benötigten Metadaten enthält und gleichzeitig
 \begin{figure}[H]
     \centering
     \includesvg[width=0.6\textwidth]{img/PlantUml/RESTapi/RESTapi.svg}
-    \caption{REST-API-Endpunkte des Video Servers}
+    [REST-API-Endpunkte des Video-Servers]{Struktur der REST-API-Endpunkte des Video-Servers. Unterhalb des Basispfads \texttt{/video} ermöglicht der Pfad \texttt{/\{playerId\}/\{filename\}} mit einer POST-Anfrage das Hochladen eines Videos durch den HB10. 
+    Eine GET-Anfrage an denselben Pfad dient dem Abruf der zugehörigen HLS-Playlist oder eines Videosegments. Über \texttt{/video/videos} stellt eine GET-Anfrage die Metadaten der verfügbaren Videos für die Webplattform bereit.}
+    \label{fig:rest}
 \end{figure}
 
-Für die Kommunikation zwischen dem Server und den Clients werden REST-API-Endpunkte bereitgestellt. Diese Endpunkte ermöglichen es den Clients, Videos hochzuladen, Metadaten abzurufen und Videos zu streamen (s. \cref{fig:videocycle}) . Die API-Endpunkte sind wie folgt strukturiert:
+Für die Kommunikation zwischen dem Server und den Clients werden REST-API-Endpunkte (s. \cref{fig:rest}) bereitgestellt. Diese Endpunkte ermöglichen es den Clients, Videos hochzuladen, Metadaten abzurufen und Videos zu streamen (s. \cref{fig:videocycle}) . Die API-Endpunkte sind wie folgt strukturiert:
 
 \begin{itemize}
     \item \textbf{POST /video/\{playerId\}/\{filename\}}: Ein Endpunkt für den HB10, um ein Video hochzuladen. Der Endpunkt erhält die spielerId den Dateinamen und die Videodaten.
@@ -190,13 +193,12 @@ Zusammenfassend bietet HLS gegenüber RTMP entscheidende Vorteile hinsichtlich K
 Alternativ zu HLS wäre auch MPEG-DASH \parencite{Saini2026} eine Option, sie basieren auf einem ähnlichen Prinzip, und für die Implementierung gäbe es wahrscheinlich keine großen Unterschiede, jedoch verwendet Apple ausschließlich HLS auf seinen Geräten.
 Somit müsste für die Integration von Apple Geräten ohnehin HLS verwendet werden, zusätzlich dazu noch MPEG-DASH einzubauen würde keinen Mehrwert bringen.
 
-\section{Integration in die LÖWEN-Dart Umgebung} \todo{abschnitt schreiben oder löschen}
+\section{Integration in die LÖWEN-Dart Umgebung}
 
 Es bestehen verschiedene Möglichkeiten, wie der Server in die Dart-Umgebung integriert werden kann. Auf der einen Seite besteht die Möglichkeit, einen eigenständigen Server aufzubauen, genau wie in diesem Kapitel beschrieben,
 und anschließend alle Daten die von anderen Komponenten der Dart-Umgebung stammen, welche für die Darstellung benötigt wird, direkt vom HB10 zu erhalten, oder es dem Server erlauben mit dem Bereits bestehenden Dart-Server zu kommunizieren.
 Auf der anderen Seite, besteht auch die Möglichkeit die Funktionalität in den bestehenden Dart-Server zu integrieren. Da der Dart-Server bereits über eine Angebundene PostgreSQL Datenbank, und verschiedene REST-API-Endpunkte verfügt, sollte sich diese Integration relativ simpel gestalten.
 In diesem Fall müsste man jedoch untersuchen, ob der Dart-Server ohne Probleme in der Lage ist, zusätzlich zu seinen bestehenden aufgaben die Video-Übertragung zu übernehmen.
-
 
 \section{Skalierbarkeit des Servers} 
 
@@ -235,7 +237,8 @@ die für die spätere Überprüfung nicht benötigt werden, sollten bereits vor 
 \begin{figure}
     \centering
     \includesvg[width=\textwidth]{img/background.svg}
-    \caption{Eine Darstellung wie das unkenntlich Machen von Personen im Hintergrund aussehen könnte.}
+    \caption[Ausblendung nicht benötigter Hintergrundbereiche]{Schematische Darstellung der möglichen Datenminimierung innerhalb einer Videoaufnahme. Der für die Spielüberprüfung relevante Bildbereich enthält den aufgenommenen Spieler. Nicht benötigte Bereiche außerhalb dieses Ausschnitts können vollständig entfernt werden. 
+    Verbleibende Hintergrundbereiche innerhalb des Bildausschnitts können zusätzlich verpixelt oder unscharf dargestellt werden, damit dort erfasste unbeteiligte Personen nicht erkennbar bleiben.}
     \label{fig:background}
 \end{figure}
 

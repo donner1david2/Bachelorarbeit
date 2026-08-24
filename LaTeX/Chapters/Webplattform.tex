@@ -1,4 +1,4 @@
-\chapter{Webplattform} \label{sec:web} \todo{bilder zurecht schneiden}
+\chapter{Webplattform} \label{sec:web}
 
 Damit die auf dem Server gespeicherten Videoaufnahmen für die spätere Überprüfung genutzt werden können, wird eine Webplattform benötigt. Diese stellt die Schnittstelle zwischen den gespeicherten Spieldaten und den Nutzern dar. Ohne eine solche Anwendung könnten die Videos zwar serverseitig abgelegt werden, 
 wären für die Spieler jedoch nicht in einer geeigneten Form zugänglich. Die Webplattform übernimmt daher die Aufgabe, die vorhandenen Videos übersichtlich bereitzustellen und eine einfache Nutzung der gespeicherten Inhalte zu ermöglichen. 
@@ -26,9 +26,11 @@ da der Zugriff auf die relevanten Videos möglichst einfach und nachvollziehbar 
 \begin{figure}[h]
     \centering
     \includesvg[width=0.33\textwidth]{img/PlantUml/cheating-detection/cheating-detection.svg}
-    \caption{Darstellung der Abfolge zur Betrugserkennung.}
+    \caption[Ablauf der nachträglichen Spielüberprüfung]{Ablauf der nachträglichen Überprüfung eines aufgezeichneten Spiels. Der HB10 erfasst die relevante Spielsituation und stellt das erzeugte Video dem Server zur Verfügung. Der Server speichert die Aufnahme und macht sie über die Webplattform zugänglich. 
+    Ein berechtigter Nutzer kann das Video ansehen und eine auffällige Spielsituation melden. Die Meldung wird anschließend durch eine zuständige Prüfinstanz bewertet, die auf Grundlage der Aufnahme entscheidet, ob das gemeldete Spiel als legitim anzusehen ist. Das System unterstützt den Prüfprozess, 
+    nimmt jedoch keine automatische Bewertung des Spiels vor.}
     \label{fig:cheatdet}
-\end{figure} \todo{beschreibung erweitern}
+\end{figure}
 
 Die Plattform unterstützt damit den Ablauf der nachträglichen Prüfung. Ein Nutzer kann zunächst nach einer passenden Aufnahme suchen, anschließend die zugehörigen Informationen einsehen und das Video abspielen. 
 Auf diese Weise wird der technische Prozess der Speicherung in einen nutzbaren Arbeitsablauf überführt. Der Fokus liegt dabei nicht auf einer automatischen Bewertung der Spielsituation. Die Entscheidung, ob eine Situation auffällig ist, bleibt weiterhin beim Nutzer beziehungsweise bei den zuständigen Personen. 
@@ -105,7 +107,8 @@ Die Startseite besitzt damit keine umfangreiche fachliche Funktion. Sie dient vo
 \begin{figure}[h] 
     \centering 
     \includegraphics[width=0.9\textwidth]{Images/starting-page.png} 
-    \caption{Startseite des Webplattform-Prototypen } 
+    \caption[Startseite des Webplattform-Prototypen]{Startseite des Webplattform-Prototypen. Die Ansicht enthält eine dauerhaft sichtbare Navigationsleiste mit dem Logo der Anwendung, einem Symbol für die Startseite, Navigationspfeilen und einem Suchfeld. 
+    Der zentrale Inhaltsbereich stellt im Prototypen lediglich eine Begrüßung dar. Die Seite dient damit vor allem als Einstiegspunkt und ermöglicht den Wechsel zu den weiteren Ansichten der Anwendung.}
     \label{fig:web-startseite} 
 \end{figure} 
 
@@ -121,7 +124,8 @@ Dadurch kann geprüft werden, ob die vom Server gelieferten Metadaten korrekt in
 \begin{figure}[h] 
     \centering 
     \includegraphics[width=0.9\textwidth]{Images/videos_search.png} 
-    \caption{Übersicht und Suche der verfügbaren Videos} 
+    \caption[Videoübersicht mit Such- und Sortierfunktionen]{Übersicht der auf dem Server verfügbaren Videos innerhalb des Webplattform-Prototypen. Die geladenen Metadaten werden tabellarisch in den Spalten Name, Würfe und Datum dargestellt. Über das Suchfeld können die sichtbaren Einträge eingeschränkt werden. 
+    Die Bedienelemente an den Spaltenüberschriften ermöglichen eine Sortierung der angezeigten Metadaten. Die Ansicht dient im Prototypen dem Nachweis, dass serverseitig gespeicherte Videoinformationen geladen, dargestellt, gefiltert und für die Auswahl eines Videos verwendet werden können.}
     \label{fig:web-videos-suche} 
 \end{figure} 
 
@@ -183,7 +187,8 @@ ob die gespeicherten Videodateien korrekt ausgeliefert und vom Browser wiedergeg
 \begin{figure}[h] 
     \centering 
     \includegraphics[width=0.9\textwidth]{Images/Video-Player.png} 
-    \caption{Wiedergabe eines gespeicherten Videos innerhalb der Webplattform} 
+    \caption[Wiedergabe eines gespeicherten Videos]{Wiedergabe eines auf dem Server gespeicherten Videos innerhalb der Webplattform. Nach der Auswahl einer Aufnahme wird der Videoinhalt in einer eigenen Ansicht über den eingebundenen Browser-Videoplayer dargestellt. 
+    Die Steuerelemente ermöglichen unter anderem das Starten und Pausieren der Wiedergabe sowie die Navigation innerhalb des Videos. Die Ansicht dient im Prototypen dem Nachweis, dass die über HLS bereitgestellten Videodaten vom Server abgerufen und unmittelbar im Browser wiedergegeben werden können.}
     \label{fig:web-video-player} 
 \end{figure} 
 
@@ -245,6 +250,22 @@ eine Kennzeichnung bereits überprüfter Videos oder eine bessere Darstellung re
 Insgesamt zeigt die Webplattform, dass die gespeicherten Aufnahmen über eine browserbasierte Oberfläche zugänglich gemacht werden können. Die prototypische Umsetzung erfüllt damit ihren Zweck als Testoberfläche. Gleichzeitig wird deutlich, 
 dass für einen produktiven Einsatz eine neue Benutzeroberfläche erforderlich wäre, die stärker auf die tatsächlichen Abläufe und Anforderungen der Nutzer ausgerichtet ist.
 
-\todo{abschnitt zu Verschiedenen Auflösungen}
+\subsection{Wiedergabe in unterschiedlichen Auflösungen} 
+
+Neben der einfachen Wiedergabe einer einzelnen Videodatei ermöglicht HLS die Bereitstellung eines Videos in mehreren Auflösungen. Hierfür wird das Ausgangsvideo in mehrere Varianten mit unterschiedlichen Auflösungen und Bitraten kodiert. 
+Jede dieser Varianten wird in einzelne Segmente unterteilt und durch eine eigene Playlist beschrieben. Eine übergeordnete Playlist verweist anschließend auf die verfügbaren Varianten. Dieses Vorgehen bildet die Grundlage für die adaptive Wiedergabe eines Videos über HLS \cite{Saini2026}. 
+
+Beim Start der Wiedergabe ruft der Videoplayer zunächst die übergeordnete Playlist ab. Anhand der darin enthaltenen Informationen kann anschließend eine geeignete Variante ausgewählt werden. Während der Wiedergabe besteht die Möglichkeit, zwischen den unterschiedlichen Varianten zu wechseln. 
+Dadurch kann die übertragene Auflösung an die verfügbare Netzwerkverbindung und die Wiedergabebedingungen angepasst werden. Veränderungen der verwendeten Bitrate innerhalb einer HLS-Sitzung treten auch bei der praktischen Nutzung adaptiver Videostreams auf \cite{10.1145/2068816.2068829}. 
+
+Für die entwickelte Webplattform könnte beispielsweise jeweils eine Variante mit niedriger, mittlerer und hoher Auflösung bereitgestellt werden. Bei einer langsameren Verbindung kann der Player eine Variante mit geringerer Auflösung und Bitrate verwenden. Steht eine höhere Übertragungsrate zur Verfügung, 
+kann auf eine höher aufgelöste Variante gewechselt werden. Der Nutzer kann das Video dadurch weiterhin wiedergeben, ohne vor dem Start eine separate Videodatei auswählen zu müssen. 
+
+Die Bereitstellung mehrerer Auflösungen erfordert jedoch, dass das Videomaterial mehrfach kodiert und gespeichert wird. Zusätzlich zu den einzelnen Segmenten müssen die zugehörigen Varianten-Playlists und eine übergeordnete Playlist erzeugt werden. 
+Gegenüber der im Prototypen verwendeten Bereitstellung einer einzelnen Variante erhöht sich dadurch der Aufwand für die Verarbeitung und Speicherung der Videos. Für einen späteren produktiven Einsatz könnte dieser zusätzliche Aufwand dennoch sinnvoll sein, 
+da HLS gerade für die adaptive Bereitstellung von Videoinhalten vorgesehen ist \cite{Saini2026}. 
+
+Im aktuellen Prototypen wurde auf die Erzeugung mehrerer Auflösungen verzichtet. Für den Nachweis der grundlegenden Videoübertragung und Wiedergabe ist eine einzelne Variante ausreichend. Die vorhandene HLS-Struktur kann jedoch später um weitere Varianten ergänzt werden, 
+ohne dass der grundsätzliche Ablauf der Videoauswahl innerhalb der Webplattform verändert werden muss. Des Weiteren muss zu einem Späteren Zeitpunkt noch abgewägt werden, ob sich der zusätzliche Komprimierungs-Aufwand der benötigt wird auch tatsächlich lohnt.
 
 \newpage

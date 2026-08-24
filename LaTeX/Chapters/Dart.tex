@@ -33,7 +33,7 @@ und mehreren \enquote{Satellit}-Anwendungen welche auf eine bestimmte Funktional
 \begin{figure}[h]
     \centering
     \includesvg[width=\textwidth]{img/Dart_Apps.svg}
-    \caption{Einordnung der Video-App in die bestehende Anwendungsstruktur des HB10. Die zentrale Dart-Anwendung bleibt für den eigentlichen Spielbetrieb verantwortlich, während die Video-App als separate Anwendung die Aufnahme und Aufbereitung der Videodaten übernimmt. 
+    \caption[Einordnung der Video-App in die HB10-Anwendungsstruktur]{Einordnung der Video-App in die bestehende Anwendungsstruktur des HB10. Die zentrale Dart-Anwendung bleibt für den eigentlichen Spielbetrieb verantwortlich, während die Video-App als separate Anwendung die Aufnahme und Aufbereitung der Videodaten übernimmt. 
     Die Kommunikation zwischen beiden Anwendungen erfolgt über eine Socket-Verbindung, wodurch die Videofunktion funktional von der Hauptanwendung getrennt wird.}
     \label{fig:dartaufbau}
 \end{figure}
@@ -50,7 +50,7 @@ die Abläufe in und zwischen diesen Komponenten folgt anschließend in \cref{sec
 \begin{figure}[h]
     \centering
     \includesvg[width=\textwidth]{img/Video-Aufbau.svg}
-    \caption{Aufbau der Videofunktion innerhalb des HB10. Die Kamera liefert unkomprimierte Videodaten an die Videoaufnahme-Anwendung, während die Haupt-Dart-Anwendung den Spielbetrieb steuert und relevante Ereignisse über eine Socket-Verbindung an die Videokomponente weitergibt. 
+    \caption[Aufbau der Videofunktion im HB10]{Aufbau der Videofunktion innerhalb des HB10. Die Kamera liefert unkomprimierte Videodaten an die Videoaufnahme-Anwendung, während die Haupt-Dart-Anwendung den Spielbetrieb steuert und relevante Ereignisse über eine Socket-Verbindung an die Videokomponente weitergibt. 
     Nach der Verarbeitung werden die erzeugten Videodateien für die spätere Bereitstellung an den Storage-Server übertragen.}
     \label{fig:videoaufbau}
 \end{figure}
@@ -84,7 +84,7 @@ Diese Trennung reduziert die Komplexität innerhalb der Hauptanwendung und erlei
 \begin{figure}[h]
     \centering
     \includesvg[width=\textwidth]{img/Video_App.svg}
-    \caption{Architektur und Datenfluss der Video-App. Die Anwendung verarbeitet von der Kamera bereitgestellte rohe(YUYV\cite{theKernel2020YUYV}) Videodaten, speichert diese zunächst in einem Ringpuffer und erzeugt daraus ereignisbasierte Videoausschnitte sowie fertige Videos. 
+    \caption[Architektur und Datenfluss der Video-App]{Architektur und Datenfluss der Video-App. Die Anwendung verarbeitet von der Kamera bereitgestellte rohe(YUYV\cite{theKernel2020YUYV}) Videodaten, speichert diese zunächst in einem Ringpuffer und erzeugt daraus ereignisbasierte Videoausschnitte sowie fertige Videos. 
     Die Steuerung erfolgt über Ereignisse und Antworten im Austausch mit der Dart-App; die erzeugten Videodateien werden im Dateisystem abgelegt.}
     \label{fig:videoapp}
 \end{figure}
@@ -103,7 +103,7 @@ Durch diese Auslagerung videobezogener Funktionen bleibt die Gesamtarchitektur �
 \begin{figure}[h!]
     \centering
     \includesvg[width=0.75\textwidth]{img/PlantUml/socket/socket.svg}
-    \caption{Ablauf der Nachrichtenübertragung zwischen zwei Anwendungen, in unserem Fall die Dart-App und Video-App, über die Socket-Verbindung. Der Sender serialisiert zunächst die zu übertragenden Daten, übermittelt anschließend die Länge des erzeugten Bytestreams und sendet danach die eigentlichen Nutzdaten. 
+    \caption[Nachrichtenübertragung über die Socket-Verbindung]{Ablauf der Nachrichtenübertragung zwischen zwei Anwendungen, in unserem Fall die Dart-App und Video-App, über die Socket-Verbindung. Der Sender serialisiert zunächst die zu übertragenden Daten, übermittelt anschließend die Länge des erzeugten Bytestreams und sendet danach die eigentlichen Nutzdaten. 
     Der Empfänger liest zuerst die angegebene Datenlänge aus, empfängt darauf basierend den vollständigen Bytestream und rekonstruiert daraus die ursprüngliche Datenstruktur durch Deserialisierung.}
     \label{fig:dartsocket}
 \end{figure}
@@ -135,7 +135,7 @@ Zur grafischen Darstellung der Abläufe und der Kommunikation zwischen den betei
     \centering
     {\small
     \includesvg[width=0.65\textwidth]{img/PlantUml/DartSequenz1/DartSequenz1.svg}}
-    \caption{Initialisierung der Videofunktion vor Beginn der eigentlichen Aufnahme. Die VideoMain-Komponente stellt zunächst eine Socket-Schnittstelle bereit und wartet auf eine Verbindung der Dart-App. 
+    \caption[Initialisierung der Videofunktion]{Initialisierung der Videofunktion vor Beginn der eigentlichen Aufnahme. Die VideoMain-Komponente stellt zunächst eine Socket-Schnittstelle bereit und wartet auf eine Verbindung der Dart-App. 
     Nach erfolgreichem Verbindungsaufbau wird zusätzlich die Kameraverbindung geöffnet und ein separater \mbox{Thread} für die fortlaufende Verarbeitung der Kamerabilder erzeugt.}
     \label{fig:dartsequenz1}
 \end{figure}
@@ -157,7 +157,7 @@ stellt dieses Diagramm die dauerhafte Laufzeitstruktur der Videoerfassung dar.
     \centering
     {\small
     \includesvg[width=0.7\textwidth]{img/PlantUml/DartSequenz2/DartSequenz2.svg}}
-    \caption{Kontinuierliche Erfassung und Zwischenspeicherung der Kamerabilder während des Betriebs. Der VideoFramesThread liest fortlaufend einzelne Frames von der Kamera ein und legt diese in einem internen Puffer ab. 
+    \caption[Erfassung und Zwischenspeicherung der Kamerframes]{Kontinuierliche Erfassung und Zwischenspeicherung der Kameraframes während des Betriebs. Der VideoFramesThread liest fortlaufend einzelne Frames von der Kamera ein und legt diese in einem internen Puffer ab. 
     Dadurch stehen bei einem später gemeldeten Spielereignis nicht nur aktuelle Bilddaten, sondern auch unmittelbar zuvor aufgenommene Frames zur Verfügung.}
     \label{fig:dartsequenz2}
 \end{figure}
@@ -179,7 +179,7 @@ Deutlich wird hierbei vor allem die Trennung zwischen dem Spielbetrieb selbst un
     \centering
     {\scriptsize
     \includesvg[width=0.7\textwidth]{img/PlantUml/DartSequenz3/DartSequenz3.svg}}
-    \caption{Ablauf der Videoverarbeitung von einem registrierten Dartwurf bis zur Bereitstellung des fertigen Videos. Während des Spiels sendet die Dart-App Trefferereignisse an die VideoMain-Komponente, die daraufhin die zugehörigen Rohdaten im Dateisystem speichert. 
+    \caption[Verarbeitung eines Dartwurfs bis zum Video-Upload]{Ablauf der Videoverarbeitung von einem registrierten Dartwurf bis zur Bereitstellung des fertigen Videos. Während des Spiels sendet die Dart-App Trefferereignisse an die VideoMain-Komponente, die daraufhin die zugehörigen Rohdaten im Dateisystem speichert. 
     Nach Spielende werden die gespeicherten Rohdaten eingelesen, komprimiert und als verarbeitetes Video abgelegt, bevor die Dart-App das Ergebnis abruft und an den Server überträgt.}
     \label{fig:dartsequenz3}
 \end{figure}
