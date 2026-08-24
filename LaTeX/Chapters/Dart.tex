@@ -3,11 +3,29 @@
 
 Als Videoquelle und Spielgerät dient der Löwen-DART HB10, dieser muss kurze Videoaufnahmen für jeden Wurf erstellen, aus einem Spiel des zukünftigen Turnier Modus. Nach Abschluss des Spiels werden alle Videoaufnahmen zu einem Video zusammengeführt, und für das Streaming vorbereitet.
 
-\todo{mehr zum HB10 schreiben}
+\paragraph{Allgemeiner Spielablauf} 
+
+Vor dem Beginn eines Spiels wählen die Spieler am HB10 zunächst den gewünschten Spielmodus aus. Anschließend wird die Anzahl der teilnehmenden Spieler festgelegt. Abhängig vom ausgewählten Spiel können die Teilnehmer außerdem zu Teams zusammengefasst werden. Die Spieler haben dabei die Möglichkeit, 
+sich mit ihrem bestehenden Benutzerkonto am Gerät anzumelden. Alternativ kann das Spiel ohne eine Anmeldung durchgeführt werden. 
+
+Nachdem die erforderlichen Einstellungen vorgenommen wurden, kann das Spiel gestartet werden. Die Spieler werfen daraufhin nacheinander jeweils bis zu drei Pfeile auf die Dartscheibe. Nach Abschluss eines Durchgangs erkennt das Gerät den Spielerwechsel und gibt die Dartscheibe für den nächsten Spieler frei. 
+Die erzielten Treffer werden durch den HB10 erfasst und entsprechend den Regeln des ausgewählten Spielmodus verarbeitet. 
+
+Dieser Ablauf wird wiederholt, bis ein Spieler beziehungsweise ein Team das Ziel des jeweiligen Spielmodus erreicht hat oder die festgelegte maximale Rundenanzahl überschritten wurde. Das konkrete Spielziel ist dabei vom gewählten Modus abhängig. Bei einem 501-Spiel beginnen die Spieler beispielsweise mit jeweils 501 Punkten. 
+Die durch einen Wurf erzielten Punkte werden vom aktuellen Punktestand abgezogen. Das Spiel endet, sobald ein Spieler entsprechend den gewählten Spieloptionen exakt null Punkte erreicht. Wird das Spiel nicht innerhalb der vorgegebenen Rundenanzahl beendet, 
+erfolgt die Beendigung anhand der für den jeweiligen Spielmodus festgelegten Regeln.
+
+\paragraph{Einsatz von FFmpeg} \label{sec:ffmpeg}
+
+Für die Bearbeitung und Komprimierung der aufgenommenen Videodaten wird FFmpeg\cite{ffmpeg_doxygen} eingesetzt. Das Framework übernimmt dabei die Verarbeitung der zunächst unkomprimiert gespeicherten Bilddaten, das Zusammenführen der einzelnen Videoausschnitte sowie die anschließende Komprimierung in das vorgesehene Ausgabeformat. 
+
+Aufgrund der auf dem HB10 eingesetzten älteren Ubuntu-Version war keine geeignete FFmpeg-Version verfügbar, welche gleichzeitig mit dem vorhandenen Betriebssystem kompatibel war und den Zugriff auf die Hardware-Codecs der APU unterstützte. 
+Die benötigte FFmpeg-Version musste daher zunächst speziell für das System aus dem Quellcode gebaut werden. Dabei wurden die für den Zugriff auf die Hardware-Codecs erforderlichen Funktionen eingebunden, 
+sodass FFmpeg neben der softwarebasierten Komprimierung grundsätzlich auch für die hardwarebeschleunigte Kodierung verwendet werden konnte.
 
 \section{Aufbau}
 Der HB10 besitzt eine AMD Ryzen R1600 Serie embedded APU, und verwendet das Ubuntu Betriebssystem. Darauf aufbauend wurde die Software des HB10 bestehend aus einer Hauptanwendung in welcher der normale Spielbetrieb abläuft, 
-und mehreren \enquote{Satellit}-Anwendungen welche auf eine bestimmte Funktionalität spezialisiert sind entwickelt. Ein Beispiel dafür ist der sogenannte "Update-Server", welcher dafür zuständig ist, das gesamte System zu updaten.
+und mehreren \enquote{Satellit}-Anwendungen welche auf eine bestimmte Funktionalität spezialisiert sind entwickelt. Ein Beispiel dafür ist der sogenannte \enquote{Update-Server}, welcher dafür zuständig ist, dass gesamte System zu updaten.
 %Für die Videoaufnahme-Funktion des HB10 würde eine solche Anwendung erstellt (s. Video-App in \cref{fig:dartaufbau}).
 \begin{figure}[h]
     \centering
@@ -17,13 +35,13 @@ und mehreren \enquote{Satellit}-Anwendungen welche auf eine bestimmte Funktional
     \label{fig:dartaufbau}
 \end{figure}
 
-Der Grund für diesen Aufbau ist, dass die Software des HB10 auf den Geldspielgeräten von Löwen Entertainment basiert. Diese bestehen aus Gründen der Sicherheit und Wartbarkeit aus zwei Computern, einem leistungsschwachen, aber besonders geschützten, Secure-Modul, 
-welches für die Spiele-Logik und Geldverarbeitung verantwortlich ist, und einem zweiten Rechner welcher für den anspruchsvollere Anwendungen, wie zum Beispiel die Grafik, zuständig ist. Da nur der Teil auf dem Secure-Modul relevant für Prüfungen der \ac{PTB}\cite{https://www.ptb.de/cms/ptb/fachabteilungen/abt8/fb-85/ag-853.html} ist, 
-können die anderen Komponenten auf dem zweiten Rechner deutlich einfacher im Fehlerfall aktualisiert werden. Die Kommunikation der einzelnen Komponenten geschieht dabei über Sockets  über Ethernet. Beim HB10 laufen alle Komponenten auf dem AMD Ryzen System, sodass die Ethernetverbindung an dieser Stelle entfällt. 
+Der Grund für diesen Aufbau ist, dass die Software des HB10 auf den Geldspielgeräten von LÖWEN ENTERTAINMENT basiert. Diese bestehen aus Gründen der Sicherheit und Wartbarkeit aus zwei Computern, einem leistungsschwachen, aber besonders geschützten, Secure-Modul, 
+welches für die Spiele-Logik und Geldverarbeitung verantwortlich ist, und einem zweiten Rechner welcher für den anspruchsvollere Anwendungen, wie zum Beispiel die Grafik, zuständig ist. Da nur der Teil auf dem Secure-Modul relevant für Prüfungen der \ac{PTB}\cite{PTBSpielgeraete} ist, 
+können die anderen Komponenten auf dem zweiten Rechner deutlich einfacher im Fehlerfall aktualisiert werden. Die einzelnen Komponenten sind per Ethernet miteinander verbunden und können über Socket-Verbindungen miteinander kommunizieren. Beim HB10 laufen alle Komponenten auf dem AMD Ryzen System, sodass die Ethernetverbindung an dieser Stelle entfällt. 
 Gemäß des beschriebenen Konzepts wurde eine eigene Anwendung für die Videoaufnahmefunktion erstellt (s. Video-App in \cref{fig:dartaufbau}).
 
-Somit erstreckt sich die neuimplementiere Videofunktion des HB10 über zwei Anwendungen (s. \cref{fig:videoaufbau}). Die erste ist die eigentliche DART-Anwendung, diese ist dafür zuständig die zweite Anwendung über Ereignisse wie Treffer, Spiel-Start und Ende zu Informieren,
-sowie das abschließende Übertragen an den Server. Die zweite Anwendung, ist verantwortlich für das Zwischenspeichern, das Zusammenschneiden, das Komprimieren der Videodaten, sowie das anschließende Erstellen der Playlist. Im Folgenden wird der Aufbau der einzelnen Komponenten kurz dargestellt,
+Somit erstreckt sich die neuimplementiere Videofunktion des HB10 über zwei Anwendungen (s. \cref{fig:videoaufbau}). Die erste ist die eigentliche DART-Anwendung. Diese ist dafür zuständig die zweite Anwendung über Ereignisse wie Treffer, Spiel-Start und Ende zu Informieren,
+sowie das abschließende Übertragen an den Server. Die zweite Anwendung, ist verantwortlich für das Zwischenspeichern, das Zusammenschneiden und das Komprimieren der Videodaten, sowie das anschließende Erstellen der Playlist. Im Folgenden wird der Aufbau der einzelnen Komponenten kurz dargestellt,
 die Abläufe in und zwischen diesen Komponenten folgt anschließend in \cref{sec:dart-ablauf} \todo{itemizeation}
 
 \begin{figure}[h]
@@ -34,10 +52,13 @@ die Abläufe in und zwischen diesen Komponenten folgt anschließend in \cref{sec
     \label{fig:videoaufbau}
 \end{figure}
 
+Die bestehende Software des HB10 sowie die im Rahmen dieser Arbeit erweiterte Dart-Anwendung sind in C++ implementiert. Für die Verarbeitung der Videodaten wurde zusätzlich FFmpeg eingebunden. 
+Die hierfür benötigten Zugriffe auf die FFmpeg-Bibliotheken wurden unmittelbar über deren in C bereitgestellte Programmierschnittstelle umgesetzt.
+
 \subsection{Kamera}
 
-Die Kamera (Modell:  ELP-USB3MP01HL29)\cite{https://www.elpcctv.com/3mp-h264-ar0331-cmos-wdr-camera-module-usb-with-29mm-wide-angle-lens-for-vehicle-video-surveillanc-p-283.html } dient als Videoquelle für die Aufnahmen des Spielers und der Dartscheibe. Für den Prototypen gibt es zunächst eine Kamera, 
-später wird der HB10 jeweils eine Kamera für den Spieler und die Dartscheibe besitzen. Die angewandte Kamera bietet verschiedene Videoformate in Verschiedenen Auflösungen und Bildwiederholfrequenzen an. Für die Videoaufnahme am HB10 wurde das einzige unkomprimierte Format der Kamera gewählt, 
+Die Kamera (Modell:  ELP-USB3MP01HL29)\cite{elp_ar0331_wdr_camera} dient als Videoquelle für die Aufnahmen des Spielers und der Dartscheibe. Für den Prototypen wird zunächst lediglich eine Kamera verwendet, 
+für die spätere Umsetzung im HB10 soll jedoch jeweils eine separate Kamera für den Spieler und die Dartscheibe genutzt werden. Die angewandte Kamera bietet verschiedene Videoformate in Verschiedenen Auflösungen und Bildwiederholfrequenzen an. Für die Videoaufnahme am HB10 wurde das einzige unkomprimierte Format der Kamera gewählt, 
 da vorgesehen ist, die Videos vor dem Absenden zu bearbeiten, oder Objekte darin zu erkennen und so ein zusätzliches dekodieren gespart werden kann. Des Weiteren erleichtert ein unkomprimiertes Format das Puffern einer bestimmten Videolänge, da die Größe der einzelnen Frames bekannt ist.
 
 Für den Test wurden eine Auflösung von 1280x720 pixel und eine Bildwiederholfrequenz von 10 fps gewählt, da dies eine gute Balance zwischen Qualität und Dateigröße bietet. Auf den ersten Blick erscheint diese Wahl für die Erkennung von Betrugsversuchen als Ausreichend, 
@@ -46,7 +67,9 @@ und wird in dieser Arbeit nicht abschließend behandelt.
 
 \paragraph{Integration der Kamera}
 
-\todo{abschnitt schreiben}
+Linux stellt für den Zugriff auf Kameras die standardisierte Video4Linux-Schnittstelle (V4L2) bereit. Über USB angeschlossene Kameras werden dabei als Gerätedateien, beispielsweise \texttt{/dev/video0}, in das System eingebunden. Anwendungen können über diese Schnittstelle auf die von der Kamera bereitgestellten Videodaten zugreifen und die unterstützten Aufnahmeparameter konfigurieren. 
+
+Für die Integration der Kamera in die Video-App wurde zusätzlich FFmpeg (s. \cref{sec:ffmpeg}) verwendet. Da FFmpeg innerhalb des HB10 ohnehin für die anschließende Verarbeitung und Komprimierung der Videodaten eingesetzt wird, kann darüber auch die Aufnahme der Kamerabilder erfolgen. FFmpeg bildet dabei eine Abstraktionsebene über der V4L2-Schnittstelle und vereinfacht insbesondere die Konfiguration von Parametern wie Auflösung, Bildformat und Bildwiederholfrequenz. Dadurch müssen die für den direkten Zugriff auf V4L2 erforderliche Verwaltung der Datenpuffer und die Behandlung der unterschiedlichen Kameraformate nicht vollständig innerhalb der Video-App implementiert werden.
 
 \subsection{Dart-App}
 

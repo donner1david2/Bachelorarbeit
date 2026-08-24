@@ -20,9 +20,21 @@ Der HB10 ist dafür zuständig, den Spielbetrieb durchzuführen, und die Videos 
 \section{Reverse Proxy} \todo{quelle für reverse proxy angeben}
 
 Es besteht auch die Möglichkeit mehrere Instanzen des Servers gleichzeitig laufen zu lassen, und zwischen Server und Client einen Reverse Proxy zu platzieren, welcher den Client (HB10 oder ein Nutzer) zu einem passenden Server weiterleitet. Für den Prototypen wurde entschieden dies auszulassen,
-da es bei der zu erwartenden Menge an Nutzern nicht notwendig ist, mehrere Server aus Gründen des load balancing aufzusetzen. Und da der HB10 momentan hauptsächlich in Deutschland vertreten ist, werden auch keine Regions spezifischen Server benötigt um diese näher am Client zu platzieren.
+da es bei der zu erwartenden Menge an Nutzern nicht notwendig ist, mehrere Server aus Gründen des load balancing aufzusetzen. Da der HB10 gegenwärtig überwiegend in Deutschland eingesetzt wird, besteht derzeit keine Notwendigkeit, regionsspezifische Serverinfrastrukturen bereitzustellen, 
+um diese räumlich näher an den Clients zu positionieren.
 
 \section{Nutzungsszenarien}
 
+Das zentrale Nutzungsszenario besteht in der nachträglichen Überprüfung eines asynchron durchgeführten Turnierspiels. Der Spieler führt das Spiel am HB10 durch, während die relevanten Spielsituationen durch Videoaufnahmen dokumentiert werden. 
+Die technische Verarbeitung der einzelnen Aufnahmen sowie deren Übertragung und Speicherung erfolgt entsprechend der zuvor beschriebenen Systemarchitektur. 
+
+Nach der Bereitstellung des Videos können der aufgezeichnete Spieler und weitere für das Turnier berechtigte Teilnehmer die Aufnahme über die Webplattform aufrufen. Dort kann der dokumentierte Spielverlauf betrachtet und mit dem gemeldeten Spielergebnis verglichen werden. 
+Der Zugriff auf die Aufnahme dient dabei der manuellen Prüfung, ob aus Sicht des Nutzers Hinweise auf einen möglichen Betrugsversuch vorliegen. 
+
+Wird eine Spielsituation als auffällig eingeschätzt, kann das betroffene Spiel zur weiteren Überprüfung gemeldet werden. Eine solche Meldung stellt noch keine abschließende Bewertung dar, sondern leitet den Vorgang an eine zuständige Prüfinstanz weiter. 
+Diese kann das gespeicherte Videomaterial ebenfalls einsehen und anschließend entscheiden, ob das gemeldete Spiel als legitim anzusehen ist. 
+
+An dem Nutzungsszenario sind somit drei Nutzergruppen beteiligt. Der Spieler erzeugt durch die Teilnahme am Turnierspiel die aufzunehmenden Spieldaten. Die berechtigten Teilnehmer verwenden die Webplattform zur Betrachtung der bereitgestellten Aufnahme und können auffällige Situationen melden. 
+Die zuständige Prüfinstanz übernimmt schließlich die abschließende Bewertung des gemeldeten Spiels. Das System stellt hierfür das Videomaterial und die zugehörigen Spielinformationen bereit, nimmt jedoch keine automatische Entscheidung über das Vorliegen eines Betrugsversuches vor.
 
 \newpage

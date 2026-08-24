@@ -2,6 +2,8 @@
 
 Für das Speichern und Bereitstellen der Videos wird ein Server benötigt, der die empfangenen Videodaten und deren Metadaten speichert und auf Anfrage eines Nutzers bereitstellt. Dieser muss dabei in der Lage sein, eine größere Anzahl an Nutzern gleichzeitig zu bedienen.
 
+Die Serveranwendung wurde in Kotlin auf Grundlage von Spring Boot implementiert. Sie stellt die benötigten HTTP-Endpunkte für den Upload und den Abruf der Videodaten bereit und übernimmt die Verwaltung der zugehörigen Metadaten.
+
 \section{Wahl des Servertyps}
 
 Für den Server wurde entschieden, auf einen klassischen Webserver kombiniert mit relationaler Datenbank zurückzugreifen, der die Videos auf dem Dateisystem speichert. Ein Alternativer Gedanke wäre es, statt das Dateisystem des Servers zu verwenden, die Videos in einem Object-Storage zu speichern. 
