@@ -8,9 +8,9 @@ participant VideoMain
 participant FileSystem
 participant Server
 
-loop player playing Dart
+loop Spieler bedient HB10
 
-    loop not game ended
+    loop Spieler am spielen
         activate DartApp
         DartApp -> VideoMain: treffer senden
         deactivate DartApp

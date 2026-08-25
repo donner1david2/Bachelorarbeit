@@ -24,11 +24,12 @@ Für die Bearbeitung und Komprimierung der aufgenommenen Videodaten wird FFmpeg\
 
 Aufgrund der auf dem HB10 eingesetzten älteren Ubuntu-Version war keine geeignete FFmpeg-Version verfügbar, welche gleichzeitig mit dem vorhandenen Betriebssystem kompatibel war und den Zugriff auf die Hardware-Codecs der APU unterstützte. 
 Die benötigte FFmpeg-Version musste daher zunächst speziell für das System aus dem Quellcode gebaut werden. Dabei wurden die für den Zugriff auf die Hardware-Codecs erforderlichen Funktionen eingebunden, 
-sodass FFmpeg neben der softwarebasierten Komprimierung grundsätzlich auch für die hardwarebeschleunigte Kodierung verwendet werden konnte.
+sodass FFmpeg neben der softwarebasierten Komprimierung grundsätzlich auch für die hardwarebeschleunigte Kodierung verwendet werden konnte. In \cref{sec:GPU} wird erläutert weshalb trotzdem Hardware basierte Komprimierung nicht auf dem jetzigen Stand des HB10 möglich ist.
 
 \section{Aufbau}
-Der HB10 besitzt eine AMD Ryzen R1600 Serie embedded APU, und verwendet das Ubuntu Betriebssystem. Darauf aufbauend wurde die Software des HB10 bestehend aus einer Hauptanwendung in welcher der normale Spielbetrieb abläuft, 
-und mehreren \enquote{Satellit}-Anwendungen welche auf eine bestimmte Funktionalität spezialisiert sind entwickelt. Ein Beispiel dafür ist der sogenannte \enquote{Update-Server}, welcher dafür zuständig ist, dass gesamte System zu updaten.
+
+Der HB10 besitzt eine AMD Ryzen R1600 Serie embedded APU, und verwendet das Ubuntu Betriebssystem in der Version 19.10. Darauf aufbauend wurde die Software des HB10 bestehend aus einer Hauptanwendung in welcher der normale Spielbetrieb abläuft, 
+und mehreren \enquote{Satellit}-Anwendungen welche auf eine bestimmte Funktionalität spezialisiert sind entwickelt (s. \cref{fig:dartaufbau}). Ein Beispiel dafür ist der sogenannte \enquote{Update-Server}, welcher dafür zuständig ist, dass gesamte System zu updaten.
 %Für die Videoaufnahme-Funktion des HB10 würde eine solche Anwendung erstellt (s. Video-App in \cref{fig:dartaufbau}).
 \begin{figure}[h]
     \centering
@@ -40,8 +41,8 @@ und mehreren \enquote{Satellit}-Anwendungen welche auf eine bestimmte Funktional
 
 Der Grund für diesen Aufbau ist, dass die Software des HB10 auf den Geldspielgeräten von LÖWEN ENTERTAINMENT basiert. Diese bestehen aus Gründen der Sicherheit und Wartbarkeit aus zwei Computern, einem leistungsschwachen, aber besonders geschützten, Secure-Modul, 
 welches für die Spiele-Logik und Geldverarbeitung verantwortlich ist, und einem zweiten Rechner welcher für den anspruchsvollere Anwendungen, wie zum Beispiel die Grafik, zuständig ist. Da nur der Teil auf dem Secure-Modul relevant für Prüfungen der \ac{PTB}\cite{PTBSpielgeraete} ist, 
-können die anderen Komponenten auf dem zweiten Rechner deutlich einfacher im Fehlerfall aktualisiert werden. Die einzelnen Komponenten sind per Ethernet miteinander verbunden und können über Socket-Verbindungen miteinander kommunizieren. Beim HB10 laufen alle Komponenten auf dem AMD Ryzen System, sodass die Ethernetverbindung an dieser Stelle entfällt. 
-Gemäß des beschriebenen Konzepts wurde eine eigene Anwendung für die Videoaufnahmefunktion erstellt (s. Video-App in \cref{fig:dartaufbau}).
+können die anderen Komponenten auf dem zweiten Rechner deutlich einfacher im Fehlerfall aktualisiert werden. Die einzelnen Komponenten sind per Ethernet miteinander verbunden und können über Socket-Verbindungen miteinander kommunizieren. Beim HB10 laufen alle Komponenten auf dem AMD Ryzen System, 
+sodass die Ethernetverbindung, ebenso wie die spezielle Prüfung durch die \ac{PTB}, an dieser Stelle entfällt. Gemäß des beschriebenen Konzepts wurde eine eigene Anwendung für die Videoaufnahmefunktion erstellt (s. Video-App in \cref{fig:dartaufbau}).
 
 Somit erstreckt sich die neuimplementiere Videofunktion des HB10 über zwei Anwendungen (s. \cref{fig:videoaufbau}). Die erste ist die eigentliche DART-Anwendung. Diese ist dafür zuständig die zweite Anwendung über Ereignisse wie Treffer, Spiel-Start und Ende zu Informieren,
 sowie das abschließende Übertragen an den Server. Die zweite Anwendung, ist verantwortlich für das Zwischenspeichern, das Zusammenschneiden und das Komprimieren der Videodaten, sowie das anschließende Erstellen der Playlist. Im Folgenden wird der Aufbau der einzelnen Komponenten kurz dargestellt,
@@ -58,8 +59,8 @@ die Abläufe in und zwischen diesen Komponenten folgt anschließend in \cref{sec
 \subsection{Kamera}
 
 Die Kamera (Modell:  ELP-USB3MP01HL29)\cite{elp_ar0331_wdr_camera} dient als Videoquelle für die Aufnahmen des Spielers und der Dartscheibe. Für den Prototypen wird zunächst lediglich eine Kamera verwendet, 
-für die spätere Umsetzung im HB10 soll jedoch jeweils eine separate Kamera für den Spieler und die Dartscheibe genutzt werden. Die angewandte Kamera bietet verschiedene Videoformate in Verschiedenen Auflösungen und Bildwiederholfrequenzen an. Für die Videoaufnahme am HB10 wurde das einzige unkomprimierte Format der Kamera gewählt, 
-da vorgesehen ist, die Videos vor dem Absenden zu bearbeiten, oder Objekte darin zu erkennen und so ein zusätzliches dekodieren gespart werden kann. Des Weiteren erleichtert ein unkomprimiertes Format das Puffern einer bestimmten Videolänge, da die Größe der einzelnen Frames bekannt ist.
+für die spätere Umsetzung im HB10 soll jedoch jeweils eine separate Kamera für den Spieler und die Dartscheibe genutzt werden. Die angewandte Kamera bietet verschiedene Videoformate in verschiedenen Auflösungen und Bildwiederholfrequenzen an. Für die Videoaufnahme am HB10 wurde das einzige unkomprimierte Format der Kamera gewählt, 
+da vorgesehen ist, die Videos vor dem Absenden zu bearbeiten oder Objekte darin zu erkennen und so ein zusätzliches dekodieren gespart werden kann. Des Weiteren erleichtert ein unkomprimiertes Format das Puffern einer bestimmten Videolänge, da die Größe der einzelnen Frames bekannt ist.
 
 Für den Test wurden eine Auflösung von 1280x720 pixel und eine Bildwiederholfrequenz von 10 fps gewählt, da dies eine gute Balance zwischen Qualität und Dateigröße bietet. Auf den ersten Blick erscheint diese Wahl für die Erkennung von Betrugsversuchen als Ausreichend, 
 und bietet eine vergleichsweise geringe Dateigröße. Dies trägt dazu bei, dass die Funktionalität auch an Orten mit niedriger Bandbreite zu gewährleisten ist. Welche Auflösung und Bildwiederholfrequenz schließlich gewählt werden sollte, muss weiter untersucht werden, 
@@ -98,6 +99,8 @@ um die Videodaten in einer für die spätere Nutzung geeigneten Form bereitzuste
 Die Video-App kann damit als eigenständige technische Verarbeitungseinheit verstanden werden. Ihre Aufgabe besteht darin, Rohdaten der Kamera aufzunehmen und innerhalb einer separaten Anwendung so zu verwalten, dass sie für die weiteren Schritte des Systems verfügbar sind. 
 Durch diese Auslagerung videobezogener Funktionen bleibt die Gesamtarchitektur übersichtlich und die Hauptanwendung wird von medienspezifischen Aufgaben entlastet.
 
+Zur grafischen Darstellung der Abläufe und der Kommunikation zwischen den beteiligten Komponenten werden im Folgenden mit PlantUML\footnote{https://plantuml.com/de/} erstellte Diagramme verwendet.
+
 \subsection{Kommunikation zwischen Dart-App und Video-App}
 
 \begin{figure}[h!]
@@ -128,8 +131,6 @@ Diese werden in den folgenden Abschnitten erläutert.
 
 Im ersten Bereich der Video-App findet der Aufbau der Verbindung zwischen den beteiligten Komponenten sowie die Herstellung der Betriebsbereitschaft für die spätere Videoaufnahme (s. \cref{fig:dartsequenz1}). Sichtbar wird insbesondere, 
 dass das System nicht erst mit dem ersten Wurf aktiv wird, sondern bereits im Vorfeld in einen aufnahmefähigen Zustand überführt werden muss.
-
-Zur grafischen Darstellung der Abläufe und der Kommunikation zwischen den beteiligten Komponenten werden im Folgenden mit PlantUML\cite{plantuml} erstellte Diagramme verwendet.
 
 \begin{figure}[h!]
     \centering
@@ -203,7 +204,6 @@ Mittels Software-Kompression ist praktisch möglich jeden Codec einzubinden, üb
 
 \begin{table}[ht] 
     \centering 
-    \label{tab:codec_vergleich} 
     \begin{tabular}{|l|l|l|l|} 
         \hline 
         \textbf{Codec} & \textbf{Kompressionseffizienz} & \textbf{Kodieraufwand}* \\ 
@@ -218,16 +218,17 @@ Mittels Software-Kompression ist praktisch möglich jeden Codec einzubinden, üb
         \hline 
     \end{tabular} 
     \caption{*Kodieraufwand ist auf viele gängige Codecs bezogen. Gering könnte beispielsweise MPEG-2 zugeordnet werden.\\Vergleich ausgewählter Videocodecs \cite{Grois2013, webm_vp8}}
+    \label{tab:codec_vergleich} 
 \end{table}
 
-\subsection{GPU Encoding}
+\subsection{GPU Encoding} \label{sec:gpu}
 
-Bei der Implementierung der Hardware-Komprimierung wurde festgestellt, dass die vorhandenen Grafiktreiber des HB10 nicht mit H.264 und H.265 kompatibel sind, dieser Fehler wurde in späteren Versionen der Treiber behoben. Jedoch ist es nicht momentan nicht möglich,
-die Grafiktreiber des HB10 zu aktualisieren, da die Treiber bereits die aktuellste Version sind, die mit der Linux-Version des HB10 kompatibel sind. Das bedeutet, um die Hardware Komprimierung auf dem HB10 umzusetzen, müsste die Linux version des HB10 aktualisiert werden,
+Bei der Implementierung der Hardware Komprimierung wurde festgestellt, dass die vorhandenen Grafiktreiber des HB10 nicht mit H.264 und H.265 kompatibel sind, dieser Fehler wurde in späteren Versionen der Treiber behoben. Jedoch ist es nicht momentan nicht möglich,
+die Grafiktreiber des HB10 zu aktualisieren, da die Treiber bereits die aktuellste Version sind, die mit der Linux-Version des HB10 kompatibel sind. Das bedeutet, um die Hardware Komprimierung auf dem HB10 umzusetzen, müsste die Linux-Version des HB10 aktualisiert werden,
 was mit einem hohen Aufwand für Anpassungen an der vorhanden Software und zwangsläufig mit einem hohen Testaufwand verbunden ist. Deshalb wurde sich dazu entschieden, für die Implementierung in der Dartsoftware vorläufig auf die Hardware-Komprimierung zu verzichten, und stattdessen Software Komprimierung
 verwendet.
 
-Um die Unterschiede zwischen hardware und software Komprimierung abzuschätzen, wurde die HB10 Hardware mit einem neuen Ubuntu 26.04 lts Betriebssystem versehen. Diese Version enthält alle notwendigen Treiber um die hardwarebeschleunigte Kodierung zu aktivieren. 
+Um die Unterschiede zwischen Hardware und Software Komprimierung abzuschätzen, wurde die HB10 Hardware mit einem neuen Ubuntu 26.04 lts Betriebssystem versehen. Diese Version enthält alle notwendigen Treiber um die hardwarebeschleunigte Kodierung zu aktivieren. 
 Da für das Ausführen der Dart-App auf dieser Ubuntu-Version große Änderungen am gesamten System notwendig sind, kann nicht getestet werden, wie sich das Komprimieren auf den laufenden Spielbetrieb auswirken würde. 
 Deshalb ist dieser synthetische Benchmark dazu vorgesehen die theoretischen Verbesserungen durch die Hardwarebeschleunigung zu untersuchen. Dafür gibt es die folgenden Kriterien:
 \begin{itemize}
@@ -254,11 +255,12 @@ Video mit einer Auflösung von 1280x720 bei 10 fps, also einer Größe von etwa 
     \label{tab:hardware_software_vergleich} 
 \end{table}
 
-Da die Software Komprimierung die CPU des HB10 über die gesamte Dauer der Komprimierung komplett auslastet, ist es nicht möglich, die Komprimierung parallel zum normalen Spielbetrieb durchzuführen. Deshalb müsste die Komprimierung nach dem Ende des Spieles durchgeführt werden, was zu einer langen Wartezeit führen würde.
-Bei der Hardware Komprimierung hingegen betrug die Maximale CPU Auslastung im Durchschnitt nur 39,7\% $\pm$ 3,3. Wenn man davon ausgeht, 
+Wie die Werte in Tabelle 3.2 zeigen, lastet die Software Komprimierung die CPU des HB10 über die gesamte Dauer der Komprimierung komplett aus und es ist nicht möglich die Komprimierung parallel zum normalen Spielbetrieb durchzuführen. Deshalb müsste die Komprimierung nach dem Ende des Spieles durchgeführt werden, 
+was zu einer langen Wartezeit führen würde. Bei der Hardware Komprimierung hingegen wird das System nur gering belastet und selbst die max. CPU Auslastung betrug im Mittel nur 39,7\% $\pm$ 3,3. Wenn man davon ausgeht, 
 dass im normalen Dart Spielbetrieb die CPU Auslastung maximal bei etwa 17,5\%, sollte die Hardware Komprimierung problemlos parallel dazu durchgeführt werden können.
 
-Ein Unterschied in der resultierenden Dateigröße scheint keinen merkbaren Einfluss auf die Dauer oder CPU Auslastung der Komprimierung zu haben. Die entstehende Dateigröße der verschiedenen Codecs lag zwar standardmäßig auseinander, beide Codecs konnten jedoch die Dateigröße des anderen Codecs erreichen.
+Die resultierende Dateigröße lag je nach eingestellten Parametern zwischen 46,6 MB und 94,1 MB.
+Ein Unterschied darin scheint keinen merkbaren Einfluss auf die Dauer oder CPU Auslastung der Komprimierung zu haben. Die entstehende Dateigröße der verschiedenen Codecs lag zwar standardmäßig auseinander, beide Codecs konnten jedoch die Dateigröße des anderen Codecs problemlos erreichen.
 Änderungen an der Dateigröße scheinen sich hauptsächlich auf die Videoqualität auszuwirken, und nicht auf die Dauer oder CPU Auslastung der Komprimierung. Da die Videoqualität für den Anwendungsfall lediglich ausreichen muss, um den Spieler sowie dessen Würfe eindeutig erkennen zu können, 
 stellt die Dateigröße kein maßgebliches Kriterium bei der Wahl des Codecs dar.
 
@@ -274,12 +276,12 @@ für jedes einzelne Patent überprüfen ob dieses für unseren Anwendungsfall re
 Da aber die Patentpools erkannt haben, dass die Patente für H.264 bald auslaufen, wurde die minimale Lizenzgebühr auf 100000\$ pro Jahr festgelegt.
 
 Für H.265 bestehen zwei patentpools, welche beide getrennt Lizenzgebühren für die Nutzung des Codecs verlangen. Für den Verkauf von Geräten mit H.265 Kompression, verlangt ein Patentpool 0,4-1,2\$ pro Gerät, aber mit einem Kredit/Freibetrag sollte man unter 50000\$ pro Jahr bleiben. Für das Streaming,
-erhebt einer der Patentpools keine Lizenzgebühren, der andere bietet verschiedene Lizenzmodelle an, zum einen gibt es die Möglichkeit einen Prozentsatz der Streaming Einnahmen zu bezahlen, auf der anderen Seite einen Festen abgestimmten Betrag Jährlich zu zahlen, oder man zahlt einen cent Betrag pro Nutzer.
+erhebt einer der Patentpools keine Lizenzgebühren, der andere bietet verschiedene Lizenzmodelle an, zum einen gibt es die Möglichkeit einen Prozentsatz der Streaming Einnahmen zu bezahlen, auf der anderen Seite einen festen abgestimmten Betrag jährlich zu zahlen, oder man zahlt einen cent Betrag pro Nutzer.
 Ob hierbei die Möglichkeit besteht, keine Lizenzgebühren zu zahlen, solange keine Einnahmen durch das Streaming generiert werden, ist unklar und müsste wahrscheinlich mit dem Patentpool geklärt werden.
 
 Es besteht auch die Möglichkeit, dass für unseren Anwendungsfall, keine lizenzgebühren für die Nutzung von H.264 anfallen, da diese an Plattformen gerichtet sind. Ob die Webseite für das Anschauen der Videos als Platform gilt, ist unklar und müsste mit den Patentpools geklärt werden.
 
-Auch das übersteigt den Umfang und die Kompetenzen dieser Arbeit und muss später von der Rechtsabteilung im Details ausgearbeitet werden.
+Jedoch übersteigt dies den Umfang und die Kompetenzen dieser Arbeit und muss später von der Rechtsabteilung im Details ausgearbeitet werden.
 
 \section{Entfernungsbestimmung durch Objekterkennung} 
 
@@ -452,7 +454,7 @@ beeinflussen. Zusätzlich können mechanische Toleranzen bei der Kameramontage o
 um die berechneten Werte mit den tatsächlichen Entfernungen zu vergleichen und die Unsicherheiten der einzelnen Eingangsgrößen zu bestimmen. 
 
 Im Rahmen dieser Arbeit ist die Entfernungsbestimmung durch Objekterkennung als mögliche zukünftige Erweiterung zu verstehen. Die vorhandene Videofunktion stellt grundsätzlich die benötigten Bilddaten bereit. Vor einer zuverlässigen automatischen Abstandskontrolle müssten jedoch die Stabilität der Objekterkennung, 
-die Genauigkeit der Kamerakalibrierung und die resultierende Messunsicherheit unter realen Bedingungen untersucht werden. Die Objekterkennung kann darüber hinaus für die Reduzierung nicht benötigter Bildbereiche und die Unkenntlichmachung von Personen im Hintergrund verwendet werden. 
+die Genauigkeit der Kamerakalibrierung und die resultierende Abweichungen unter realen Bedingungen untersucht werden. Die Objekterkennung kann darüber hinaus für die Reduzierung nicht benötigter Bildbereiche und die Unkenntlichmachung von Personen im Hintergrund verwendet werden. 
 Dies wird in \cref{sec:blurr} näher erläutert.
 
 \newpage

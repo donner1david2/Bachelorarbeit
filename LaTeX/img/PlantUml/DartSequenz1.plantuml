@@ -11,7 +11,7 @@ par VideoMain Thread
     activate VideoMain
     VideoMain -> VideoMain: Socket belegen
 
-    loop wait for connection
+    loop auf Verbindung warten
         VideoMain -> VideoMain: auf Socket lauschen
     end
 
@@ -23,7 +23,7 @@ par VideoMain Thread
 else DartApp Thread
     activate DartApp
 
-    loop connecting
+    loop am verbinden
         DartApp -> VideoMain: Verbinden
     end
 

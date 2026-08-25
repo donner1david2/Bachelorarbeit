@@ -146,7 +146,7 @@ da sie alle für die Serverlogik benötigten Metadaten enthält und gleichzeitig
 \begin{figure}[H]
     \centering
     \includesvg[width=0.6\textwidth]{img/PlantUml/RESTapi/RESTapi.svg}
-    [REST-API-Endpunkte des Video-Servers]{Struktur der REST-API-Endpunkte des Video-Servers. Unterhalb des Basispfads \texttt{/video} ermöglicht der Pfad \texttt{/\{playerId\}/\{filename\}} mit einer POST-Anfrage das Hochladen eines Videos durch den HB10. 
+    \caption[REST-API-Endpunkte des Video-Servers]{Struktur der REST-API-Endpunkte des Video-Servers. Unterhalb des Basispfads \texttt{/video} ermöglicht der Pfad \texttt{/\{playerId\}/\{filename\}} mit einer POST-Anfrage das Hochladen eines Videos durch den HB10. 
     Eine GET-Anfrage an denselben Pfad dient dem Abruf der zugehörigen HLS-Playlist oder eines Videosegments. Über \texttt{/video/videos} stellt eine GET-Anfrage die Metadaten der verfügbaren Videos für die Webplattform bereit.}
     \label{fig:rest}
 \end{figure}
@@ -162,8 +162,8 @@ Für die Kommunikation zwischen dem Server und den Clients werden REST-API-Endpu
 \begin{figure}[H]
     \centering
     \includesvg[width=\textwidth]{img/PlantUml/VideoZyklus/VideoZyklus.svg}
-    \caption[Lebenszyklus eines Videos]{Lebenszyklus eines Videos. Nachdem das Video auf dem HB10 fertig ist, und dort aif dem Dateisystem gespeichert. Die Dazugehörigen Metadaten werden in einer Datenbank gespeichert. Wird das Video jetzt vom Webclient abgerufen, fragt dieser zunächst die Liste aller Videos ab und zeigt sie an. 
-    Wird ein Video ausgewählt wird zunächst die dazugehörige HLS Playlist angefragt und danach die zugehörigen Segmente des Videos geladen.}
+    \caption[Lebenszyklus eines Videos]{Lebenszyklus eines Videos. Nachdem das Video auf dem HB10 fertig ist, wird es an den Server übertragen und dort auf dem Dateisystem gespeichert. Die dazugehörigen Metadaten werden in einer Datenbank gespeichert. Wird das Video jetzt vom Webclient abgerufen, 
+    fragt dieser zunächst die Liste aller Videos ab und zeigt sie an. Wird ein Video ausgewählt, wird zunächst die dazugehörige HLS Playlist angefragt und danach die zugehörigen Segmente des Videos geladen.}
     \label{fig:videocycle}
 \end{figure}
 

@@ -9,7 +9,7 @@ participant Kamera
 -> VideoFramesThread: Erstellen
 activate VideoFramesThread
 
-loop reading frames
+loop am Frames lesen
     VideoFramesThread -> Kamera: Frames anfragen
     deactivate VideoFramesThread
     activate Kamera

@@ -5,15 +5,29 @@
 \chapter*{Kurzfassung (Abstract)}
 \addcontentsline{toc}{chapter}{Kurzfassung (Abstract)}
 
-Ziel dieser Bachelorarbeit war es, eine Video-Streaming-Lösung für das \textit{LÖWEN DART HB10} zu entwickeln und prototypisch umzusetzen. Der Hintergrund dafür ist die Erweiterung des bestehenden Dart-Systems um Spiel- und Turnierformen, 
+Ziel dieser Bachelorarbeit war es, eine Video-Streaming-Lösung für das \textit{LÖWEN DART HB10} zu entwickeln und prototypisch umzusetzen. Der Hintergrund dafür ist die Erweiterung des bestehenden Dart-Systems um Online-Spiel und Turnierformen, 
 bei denen eine spätere Überprüfung einzelner Spiele notwendig werden kann. Dafür sollte ein System entstehen, das relevante Spielsituationen aufzeichnet, speichert und anschließend über eine Webplattform abrufbar macht. 
 
 Im Verlauf der Arbeit wurde dazu eine Architektur entwickelt, die aus mehreren Komponenten besteht. Auf dem HB10 übernimmt eine eigenständige Video-App die Aufnahme und Verarbeitung der Videodaten. 
-Die bestehende Dart-App bleibt weiterhin für den Spielablauf zuständig und teilt der Video-App relevante Ereignisse über eine Socket-Verbindung mit. Dadurch konnte die Videofunktion vom eigentlichen Spielbetrieb getrennt werden, ohne den Zusammenhang zwischen Spielereignis und Aufnahme zu verlieren. 
+Die bestehende Dart-App bleibt weiterhin für den Spielablauf zuständig und teilt der Video-App relevante Ereignisse über eine Socket-Verbindung mit. Dadurch kann die Videofunktion vom eigentlichen Spielbetrieb getrennt werden, ohne den Zusammenhang zwischen Spielereignis und Aufnahme zu verlieren. 
 
 Die aufgenommenen Videodaten werden zunächst lokal verarbeitet und anschließend an einen Server übertragen. Dort werden die Videodateien gespeichert und die zugehörigen Metadaten in einer Datenbank abgelegt. Über eine REST-Schnittstelle können diese Daten von der Webplattform abgerufen werden. 
 Die Webplattform stellt die gespeicherten Videos dar und ermöglicht deren Wiedergabe im Browser. 
 
-Zusammenfassend konnte gezeigt werden, dass eine Video-on-Demand-Lösung für HB10 Dart Geräte grundsätzlich technisch realisierbar ist. Der entwickelte Prototyp bildet den vollständigen Ablauf von der Aufnahme über die Speicherung bis zur späteren Wiedergabe ab. Gleichzeitig wurde deutlich, 
+Die Arbeit konnte zeigen, dass eine Video-on-Demand-Lösung für HB10 Dart Geräte grundsätzlich technisch realisierbar ist. Der entwickelte Prototyp bildet den vollständigen Ablauf von der Aufnahme über die Speicherung bis zur späteren Wiedergabe ab. Gleichzeitig wurde deutlich, 
 dass für einen produktiven Einsatz noch mehrere technische und organisatorische Punkte weiter untersucht werden müssen. 
+
+\paragraph*{english}
+
+The objective of this bachelor’s thesis was to develop and implement a video streaming solution for the LÖWEN DART HB10. The motivation behind this work was the planned extension of the existing dart system with online gameplay and tournament formats, where the subsequent review of individual matches may become necessary. 
+To support this, a system was designed to record, store, and provide access to relevant game situations through a web-based platform.
+
+During the course of the project, an architecture consisting of multiple components was developed. On the HB10 device, a dedicated video application is responsible for recording and processing video data. 
+The existing dart application remains responsible for game logic and communicates relevant events to the video application via a socket connection. This approach separates video functionality from the game operation itself while preserving the relationship between game events and the corresponding recordings.
+
+The recorded video data is initially processed locally and then transferred to a server. There, the video files are stored while the associated metadata is maintained in a database. These data can be accessed through a REST API and retrieved by the web platform. 
+The platform presents the stored videos and enables playback directly within a web browser.
+
+The results of this thesis demonstrate that a video-on-demand solution for HB10 dart devices is technically feasible. The developed prototype covers the complete workflow, from video capture and storage to subsequent playback. At the same time, 
+the work highlights several technical and organizational aspects that require further investigation before the system can be considered ready for productive deployment.
 
