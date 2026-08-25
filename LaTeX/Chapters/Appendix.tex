@@ -1,0 +1,168 @@
+% !TEX root =  master.tex
+\appendix
+
+\chapter{Herleitungen zur Objekterkennung} \label{app:herleitungen_objekterkennung} 
+
+\section{Herleitung der Formel für die Entfernung} \label{app:herleitung_entfernung} 
+
+Aus dem vertikalen Öffnungswinkel \(\gamma\) und der Bildhöhe \(H\) wird zunächst die vertikale Brennweite \(f_y\) in Pixeln bestimmt. Aus dem rechtwinkligen Dreieck zwischen der optischen Achse und dem oberen Bildrand folgt 
+
+\begin{equation} 
+    \tan\left(\frac{\gamma}{2}\right) = \frac{H/2}{f_y}. 
+    \label{eq:anhang_brennweite_ausgang} 
+\end{equation} 
+
+Durch Umstellen ergibt sich 
+
+\begin{equation} 
+    f_y = \frac{H}{ 2\tan\left(\frac{\gamma}{2}\right) }. 
+    \label{eq:anhang_brennweite} 
+\end{equation} 
+
+Der vertikale Pixelabstand \(\Delta Y\) des erkannten Referenzpunktes von der Bildmitte wird so definiert, dass ein Punkt in der unteren Bildhälfte einen positiven Winkel unterhalb der optischen Achse erzeugt. Daraus folgt 
+
+\begin{equation} 
+    \Delta Y = \frac{H}{2}-Y = \frac{H}{2} \left( 1-\frac{2Y}{H} \right). 
+    \label{eq:anhang_pixelabstand} 
+\end{equation} 
+
+Der Winkel \(\beta\) beschreibt die vertikale Abweichung des zum erkannten Bildpunkt gehörenden Lichtstrahls von der optischen Achse der Kamera. Für diesen Winkel gilt 
+
+\begin{equation} 
+    \tan(\beta) = \frac{\Delta Y}{f_y}. 
+    \label{eq:anhang_beta_ausgang} 
+\end{equation} 
+
+Werden die Gleichungen~\ref{eq:anhang_brennweite} und~\ref{eq:anhang_pixelabstand} eingesetzt, ergibt sich 
+
+\begin{equation} 
+    \tan(\beta) = \frac{ \frac{H}{2} \left(1-\frac{2Y}{H}\right) }{ \frac{H}{ 2\tan\left(\frac{\gamma}{2}\right) } }. 
+    \label{eq:anhang_beta_eingesetzt} 
+\end{equation} 
+
+Nach dem Kürzen der gemeinsamen Faktoren verbleibt 
+
+\begin{equation} 
+    \tan(\beta) = \left( 1-\frac{2Y}{H} \right) \tan\left(\frac{\gamma}{2}\right). 
+    \label{eq:anhang_beta_tangens} 
+\end{equation} 
+
+Damit kann der relative Winkel des Bildpunktes durch 
+
+\begin{equation} 
+    \beta(Y) = \arctan\left( \left(1-\frac{2Y}{H}\right) \tan\left(\frac{\gamma}{2}\right) \right) 
+    \label{eq:anhang_beta} 
+\end{equation} 
+
+berechnet werden. Die Kamera ist um den Winkel \(\alpha_{\mathrm{tilt}}\) gegenüber der Horizontalen nach unten geneigt. Der gesamte Winkel \(\theta\) zwischen der Horizontalen und dem zum Referenzpunkt verlaufenden Lichtstrahl ergibt sich daher zu 
+
+\begin{equation} 
+    \theta = \alpha_{\mathrm{tilt}}+\beta(Y). 
+    \label{eq:anhang_theta} 
+\end{equation} 
+
+Unter der Annahme einer ebenen Bodenfläche entsteht zwischen der Kameraposition, dem senkrechten Lot auf den Boden und der Position des Spielers ein rechtwinkliges Dreieck. Die Kamerahöhe \(h\) bildet dabei die Gegenkathete und die gesuchte horizontale Entfernung \(d\) die Ankathete. Somit gilt 
+
+\begin{equation} 
+    \tan(\theta) = \frac{h}{d}. 
+    \label{eq:anhang_distanz_dreieck} 
+\end{equation} 
+
+Die horizontale Entfernung kann entsprechend durch 
+
+\begin{equation} 
+    d = \frac{h}{\tan(\theta)} 
+    \label{eq:anhang_distanz_theta} 
+\end{equation} 
+
+bestimmt werden. Durch Einsetzen der Gleichungen~\ref{eq:anhang_beta} und~\ref{eq:anhang_theta} in Gleichung~\ref{eq:anhang_distanz_theta} ergibt sich die vollständige Distanzfunktion 
+
+\begin{equation} 
+    d(h,\alpha_{\mathrm{tilt}},Y) = \frac{h}{ \tan\left( \alpha_{\mathrm{tilt}} + \arctan\left( \left(1-\frac{2Y}{H}\right) \tan\left(\frac{\gamma}{2}\right) \right) \right) }. 
+    \label{eq:anhang_distanzfunktion} 
+\end{equation} 
+
+Die Richtung des verwendeten Koordinatensystems kann anhand der Randpositionen überprüft werden. Für \(Y=0\) befindet sich der Referenzpunkt am unteren Bildrand. Gleichung~\ref{eq:anhang_beta} liefert in diesem Fall 
+
+\begin{equation} 
+    \beta(0) = \arctan\left( \tan\left(\frac{\gamma}{2}\right) \right) = \frac{\gamma}{2}, 
+    \label{eq:anhang_randpruefung} 
+\end{equation} 
+
+sofern der betrachtete Winkel im eindeutigen Wertebereich des Arkustangens liegt. Der Gesamtwinkel \(\theta\) nimmt dadurch innerhalb des sichtbaren Bildbereiches einen großen Wert an. Der Tangens im Nenner von Gleichung~\ref{eq:anhang_distanzfunktion} wird entsprechend größer und die berechnete Entfernung kleiner. Dies entspricht der geometrischen Annahme, dass ein am unteren Bildrand erkannter Bodenpunkt näher an der Kamera liegt als ein weiter oben erkannter Bodenpunkt. 
+
+\section{Herleitung der Gaußschen Fehlerfortpflanzung} 
+\label{app:herleitung_fehlerfortpflanzung} 
+
+Für voneinander unabhängige Unsicherheiten der Kamerahöhe, des Kameraneigungswinkels und der erkannten Pixelposition wird die Standardunsicherheit der Distanz durch 
+
+\begin{equation} 
+    \sigma_d = \sqrt{ \left( \frac{\partial d}{\partial h}\sigma_h \right)^2 + \left( \frac{\partial d}{\partial \alpha_{\mathrm{tilt}}} \sigma_{\alpha} \right)^2 + \left( \frac{\partial d}{\partial Y}\sigma_Y \right)^2 } 
+    \label{eq:anhang_gauss} 
+\end{equation} 
+
+bestimmt. Zur übersichtlicheren Darstellung wird 
+
+\begin{equation} 
+    \theta = \alpha_{\mathrm{tilt}} + \arctan\left( \left(1-\frac{2Y}{H}\right) \tan\left(\frac{\gamma}{2}\right) \right) 
+    \label{eq:anhang_theta_fehler} 
+\end{equation} 
+
+verwendet. Die partielle Ableitung nach der Kamerahöhe lautet 
+
+\begin{equation} 
+    \frac{\partial d}{\partial h} = \frac{1}{\tan(\theta)} = \frac{d}{h}. 
+    \label{eq:anhang_ableitung_h} 
+\end{equation} 
+
+Für die partielle Ableitung nach dem Kameraneigungswinkel ergibt sich 
+
+\begin{equation} 
+    \frac{\partial d} {\partial \alpha_{\mathrm{tilt}}} = -\frac{h}{\sin^2(\theta)}. 
+    \label{eq:anhang_ableitung_alpha} 
+\end{equation} 
+
+Gleichung~\ref{eq:anhang_ableitung_alpha} setzt voraus, dass der Winkel und seine Unsicherheit im Bogenmaß eingesetzt werden. Liegt die Winkelunsicherheit \(\sigma_{\alpha,\mathrm{grad}}\) in Grad vor, muss sie mit 
+
+\begin{equation} 
+    \sigma_{\alpha} = \frac{\pi}{180} \sigma_{\alpha,\mathrm{grad}} 
+    \label{eq:anhang_grad_bogenmass} 
+\end{equation} 
+
+in das Bogenmaß umgerechnet werden. Die Abhängigkeit der Entfernung von der erkannten Pixelposition wird mit der Kettenregel bestimmt. Hierfür wird zunächst Gleichung~\ref{eq:anhang_beta} nach \(Y\) abgeleitet: 
+
+\begin{equation} 
+    \frac{\partial \beta}{\partial Y} = -\frac{ \frac{2}{H}\tan\left(\frac{\gamma}{2}\right) }{ 1+ \left(1-\frac{2Y}{H}\right)^2 \tan^2\left(\frac{\gamma}{2}\right) }. 
+    \label{eq:anhang_ableitung_beta_y} 
+\end{equation} 
+
+Aus 
+
+\begin{equation} 
+    \frac{\partial d}{\partial Y} = \frac{\partial d}{\partial \theta} \frac{\partial \theta}{\partial \beta} \frac{\partial \beta}{\partial Y} 
+    \label{eq:anhang_kettenregel} 
+\end{equation} 
+
+und 
+
+\begin{equation} 
+    \frac{\partial \theta}{\partial \beta} = 1 
+    \label{eq:anhang_ableitung_theta_beta} 
+\end{equation} 
+
+folgt 
+
+\begin{equation} 
+    \frac{\partial d}{\partial Y} = \frac{h}{\sin^2(\theta)} \frac{ \frac{2}{H}\tan\left(\frac{\gamma}{2}\right) }{ 1+ \left(1-\frac{2Y}{H}\right)^2 \tan^2\left(\frac{\gamma}{2}\right) }. 
+    \label{eq:anhang_ableitung_y} 
+\end{equation} 
+
+Durch Einsetzen der Gleichungen~\ref{eq:anhang_ableitung_h}, \ref{eq:anhang_ableitung_alpha}, \ref{eq:anhang_grad_bogenmass} und~\ref{eq:anhang_ableitung_y} in Gleichung~\ref{eq:anhang_gauss} ergibt sich für eine in Grad angegebene Winkelunsicherheit die zusammengesetzte Distanzunsicherheit 
+
+\begin{equation} 
+    \begin{split} 
+        \sigma_d = \Bigg[ &\left( \frac{d}{h}\sigma_h \right)^2 + \left( \frac{h}{\sin^2(\theta)} \frac{\pi}{180} \sigma_{\alpha,\mathrm{grad}} \right)^2 \\[0.5em] &+ \left( \frac{h}{\sin^2(\theta)} \frac{ \frac{2}{H}\tan\left(\frac{\gamma}{2}\right) }{ 1+ \left(1-\frac{2Y}{H}\right)^2 \tan^2\left(\frac{\gamma}{2}\right) } 
+        \sigma_Y \right)^2 \Bigg]^{\frac{1}{2}}. 
+        \label{eq:anhang_distanzunsicherheit} 
+    \end{split} 
+\end{equation}

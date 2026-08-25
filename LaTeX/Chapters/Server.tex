@@ -11,7 +11,7 @@ Dies ist mittlerweile eine empfohlene Praxis bei \ac{VOD} Streaming Plattformen 
 verringert deutlich die Vorteile die Object-Storage mit sich bringt. Deshalb wurde entschieden, die Videos auf dem Dateisystem des Servers zu speichern. Da die Videos maximal eine Länge von einigen Minuten haben, ist die Dateigröße relativ klein, 
 sodass eine Speicherung auf dem Dateisystem des Servers keine Probleme mit sich bringen sollte, und die Verknüpfung von Metadaten und Videos stark vereinfacht wird.
 
-Als Kommunikationsprotokoll zwischen Server und Clients wird HTTP zusammen mit REST-API verwendet. Da dies eine simple aber ausreichende Methode ist. Der größte Nachteil ist das abgebrochene Anfragen nicht fortgesetzt werden können. Somit kann die Übertragung von großen Dateien problematisch werden.
+Als Kommunikationsprotokoll zwischen Server und Clients wird HTTP zusammen mit REST-API verwendet. Dies stellt eine einfache, aber ausreichende Methode dar. Der größte Nachteil ist das abgebrochene Anfragen nicht fortgesetzt werden können. Somit kann die Übertragung von großen Dateien problematisch werden.
 Da aber HLS als Streaming Protokoll verwendet wird, (s. \ref{sec:hls}) liegen die Videos nicht als eine einzelne große Datei vor, sondern eine Playlist Datei mit einzelnen Video Segmenten, welche nicht größer als 5MB werden. Deshalb ist die Übertragung der Videos kein Problem.
 Es braucht deutlich reduzierten Aufwand, einen REST-Server mittels Spring Boot aufzusetzen, als bei einer vergleichbaren Implementierung ohne den Einsatz eines Frameworks. Spring Boot übernimmt den Großteil der Aufgaben und es müssen nur die Endpunkte für die Clients, 
 die Schnittstellen zur Datenbank und wie erhaltene Anfragen bearbeitet werden müssen definiert werden. Da eine große Menge strukturierter Video-Metadaten gespeichert werden, wurde eine relationale Datenbank zur effizienten Verwaltung dieser Daten eingesetzt.
@@ -130,9 +130,9 @@ bildet diese Tabelle die zentrale Verbindung zwischen den gespeicherten Videodat
     \label{fig:video-entity} 
 \end{figure} 
 
-Die Entität besitzt eine eindeutige \textit{id}, über die jeder Datensatz innerhalb der Datenbank identifiziert werden kann. Momentan wird in \textit{name} nur die PlayerId vom Dart gespeichert da es für den Prototypen nicht notwendig war ein Benennungsschema für die Videos zu erstellen. 
+Die Entität besitzt eine eindeutige \textit{id}, über die jeder Datensatz innerhalb der Datenbank identifiziert werden kann. Momentan wird in \textit{name} nur die PlayerId vom Dart gespeichert, da es für den Prototypen nicht notwendig war ein Benennungsschema für die Videos zu erstellen. 
 In einer richtigen Implementierung sollten dann passende Namen vergeben werden, und die PlayerId kann in ein eigenes Attribut wandern. Der Wert \textit{path} beschreibt den Pfad der gespeicherten Videodatei beziehungsweise der HLS-Playlist. Ergänzend dazu enthält das Attribut \textit{throws}.
-Dieser Wert kann entweder als Statistik zum sortieren verwendet werden, oder im Fall, dass man die Videolänge angeben möchte können wir diese mit den Würfen berechnen da wir wissen, dass ein Wurf genau 3 Sekunden entspricht. 
+Dieser Wert kann entweder als Statistik zum sortieren verwendet werden, oder im Fall, dass man die Videolänge angeben möchte, können wir diese mit den Würfen berechnen da wir wissen, dass ein Wurf genau 3 Sekunden entspricht. 
 
 Der Erstellungszeitpunkt wird über \textit{date} gespeichert. Dieser Wert ist notwendig, um mehrere Videos eines Spielers zeitlich einordnen und in einer nachvollziehbaren Reihenfolge anzeigen zu können. Das Attribut \textit{tournament} beschreibt das zugehörige Turnier des Videos. 
 Um später den Nutzern zu ermöglichen alle Videos eines bestimmten Turniers anzuschauen.
@@ -154,7 +154,7 @@ da sie alle für die Serverlogik benötigten Metadaten enthält und gleichzeitig
 Für die Kommunikation zwischen dem Server und den Clients werden REST-API-Endpunkte (s. \cref{fig:rest}) bereitgestellt. Diese Endpunkte ermöglichen es den Clients, Videos hochzuladen, Metadaten abzurufen und Videos zu streamen (s. \cref{fig:videocycle}) . Die API-Endpunkte sind wie folgt strukturiert:
 
 \begin{itemize}
-    \item \textbf{POST /video/\{playerId\}/\{filename\}}: Ein Endpunkt für den HB10, um ein Video hochzuladen. Der Endpunkt erhält die ID des Spielers den Dateinamen und die Videodaten.
+    \item \textbf{POST /video/\{playerId\}/\{filename\}}: Ein Endpunkt für den HB10, um ein Video hochzuladen. Der Endpunkt erhält die ID des Spielers, den Dateinamen und die Videodaten.
     \item \textbf{GET /video/\{playerId\}/\{filename\}}: Ein Endpunkt für den Nutzer, um die HLS-playlist und Segmente für ein bestimmtes Video abzurufen.
     \item \textbf{GET /video/videos}: Ein Endpunkt für den Nutzer, um eine Liste aller verfügbaren Videos abzurufen. Der Endpunkt gibt eine Liste von Metadaten über die Videos zurück.
 \end{itemize}
@@ -196,8 +196,8 @@ Somit müsste für die Integration von Apple Geräten ohnehin HLS verwendet werd
 \section{Integration in die LÖWEN-Dart Umgebung}
 
 Es bestehen verschiedene Möglichkeiten, wie der Server in die Dart-Umgebung integriert werden kann. Auf der einen Seite besteht die Möglichkeit, einen eigenständigen Server aufzubauen, genau wie in diesem Kapitel beschrieben,
-und anschließend alle Daten die von anderen Komponenten der Dart-Umgebung stammen, welche für die Darstellung benötigt wird, direkt vom HB10 zu erhalten, oder es dem Server erlauben mit dem Bereits bestehenden Dart-Server zu kommunizieren.
-Auf der anderen Seite, besteht auch die Möglichkeit die Funktionalität in den bestehenden Dart-Server zu integrieren. Da der Dart-Server bereits über eine Angebundene PostgreSQL Datenbank, und verschiedene REST-API-Endpunkte verfügt, sollte sich diese Integration relativ simpel gestalten.
+und anschließend alle Daten, die von anderen Komponenten der Dart-Umgebung stammen, welche für die Darstellung benötigt wird, direkt vom HB10 zu erhalten, oder es dem Server erlauben mit dem Bereits bestehenden Dart-Server zu kommunizieren.
+Auf der anderen Seite besteht auch die Möglichkeit die Funktionalität in den bestehenden Dart-Server zu integrieren. Da der Dart-Server bereits über eine Angebundene PostgreSQL Datenbank, und verschiedene REST-API-Endpunkte verfügt, sollte sich diese Integration relativ simpel gestalten.
 In diesem Fall müsste man jedoch untersuchen, ob der Dart-Server ohne Probleme in der Lage ist, zusätzlich zu seinen bestehenden aufgaben die Video-Übertragung zu übernehmen.
 
 \section{Skalierbarkeit des Servers} 

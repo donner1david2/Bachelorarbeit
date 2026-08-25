@@ -44,7 +44,7 @@ welches für die Spiele-Logik und Geldverarbeitung verantwortlich ist, und einem
 können die anderen Komponenten auf dem zweiten Rechner deutlich einfacher im Fehlerfall aktualisiert werden. Die einzelnen Komponenten sind per Ethernet miteinander verbunden und können über Socket-Verbindungen miteinander kommunizieren. Beim HB10 laufen alle Komponenten auf dem AMD Ryzen System, 
 sodass die Ethernetverbindung, ebenso wie die spezielle Prüfung durch die \ac{PTB}, an dieser Stelle entfällt. Gemäß des beschriebenen Konzepts wurde eine eigene Anwendung für die Videoaufnahmefunktion erstellt (s. Video-App in \cref{fig:dartaufbau}).
 
-Somit erstreckt sich die neuimplementiere Videofunktion des HB10 über zwei Anwendungen (s. \cref{fig:videoaufbau}). Die erste ist die eigentliche DART-Anwendung. Diese ist dafür zuständig die zweite Anwendung über Ereignisse wie Treffer, Spiel-Start und Ende zu informieren,
+Somit erstreckt sich die neuimplementiere Videofunktion des HB10 über zwei Anwendungen (s. \cref{fig:videoaufbau}). Die erste ist die eigentliche DART-Anwendung. Diese ist dafür zuständig, die zweite Anwendung über Ereignisse wie Treffer, Spiel-Start und Ende zu informieren,
 sowie das abschließende Übertragen an den Server. Die zweite Anwendung, ist verantwortlich für das Zwischenspeichern, das Zusammenschneiden und das Komprimieren der Videodaten, sowie das anschließende Erstellen der Playlist. Im Folgenden wird der Aufbau der einzelnen Komponenten kurz dargestellt,
 die Abläufe in und zwischen diesen Komponenten folgen anschließend in \cref{sec:dart-ablauf}
 
@@ -257,7 +257,7 @@ Video mit einer Auflösung von 1280x720 bei 10 fps, also einer Größe von etwa 
 
 Wie die Werte in Tabelle 3.2 zeigen, lastet die Software-Komprimierung die CPU des HB10 über die gesamte Dauer der Komprimierung komplett aus und es ist nicht möglich die Komprimierung parallel zum normalen Spielbetrieb durchzuführen. Deshalb müsste die Komprimierung nach dem Ende des Spieles durchgeführt werden, 
 was zu einer langen Wartezeit führen würde. Bei der Hardware-Komprimierung hingegen wird das System nur gering belastet und selbst die max. CPU Auslastung betrug im Mittel nur 39,7\% $\pm$ 3,3. Wenn man davon ausgeht, 
-dass im normalen Dart Spielbetrieb die CPU Auslastung maximal bei etwa 17,5\%, sollte die Hardware-Komprimierung problemlos parallel dazu durchgeführt werden können.
+dass im normalen Dart Spielbetrieb die CPU Auslastung maximal bei etwa 17,5\% liegt, sollte die Hardware-Komprimierung problemlos parallel dazu durchgeführt werden können.
 
 Die resultierende Dateigröße lag je nach eingestellten Parametern zwischen 46,6 MB und 94,1 MB.
 Ein Unterschied darin scheint keinen merkbaren Einfluss auf die Dauer oder CPU Auslastung der Komprimierung zu haben. Die entstehende Dateigröße der verschiedenen Codecs lag zwar standardmäßig auseinander, beide Codecs konnten jedoch die Dateigröße des anderen Codecs problemlos erreichen.
@@ -272,8 +272,8 @@ Es bestehen für sowohl H.264 als auch H.265 Patentpools, also Zusammenschlüsse
 Diese Lizenzgebühren fallen sowohl für den Verkauf von Geräten mit Kompression mittels der Codecs, als auch für das Streaming von Videos, welche mittels H.264 oder H.265 komprimiert wurden.
 
 Da H.264 ein deutlich älterer Codec ist, sind bereits der Großteil der Patente abgelaufen, jedoch existieren noch einige wenige aktive Patente. Da nicht 100\% sicher ist, ob die Nutzung von H.264 automatisch diese Patente verletzt, müsste man um sicher zu gehen, 
-für jedes einzelne Patent überprüfen ob dieses für unseren Anwendungsfall relevant ist, oder eine Lizenz für H.264 erwerben. 
-Da aber die Patentpools erkannt haben, dass die Patente für H.264 bald auslaufen, wurde die minimale Lizenzgebühr auf 100000\$ pro Jahr festgelegt.
+für jedes einzelne Patent überprüfen, ob dieses für unseren Anwendungsfall relevant ist, oder eine Lizenz für H.264 erwerben. 
+Aufgrund des bevorstehenden Auslaufens vieler H.264-Patente wurde die minimale Lizenzgebühr auf 100000\$ pro Jahr festgelegt.
 
 Für H.265 bestehen zwei Patentpools, welche beide getrennt Lizenzgebühren für die Nutzung des Codecs verlangen. Für den Verkauf von Geräten mit H.265 Kompression, verlangt ein Patentpool 0,4-1,2\$ pro Gerät, aber mit einem Kredit/Freibetrag sollte man unter 50000\$ pro Jahr bleiben. Für das Streaming,
 erhebt einer der Patentpools keine Lizenzgebühren, der andere bietet verschiedene Lizenzmodelle an, zum einen gibt es die Möglichkeit einen Prozentsatz der Streaming Einnahmen zu bezahlen, auf der anderen Seite einen festen abgestimmten Betrag jährlich zu zahlen, oder man zahlt einen cent Betrag pro Nutzer.
@@ -283,178 +283,95 @@ Es besteht auch die Möglichkeit, dass für unseren Anwendungsfall, keine Lizenz
 
 Jedoch übersteigt dies den Umfang und die Kompetenzen dieser Arbeit und muss später von der Rechtsabteilung im Detail ausgearbeitet werden.
 
-\section{Entfernungsbestimmung durch Objekterkennung} 
+\section{Entfernungsbestimmung durch Objekterkennung} \label{sec:entfernungsbestimmung} 
 
-Eine mögliche Erweiterung der Videofunktion besteht darin, die aufgenommenen Bilddaten zusätzlich zur Abschätzung der Entfernung zwischen Spieler und Gerät zu verwenden. Hierfür könnte ein Verfahren zur Objekterkennung eingesetzt werden, das den Spieler innerhalb des Kamerabildes lokalisiert. 
+Eine mögliche Erweiterung der Videofunktion besteht darin, die aufgenommenen Bilddaten zusätzlich zur Abschätzung der Entfernung zwischen Spieler und Gerät zu verwenden. Hierfür kann ein Verfahren zur Objekterkennung eingesetzt werden, das den Spieler innerhalb des Kamerabildes lokalisiert. 
 Die Kamera würde in diesem Fall nicht nur zur nachträglichen visuellen Überprüfung eines Spiels dienen, sondern zusätzlich die Bilddaten für eine automatisierte Abstandsschätzung bereitstellen. 
 
 Als Referenzpunkt kann die Unterkante der erkannten Bounding-Box des Spielers verwendet werden. Unter der Annahme, dass die Füße des Spielers innerhalb dieser Bounding-Box vollständig erfasst werden, entspricht deren Unterkante näherungsweise der Position des Spielers auf der Bodenebene. 
 Die Entfernung wird dabei nicht direkt gemessen, sondern aus der vertikalen Position dieses Referenzpunktes im Bild, der Einbauhöhe und dem Neigungswinkel der Kamera sowie dem vertikalen Öffnungswinkel des Kamerabildes berechnet. 
 
-Für die folgende Herleitung wird ein Bildkoordinatensystem verwendet, bei dem die vertikale Koordinate \(Y\) vom unteren Bildrand aus gemessen wird. Damit gilt \(Y=0\) am unteren Bildrand und \(Y=H\) am oberen Bildrand, wobei \(H\) die Bildhöhe in Pixeln bezeichnet. Die Bildmitte liegt folglich bei \(H/2\). 
+Für die Berechnung wird ein Bildkoordinatensystem verwendet, bei dem die vertikale Koordinate \(Y\) vom unteren Bildrand aus gemessen wird. Damit gilt \(Y = 0\) am unteren Bildrand und \(Y = H\) am oberen Bildrand, wobei \(H\) die Bildhöhe in Pixeln bezeichnet. Die Bildmitte liegt folglich bei \(H/2\). 
 
-Zunächst wird aus dem vertikalen Öffnungswinkel \(\gamma\) und der Bildhöhe \(H\) die vertikale Brennweite \(f_y\) in Pixeln bestimmt. Aus dem rechtwinkligen Dreieck zwischen der optischen Achse und dem oberen Bildrand folgt 
-
-\begin{equation} 
-    \tan\left(\frac{\gamma}{2}\right) = \frac{H/2}{f_y}. 
-\end{equation} 
-
-Durch Umstellen ergibt sich 
+Der relative Winkel \(\beta\) zwischen dem zum Referenzpunkt verlaufenden Lichtstrahl und der optischen Achse der Kamera kann durch 
 
 \begin{equation} 
-    f_y = \frac{H} {2 \cdot \tan\left(\frac{\gamma}{2}\right)}. 
-    \label{eq:vertical_focal_length} 
+    \beta(Y) = \arctan\left( \left(1-\frac{2Y}{H}\right) \tan\left(\frac{\gamma}{2}\right) \right) 
+    \label{eq:relativer_bildwinkel} 
 \end{equation} 
 
-Der vertikale Pixelabstand \(\Delta Y\) des erkannten Referenzpunktes von der Bildmitte wird so definiert, dass ein Punkt in der unteren Bildhälfte einen positiven Winkel unterhalb der optischen Achse erzeugt. Daraus folgt
+bestimmt werden. Dabei bezeichnet \(\gamma\) den vertikalen Öffnungswinkel der Kamera. Die vollständige Herleitung von Gleichung~\ref{eq:relativer_bildwinkel} ist in Anhang~\ref{app:herleitung_entfernung} dargestellt. 
+
+Ist die Kamera um den Winkel \(\alpha_{\mathrm{tilt}}\) gegenüber der Horizontalen nach unten geneigt, ergibt sich der gesamte Winkel zwischen der Horizontalen und dem zum Referenzpunkt verlaufenden Lichtstrahl zu 
 
 \begin{equation} 
-    \Delta Y = \frac{H}{2}-Y = \frac{H}{2} \left( 1-\frac{2Y}{H} \right). 
-    \label{eq:vertical_pixel_offset} 
+    \theta = \alpha_{\mathrm{tilt}} + \beta(Y). 
+    \label{eq:gesamtwinkel} 
 \end{equation} 
 
-Der Winkel \(\beta\) beschreibt die vertikale Abweichung des zum erkannten Bildpunkt gehörenden Lichtstrahls von der optischen Achse der Kamera. Für diesen Winkel gilt 
-
-\begin{equation} 
-    \tan(\beta) = \frac{\Delta Y}{f_y}. 
-\end{equation} 
-
-Werden die Gleichungen \ref{eq:vertical_focal_length} und \ref{eq:vertical_pixel_offset} eingesetzt, ergibt sich 
-
-\begin{equation} 
-    \tan(\beta) = \frac{ \frac{H}{2} \left( 1-\frac{2Y}{H} \right) }{ \frac{H} {2\cdot\tan\left(\frac{\gamma}{2}\right)} }. 
-\end{equation} 
-
-Nach dem Kürzen der gemeinsamen Faktoren verbleibt 
-
-\begin{equation} 
-    \tan(\beta) = \left( 1-\frac{2Y}{H} \right) \tan\left(\frac{\gamma}{2}\right). 
-\end{equation} 
-
-Damit kann der relative Winkel des Bildpunktes durch 
-
-\begin{equation} 
-    \beta(Y) = \arctan\left( \left( 1-\frac{2Y}{H} \right) \tan\left(\frac{\gamma}{2}\right) \right) 
-    \label{eq:pixel_angle} 
-\end{equation} 
-
-berechnet werden. Die Kamera ist um den Winkel \(\alpha_{\mathrm{tilt}}\) gegenüber der Horizontalen nach unten geneigt. Der gesamte Winkel \(\theta\) zwischen der Horizontalen und dem zum Referenzpunkt verlaufenden Lichtstrahl ergibt sich daher zu 
-
-\begin{equation} 
-    \theta = \alpha_{\mathrm{tilt}}+\beta(Y). 
-    \label{eq:total_camera_angle} 
-\end{equation} 
-
-Unter der Annahme einer ebenen Bodenfläche entsteht zwischen der Kameraposition, dem senkrechten Lot auf den Boden und der Position des Spielers ein rechtwinkliges Dreieck. Die Kamerahöhe \(h\) bildet dabei die Gegenkathete und die gesuchte horizontale Entfernung \(d\) die Ankathete. Somit gilt 
-
-\begin{equation} 
-    \tan(\theta) = \frac{h}{d}. 
-\end{equation} 
-
-Die horizontale Entfernung kann entsprechend durch 
+Unter der Annahme einer ebenen Bodenfläche kann die horizontale Entfernung \(d\) bei einer Kamerahöhe \(h\) anschließend durch 
 
 \begin{equation} 
     d = \frac{h}{\tan(\theta)} 
-    \label{eq:distance_basic} 
+    \label{eq:entfernung_theta} 
 \end{equation} 
 
-bestimmt werden. Durch Einsetzen der Gleichungen \ref{eq:pixel_angle} und \ref{eq:total_camera_angle} in Gleichung \ref{eq:distance_basic} ergibt sich die vollständige Distanzfunktion 
+berechnet werden. Durch Einsetzen der Gleichungen~\ref{eq:relativer_bildwinkel} und~\ref{eq:gesamtwinkel} ergibt sich die vollständige Distanzfunktion 
 
 \begin{equation} 
-    d(h,\alpha_{\mathrm{tilt}},Y) = \frac{h}{ \tan\left( \alpha_{\mathrm{tilt}} + \arctan\left( \left( 1-\frac{2Y}{H} \right) \tan\left(\frac{\gamma}{2}\right) \right) \right) }. 
-    \label{eq:distance_complete} 
+    d(h,\alpha_{\mathrm{tilt}},Y) = \frac{h}{ \tan\left( \alpha_{\mathrm{tilt}} + \arctan\left( \left(1-\frac{2Y}{H}\right) \tan\left(\frac{\gamma}{2}\right) \right) \right) }. 
+    \label{eq:distanzfunktion} 
 \end{equation} 
 
-Die Richtung des verwendeten Koordinatensystems kann anhand der Randpositionen überprüft werden. Für \(Y=0\) befindet sich der Referenzpunkt am unteren Bildrand. Gleichung \ref{eq:pixel_angle} liefert in diesem Fall 
-
-\begin{equation} 
-    \beta(0) = \arctan\left( \tan\left(\frac{\gamma}{2}\right) \right) = \frac{\gamma}{2}, 
-\end{equation} 
-
-sofern der betrachtete Winkel im eindeutigen Wertebereich des Arkustangens liegt. Der Gesamtwinkel \(\theta\) nimmt dadurch innerhalb des sichtbaren Bildbereiches einen großen Wert an. Der Tangens im Nenner von Gleichung \ref{eq:distance_complete} wird entsprechend größer und die berechnete Entfernung kleiner. 
-Dies entspricht der geometrischen Annahme, dass ein am unteren Bildrand erkannter Bodenpunkt näher an der Kamera liegt als ein weiter oben erkannter Bodenpunkt. 
+Die geometrische Herleitung der Distanzfunktion ist ebenfalls in Anhang~\ref{app:herleitung_entfernung} enthalten. 
 
 Die Genauigkeit der berechneten Entfernung hängt von den Unsicherheiten der verwendeten Eingangsgrößen ab. Relevant sind insbesondere die Unsicherheit \(\sigma_h\) der Kamerahöhe, die Unsicherheit \(\sigma_{\alpha}\) des Kameraneigungswinkels und die Unsicherheit \(\sigma_Y\) 
-der durch die Objekterkennung bestimmten Pixelposition. Werden diese Unsicherheiten als voneinander unabhängig angenommen, kann die resultierende Standardunsicherheit der Distanz mithilfe der Gaußschen Fehlerfortpflanzung bestimmt werden: 
+der durch die Objekterkennung bestimmten Pixelposition. Werden diese Unsicherheiten als voneinander unabhängig angenommen, ergibt sich die Standardunsicherheit der Distanz durch die Gaußsche Fehlerfortpflanzung zu 
 
 \begin{equation} 
-    \sigma_d = \sqrt{ \left( \frac{\partial d}{\partial h} \sigma_h \right)^2 + \left( \frac{\partial d}{\partial \alpha_{\mathrm{tilt}}} \sigma_{\alpha} \right)^2 + \left( \frac{\partial d}{\partial Y} \sigma_Y \right)^2 }. 
-    \label{eq:gaussian_error_propagation} 
+    \sigma_d = \sqrt{ \left( \frac{\partial d}{\partial h}\sigma_h \right)^2 + \left( \frac{\partial d}{\partial \alpha_{\mathrm{tilt}}} \sigma_{\alpha} \right)^2 + \left( \frac{\partial d}{\partial Y}\sigma_Y \right)^2 }. 
+    \label{eq:gauss_allgemein} 
 \end{equation} 
 
-Zur übersichtlicheren Darstellung wird 
-
-\begin{equation} 
-    \theta = \alpha_{\mathrm{tilt}} + \arctan\left( \left( 1-\frac{2Y}{H} \right) \tan\left(\frac{\gamma}{2}\right) \right) 
-\end{equation} 
-
-verwendet. Die partielle Ableitung nach der Kamerahöhe lautet 
-
-\begin{equation} 
-    \frac{\partial d}{\partial h} = \frac{1}{\tan(\theta)} = \frac{d}{h}. 
-    \label{eq:distance_derivative_height} 
-\end{equation} 
-
-Für die partielle Ableitung nach dem Kameraneigungswinkel ergibt sich 
-
-\begin{equation} \frac{\partial d} {\partial \alpha_{\mathrm{tilt}}} = -\frac{h}{\sin^2(\theta)}. 
-    \label{eq:distance_derivative_angle} 
-\end{equation} 
-
-Gleichung \ref{eq:distance_derivative_angle} setzt voraus, dass der Winkel und seine Unsicherheit im Bogenmaß eingesetzt werden. Liegt die Winkelunsicherheit \(\sigma_{\alpha,\mathrm{grad}}\) 
-
-in Grad vor, muss sie mit 
-
-\begin{equation} 
-    \sigma_{\alpha} = \frac{\pi}{180} \sigma_{\alpha,\mathrm{grad}} 
-    \label{eq:degree_to_radian} 
-\end{equation} 
-
-in das Bogenmaß umgerechnet werden. 
-
-Die Abhängigkeit der Entfernung von der erkannten Pixelposition wird mit der Kettenregel bestimmt. Hierfür wird zunächst Gleichung \ref{eq:pixel_angle} nach \(Y\) abgeleitet: 
-
-\begin{equation} 
-    \frac{\partial \beta}{\partial Y} = - \frac{ \frac{2}{H} \tan\left(\frac{\gamma}{2}\right) }{ 1+ \left( 1-\frac{2Y}{H} \right)^2 \tan^2\left(\frac{\gamma}{2}\right) }. 
-    \label{eq:pixel_angle_derivative} 
-\end{equation} 
-
-Aus 
-
-\begin{equation} 
-    \frac{\partial d}{\partial Y} = \frac{\partial d}{\partial \theta} \frac{\partial \theta}{\partial \beta} \frac{\partial \beta}{\partial Y} 
-\end{equation} 
-
-und \(\partial\theta/\partial\beta=1\) folgt 
-
-\begin{equation} 
-    \frac{\partial d}{\partial Y} = \frac{h}{\sin^2(\theta)} \cdot \frac{ \frac{2}{H} \tan\left(\frac{\gamma}{2}\right) }{ 1+ \left( 1-\frac{2Y}{H} \right)^2 \tan^2\left(\frac{\gamma}{2}\right) }. 
-    \label{eq:distance_derivative_pixel} 
-\end{equation} 
-
-Durch Einsetzen der Gleichungen \ref{eq:distance_derivative_height}, \ref{eq:distance_derivative_angle}, \ref{eq:degree_to_radian} und \ref{eq:distance_derivative_pixel} in Gleichung \ref{eq:gaussian_error_propagation} ergibt sich für eine in Grad angegebene Winkelunsicherheit die zusammengesetzte Distanzunsicherheit 
+Für eine in Grad angegebene Winkelunsicherheit ergibt sich daraus 
 
 \begin{equation} 
     \begin{split} 
-        \sigma_d = \Bigg[ & \left( \frac{d}{h}\sigma_h \right)^2 + \left( \frac{h}{\sin^2(\theta)} \frac{\pi}{180} \sigma_{\alpha,\mathrm{grad}} \right)^2 \\[0.5em] &+ \left( \frac{h}{\sin^2(\theta)} 
-        \cdot \frac{ \frac{2}{H} \tan\left(\frac{\gamma}{2}\right) }{ 1+ \left( 1-\frac{2Y}{H} \right)^2 \tan^2\left(\frac{\gamma}{2}\right) } \sigma_Y \right)^2 \Bigg]^{\frac{1}{2}}. 
-        \label{eq:distance_error_complete} 
+        \sigma_d = \Bigg[ &\left( \frac{d}{h}\sigma_h \right)^2 + \left( \frac{h}{\sin^2(\theta)} \frac{\pi}{180} \sigma_{\alpha,\mathrm{grad}} \right)^2 \\[0.5em] &+ \left( \frac{h}{\sin^2(\theta)} \frac{ \frac{2}{H}\tan\left(\frac{\gamma}{2}\right) }
+        { 1+ \left(1-\frac{2Y}{H}\right)^2 \tan^2\left(\frac{\gamma}{2}\right) } \sigma_Y \right)^2 \Bigg]^{\frac{1}{2}}. 
+        \label{eq:distanzunsicherheit} 
     \end{split} 
 \end{equation} 
 
-Die Fehlerfortpflanzung zeigt, dass die Kamerahöhe, der Einbauwinkel und die erkannte Pixelposition unterschiedliche Beiträge zur Unsicherheit der Entfernung liefern. Insbesondere enthält sowohl der Beitrag des Winkelfehlers als auch der Beitrag des Pixelfehlers den Faktor \(h/\sin^2(\theta)\). 
-Bei kleinen Gesamtwinkeln kann dieser Faktor stark ansteigen, wodurch geringe Unsicherheiten des Kamerawinkels oder der erkannten Pixelposition zu einer deutlich größeren Unsicherheit der berechneten Entfernung führen können. 
+Die Herleitung der partiellen Ableitungen und der zusammengesetzten Distanzunsicherheit ist in Anhang~\ref{app:herleitung_fehlerfortpflanzung} aufgeführt. 
 
-Zur Veranschaulichung wird eine Entfernung von \(d = 2{,}37\,\mathrm{m}\) bei einer Kamerahöhe von \(h = 1{,}20\,\mathrm{m}\), einem vertikalen Öffnungswinkel von \(\gamma = 110^\circ\) und einer Bildhöhe von \(H = 1280\,\mathrm{Pixel}\) betrachtet. 
-Unter der Annahme von Unsicherheiten von \(0{,}01\,\mathrm{m}\) für die Kamerahöhe, \(0{,}5^\circ\) für den Kamerawinkel und \(3\,\mathrm{Pixel}\) für die erkannte Position ergeben sich einzelne Distanzunsicherheiten von etwa \(0{,}020\,\mathrm{m}\), \(0{,}051\,\mathrm{m}\) beziehungsweise \(0{,}027\,\mathrm{m}\). 
-Daraus folgt eine kombinierte Unsicherheit von ungefähr \(0{,}062\,\mathrm{m}\), wobei der Kamerawinkel in diesem Beispiel den größten Einfluss aufweist.
+Zur Veranschaulichung wird eine Entfernung von \(d = 2{,}37\,\mathrm{m}\) bei einer Kamerahöhe von \(h = 1{,}20\,\mathrm{m}\), einem vertikalen Öffnungswinkel von \(\gamma = 110^\circ\) und einer Bildhöhe von \(H = 1280\,\mathrm{Pixel}\) betrachtet. Für die Kamerahöhe wird eine Unsicherheit von \(0{,}01\,\mathrm{m}\), 
+für den Kamerawinkel eine Unsicherheit von \(0{,}5^\circ\) und für die erkannte Position eine Unsicherheit von \(3\,\mathrm{Pixel}\) angenommen. Die daraus resultierenden Beiträge zur Distanzunsicherheit sind in Tabelle~\ref{tab:fehlerfortpflanzung_entfernung} zusammengefasst. 
 
-Für eine produktive Nutzung müsste daher untersucht werden, wie zuverlässig die Unterkante des Spielers unter realen Einsatzbedingungen erkannt werden kann. Unterschiedliche Körperhaltungen, Kleidung, Bewegungsunschärfe, verdeckte Bildbereiche und wechselnde Beleuchtungsverhältnisse können die ermittelte Position \(Y\) 
-beeinflussen. Zusätzlich können mechanische Toleranzen bei der Kameramontage oder Veränderungen des Einbauwinkels die Distanzberechnung beeinträchtigen. Eine Kalibrierung mit bekannten Abständen wäre deshalb erforderlich, 
-um die berechneten Werte mit den tatsächlichen Entfernungen zu vergleichen und die Unsicherheiten der einzelnen Eingangsgrößen zu bestimmen. 
+\begin{table}[htbp] 
+    \centering 
+    \begin{tabular}{|l|c|c|} 
+        \hline 
+        \textbf{Eingangsgröße} & \textbf{Angenommene Unsicherheit} & \textbf{Distanzunsicherheit} \\ 
+        \hline 
+        Kamerahöhe \(h\) & \(0{,}01\,\mathrm{m}\) & \(0{,}020\,\mathrm{m}\) \\ 
+        Kameraneigungswinkel \(\alpha_{\mathrm{tilt}}\) & \(0{,}5^\circ\) & \(0{,}051\,\mathrm{m}\) \\ 
+        Pixelposition \(Y\) & \(3\,\mathrm{Pixel}\) & \(0{,}027\,\mathrm{m}\) \\ 
+        \hline 
+        Kombinierte Unsicherheit & -- & \(0{,}062\,\mathrm{m}\) \\ 
+        \hline 
+    \end{tabular} 
+    \caption{Beiträge der Eingangsgrößen zur Unsicherheit der berechneten Entfernung} 
+    \label{tab:fehlerfortpflanzung_entfernung} 
+\end{table} 
 
-Im Rahmen dieser Arbeit ist die Entfernungsbestimmung durch Objekterkennung als mögliche zukünftige Erweiterung zu verstehen. Die vorhandene Videofunktion stellt grundsätzlich die benötigten Bilddaten bereit. Vor einer zuverlässigen automatischen Abstandskontrolle müssten jedoch die Stabilität der Objekterkennung, 
-die Genauigkeit der Kamerakalibrierung und die resultierende Abweichungen unter realen Bedingungen untersucht werden. Die Objekterkennung kann darüber hinaus für die Reduzierung nicht benötigter Bildbereiche und die Unkenntlichmachung von Personen im Hintergrund verwendet werden. 
-Dies wird in \cref{sec:blurr} näher erläutert.
+Die Ergebnisse zeigen, dass der Kameraneigungswinkel im betrachteten Beispiel den größten Beitrag zur kombinierten Distanzunsicherheit liefert. Für eine produktive Nutzung müsste daher untersucht werden, wie zuverlässig die Unterkante des Spielers unter realen Einsatzbedingungen erkannt werden kann. 
+Unterschiedliche Körperhaltungen, Kleidung, Bewegungsunschärfe, verdeckte Bildbereiche und wechselnde Beleuchtungsverhältnisse können die ermittelte Position \(Y\) beeinflussen. Zusätzlich können mechanische Toleranzen bei der Kameramontage oder Veränderungen des Einbauwinkels die Distanzberechnung beeinträchtigen. 
+
+Eine Kalibrierung mit bekannten Abständen wäre deshalb erforderlich, um die berechneten Werte mit den tatsächlichen Entfernungen zu vergleichen und die Unsicherheiten der einzelnen Eingangsgrößen zu bestimmen. 
+Im Rahmen dieser Arbeit ist die Entfernungsbestimmung durch Objekterkennung als mögliche zukünftige Erweiterung zu verstehen. Die vorhandene Videofunktion stellt grundsätzlich die benötigten Bilddaten bereit. 
+Vor einer zuverlässigen automatischen Abstandskontrolle müssten jedoch die Stabilität der Objekterkennung, die Genauigkeit der Kamerakalibrierung und die resultierenden Abweichungen unter realen Bedingungen untersucht werden. 
+
+Die Objekterkennung kann darüber hinaus für die Reduzierung nicht benötigter Bildbereiche und die Unkenntlichmachung von Personen im Hintergrund verwendet werden. Dies wird in Abschnitt~\ref{sec:blurr} näher erläutert.
 
 \newpage
