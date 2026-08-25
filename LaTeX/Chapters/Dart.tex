@@ -293,6 +293,13 @@ Die Entfernung wird dabei nicht direkt gemessen, sondern aus der vertikalen Posi
 
 Für die Berechnung wird ein Bildkoordinatensystem verwendet, bei dem die vertikale Koordinate \(Y\) vom unteren Bildrand aus gemessen wird. Damit gilt \(Y = 0\) am unteren Bildrand und \(Y = H\) am oberen Bildrand, wobei \(H\) die Bildhöhe in Pixeln bezeichnet. Die Bildmitte liegt folglich bei \(H/2\). 
 
+\begin{figure}[ht]
+    \centering
+    \includesvg[width=\textwidth]{img/diagramm-beta.svg}
+    \caption[Skizze zur Veranschaulichung der Berechnung von $\beta$]{Skizze zur Veranschaulichung der Berechnung von $\beta$}
+    \label{fig:beta}
+\end{figure}
+
 Der relative Winkel \(\beta\) zwischen dem zum Referenzpunkt verlaufenden Lichtstrahl und der optischen Achse der Kamera kann durch 
 
 \begin{equation} 
@@ -300,7 +307,7 @@ Der relative Winkel \(\beta\) zwischen dem zum Referenzpunkt verlaufenden Lichts
     \label{eq:relativer_bildwinkel} 
 \end{equation} 
 
-bestimmt werden. Dabei bezeichnet \(\gamma\) den vertikalen Öffnungswinkel der Kamera. Die vollständige Herleitung von Gleichung~\ref{eq:relativer_bildwinkel} ist in Anhang~\ref{app:herleitung_entfernung} dargestellt. 
+bestimmt werden (s. \cref{fig:beta}). Dabei bezeichnet \(\gamma\) den vertikalen Öffnungswinkel der Kamera. Die vollständige Herleitung von Gleichung~\ref{eq:relativer_bildwinkel} ist in Anhang~\ref{app:herleitung_entfernung} dargestellt. 
 
 Ist die Kamera um den Winkel \(\alpha_{\mathrm{tilt}}\) gegenüber der Horizontalen nach unten geneigt, ergibt sich der gesamte Winkel zwischen der Horizontalen und dem zum Referenzpunkt verlaufenden Lichtstrahl zu 
 
@@ -309,6 +316,13 @@ Ist die Kamera um den Winkel \(\alpha_{\mathrm{tilt}}\) gegenüber der Horizonta
     \label{eq:gesamtwinkel} 
 \end{equation} 
 
+\begin{figure}[ht]
+    \centering
+    \includesvg[width=\textwidth]{img/diagramm-d.svg}
+        \caption[Skizze zur Veranschaulichung der Berechnung von $d$]{Skizze zur Veranschaulichung der Berechnung von $d$}
+    \label{fig:d}
+\end{figure}
+
 Unter der Annahme einer ebenen Bodenfläche kann die horizontale Entfernung \(d\) bei einer Kamerahöhe \(h\) anschließend durch 
 
 \begin{equation} 
@@ -316,7 +330,7 @@ Unter der Annahme einer ebenen Bodenfläche kann die horizontale Entfernung \(d\
     \label{eq:entfernung_theta} 
 \end{equation} 
 
-berechnet werden. Durch Einsetzen der Gleichungen~\ref{eq:relativer_bildwinkel} und~\ref{eq:gesamtwinkel} ergibt sich die vollständige Distanzfunktion 
+berechnet werden (s. \cref{fig:d}). Durch Einsetzen der Gleichungen~\ref{eq:relativer_bildwinkel} und~\ref{eq:gesamtwinkel} ergibt sich die vollständige Distanzfunktion 
 
 \begin{equation} 
     d(h,\alpha_{\mathrm{tilt}},Y) = \frac{h}{ \tan\left( \alpha_{\mathrm{tilt}} + \arctan\left( \left(1-\frac{2Y}{H}\right) \tan\left(\frac{\gamma}{2}\right) \right) \right) }. 
