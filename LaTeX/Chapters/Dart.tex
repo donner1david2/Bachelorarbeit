@@ -24,7 +24,7 @@ Für die Bearbeitung und Komprimierung der aufgenommenen Videodaten wird FFmpeg\
 
 Aufgrund der auf dem HB10 eingesetzten älteren Ubuntu-Version war keine geeignete FFmpeg-Version verfügbar, welche gleichzeitig mit dem vorhandenen Betriebssystem kompatibel war und den Zugriff auf die Hardware-Codecs der APU unterstützte. 
 Die benötigte FFmpeg-Version musste daher zunächst speziell für das System aus dem Quellcode gebaut werden. Dabei wurden die für den Zugriff auf die Hardware-Codecs erforderlichen Funktionen eingebunden, 
-sodass FFmpeg neben der softwarebasierten Komprimierung grundsätzlich auch für die hardwarebeschleunigte Kodierung verwendet werden konnte. In \cref{sec:GPU} wird erläutert weshalb trotzdem Hardware basierte Komprimierung nicht auf dem jetzigen Stand des HB10 möglich ist.
+sodass FFmpeg neben der softwarebasierten Komprimierung grundsätzlich auch für die hardwarebeschleunigte Kodierung verwendet werden konnte. In \cref{sec:gpu} wird erläutert weshalb Hardware basierte Komprimierung trotzdem nicht auf dem jetzigen Stand des HB10 möglich ist.
 
 \section{Aufbau}
 
@@ -44,9 +44,9 @@ welches für die Spiele-Logik und Geldverarbeitung verantwortlich ist, und einem
 können die anderen Komponenten auf dem zweiten Rechner deutlich einfacher im Fehlerfall aktualisiert werden. Die einzelnen Komponenten sind per Ethernet miteinander verbunden und können über Socket-Verbindungen miteinander kommunizieren. Beim HB10 laufen alle Komponenten auf dem AMD Ryzen System, 
 sodass die Ethernetverbindung, ebenso wie die spezielle Prüfung durch die \ac{PTB}, an dieser Stelle entfällt. Gemäß des beschriebenen Konzepts wurde eine eigene Anwendung für die Videoaufnahmefunktion erstellt (s. Video-App in \cref{fig:dartaufbau}).
 
-Somit erstreckt sich die neuimplementiere Videofunktion des HB10 über zwei Anwendungen (s. \cref{fig:videoaufbau}). Die erste ist die eigentliche DART-Anwendung. Diese ist dafür zuständig die zweite Anwendung über Ereignisse wie Treffer, Spiel-Start und Ende zu Informieren,
+Somit erstreckt sich die neuimplementiere Videofunktion des HB10 über zwei Anwendungen (s. \cref{fig:videoaufbau}). Die erste ist die eigentliche DART-Anwendung. Diese ist dafür zuständig die zweite Anwendung über Ereignisse wie Treffer, Spiel-Start und Ende zu informieren,
 sowie das abschließende Übertragen an den Server. Die zweite Anwendung, ist verantwortlich für das Zwischenspeichern, das Zusammenschneiden und das Komprimieren der Videodaten, sowie das anschließende Erstellen der Playlist. Im Folgenden wird der Aufbau der einzelnen Komponenten kurz dargestellt,
-die Abläufe in und zwischen diesen Komponenten folgt anschließend in \cref{sec:dart-ablauf}
+die Abläufe in und zwischen diesen Komponenten folgen anschließend in \cref{sec:dart-ablauf}
 
 \begin{figure}[h]
     \centering
@@ -62,7 +62,7 @@ Die Kamera (Modell:  ELP-USB3MP01HL29)\cite{elp_ar0331_wdr_camera} dient als Vid
 für die spätere Umsetzung im HB10 soll jedoch jeweils eine separate Kamera für den Spieler und die Dartscheibe genutzt werden. Die angewandte Kamera bietet verschiedene Videoformate in verschiedenen Auflösungen und Bildwiederholfrequenzen an. Für die Videoaufnahme am HB10 wurde das einzige unkomprimierte Format der Kamera gewählt, 
 da vorgesehen ist, die Videos vor dem Absenden zu bearbeiten oder Objekte darin zu erkennen und so ein zusätzliches dekodieren gespart werden kann. Des Weiteren erleichtert ein unkomprimiertes Format das Puffern einer bestimmten Videolänge, da die Größe der einzelnen Frames bekannt ist.
 
-Für den Test wurden eine Auflösung von 1280x720 pixel und eine Bildwiederholfrequenz von 10 fps gewählt, da dies eine gute Balance zwischen Qualität und Dateigröße bietet. Auf den ersten Blick erscheint diese Wahl für die Erkennung von Betrugsversuchen als Ausreichend, 
+Für den Test wurden eine Auflösung von 1280 x 720 Pixel und eine Bildwiederholfrequenz von 10 fps gewählt, da dies eine gute Balance zwischen Qualität und Dateigröße bietet. Auf den ersten Blick erscheint diese Wahl für die Erkennung von Betrugsversuchen als ausreichend, 
 und bietet eine vergleichsweise geringe Dateigröße. Dies trägt dazu bei, dass die Funktionalität auch an Orten mit niedriger Bandbreite zu gewährleisten ist. Welche Auflösung und Bildwiederholfrequenz schließlich gewählt werden sollte, muss weiter untersucht werden, 
 und wird in dieser Arbeit nicht abschließend behandelt.
 
@@ -111,9 +111,9 @@ Zur grafischen Darstellung der Abläufe und der Kommunikation zwischen den betei
     \label{fig:dartsocket}
 \end{figure}
 
-Für die Kommunikation zwischen Dart-App und Video-App wird eine Socket Verbindung verwendet (s. \cref{fig:dartsocket}). Die Video-App wartet auf eine Verbindung der Dart-App, und ist anschließend bereit Ereignisse mit zusätzlichen Daten zu erhalten.
-Als Daten werden Datenstrukturen verwendet, die in beiden Anwendungen definiert wurden, welche zuerst benötigte Daten in einen Seriellen Bytestream schreiben und anschließend die Länge des Bytestreams, und darauf den eigentlichen Stream übertragen.
-Der Empfänger kann den empfangenen Stream dann deserealisieren, um alle Daten zu erhalten die er benötigt. Da die Kommunikation bidirektional ist, können die Rollen vertauscht werden.
+Für die Kommunikation zwischen Dart-App und Video-App wird eine Socket-Verbindung verwendet (s. \cref{fig:dartsocket}). Die Video-App wartet auf eine Verbindung der Dart-App, und ist anschließend bereit Ereignisse mit zusätzlichen Daten zu erhalten.
+Als Daten werden Datenstrukturen verwendet, die in beiden Anwendungen definiert wurden, welche zuerst benötigte Daten in einen seriellen Bytestream schreiben und anschließend die Länge des Bytestreams, und darauf den eigentlichen Stream übertragen.
+Der Empfänger kann den empfangenen Stream dann deserialisieren, um alle Daten zu erhalten die er benötigt. Da die Kommunikation bidirektional ist, können die Rollen vertauscht werden.
 
 \section{Struktur} \label{sec:dart-ablauf}
 
@@ -199,7 +199,7 @@ Im weiteren Verlauf wird das aufbereitete Material in ein nutzbares Ausgabeforma
 \section{Kompression des Videomaterials}
 
 Da der HB10 oft an Orten mit langsamer Internetverbindung betrieben wird, ist es notwendig, die Videodaten vor dem Absenden zu komprimieren.
-Dabei soll die Videofunktionalität den Hauptbetrieb des HB10 nicht beeinträchtigen, deshalb war es vorgesehen, die Videodaten mittels Hardware-Komprimierung zu komprimieren. Dazu wurde bereits ermittelt, dass die APU des HB10 die Hardware Komprimierung für H.264 und H.265 unterstützt.
+Dabei soll die Videofunktionalität den Hauptbetrieb des HB10 nicht beeinträchtigen, deshalb war es vorgesehen, die Videodaten mittels Hardware-Komprimierung zu komprimieren. Dazu wurde bereits ermittelt, dass die APU des HB10 die Hardware-Komprimierung für H.264 und H.265 unterstützt.
 Mittels Software-Kompression ist praktisch möglich jeden Codec einzubinden, über diesen Weg gäbe es noch weitere vergleichbare Codecs (s. \cref{tab:codec_vergleich}) welche verwendet werden könnten.
 
 \begin{table}[ht] 
@@ -223,12 +223,12 @@ Mittels Software-Kompression ist praktisch möglich jeden Codec einzubinden, üb
 
 \subsection{GPU Encoding} \label{sec:gpu}
 
-Bei der Implementierung der Hardware Komprimierung wurde festgestellt, dass die vorhandenen Grafiktreiber des HB10 nicht mit H.264 und H.265 kompatibel sind, dieser Fehler wurde in späteren Versionen der Treiber behoben. Jedoch ist es nicht momentan nicht möglich,
-die Grafiktreiber des HB10 zu aktualisieren, da die Treiber bereits die aktuellste Version sind, die mit der Linux-Version des HB10 kompatibel sind. Das bedeutet, um die Hardware Komprimierung auf dem HB10 umzusetzen, müsste die Linux-Version des HB10 aktualisiert werden,
-was mit einem hohen Aufwand für Anpassungen an der vorhanden Software und zwangsläufig mit einem hohen Testaufwand verbunden ist. Deshalb wurde sich dazu entschieden, für die Implementierung in der Dartsoftware vorläufig auf die Hardware-Komprimierung zu verzichten, und stattdessen Software Komprimierung
+Bei der Implementierung der Hardware-Komprimierung wurde festgestellt, dass die vorhandenen Grafiktreiber des HB10 nicht mit H.264 und H.265 kompatibel sind, dieser Fehler wurde in späteren Versionen der Treiber behoben. Jedoch ist es derzeit nicht möglich,
+die Grafiktreiber des HB10 zu aktualisieren, da die Treiber bereits der aktuellsten Version sind, die mit der Linux-Version des HB10 kompatibel ist. Das bedeutet, um die Hardware-Komprimierung auf dem HB10 umzusetzen, müsste die Linux-Version des HB10 aktualisiert werden,
+was mit einem hohen Aufwand für Anpassungen an der vorhanden Software und zwangsläufig mit einem hohen Testaufwand verbunden ist. Deshalb wurde sich dazu entschieden, für die Implementierung in der Dartsoftware vorläufig auf die Hardware-Komprimierung zu verzichten, und stattdessen Software-Komprimierung
 verwendet.
 
-Um die Unterschiede zwischen Hardware und Software Komprimierung abzuschätzen, wurde die HB10 Hardware mit einem neuen Ubuntu 26.04 lts Betriebssystem versehen. Diese Version enthält alle notwendigen Treiber um die hardwarebeschleunigte Kodierung zu aktivieren. 
+Um die Unterschiede zwischen Hardware- und Software-Komprimierung abzuschätzen, wurde die HB10 Hardware mit einem neuen Ubuntu 26.04 lts Betriebssystem versehen. Diese Version enthält alle notwendigen Treiber um die hardwarebeschleunigte Kodierung zu aktivieren. 
 Da für das Ausführen der Dart-App auf dieser Ubuntu-Version große Änderungen am gesamten System notwendig sind, kann nicht getestet werden, wie sich das Komprimieren auf den laufenden Spielbetrieb auswirken würde. 
 Deshalb ist dieser synthetische Benchmark dazu vorgesehen die theoretischen Verbesserungen durch die Hardwarebeschleunigung zu untersuchen. Dafür gibt es die folgenden Kriterien:
 \begin{itemize}
@@ -238,7 +238,7 @@ Deshalb ist dieser synthetische Benchmark dazu vorgesehen die theoretischen Verb
     \item Größe des komprimierten Videos: da wie bereits angesprochen verschiedene Aufsteller verschieden schnelle Internet-Anschlüsse besitzen ist es wichtig, dass das fertige Video so klein wie möglich ist.  
 \end{itemize}
 
-Das Benchmark wurde einmal für 500 Durchläufe mit dem H.264 Hardware Codec der APU des HB10 durchgeführt und ein weiteres mal für 500 Durchläufe mit dem x264 Software Codec. Dabei sollten diese ein 78 Sekunden langes YUYV:422 (eine rohes Videoformat) 
+Das Benchmark wurde einmal für 500 Durchläufe mit dem H.264 Hardware-Codec der APU des HB10 durchgeführt und ein weiteres mal für 500 Durchläufe mit dem x264 Software-Codec. Dabei sollten diese ein 78 Sekunden langes YUYV:422 (eine rohes Videoformat) 
 Video mit einer Auflösung von 1280x720 bei 10 fps, also einer Größe von etwa 1,44 GB komprimieren. Dabei wurden folgende Ergebnisse erzielt: 
 
 \begin{table}[H] 
@@ -255,16 +255,16 @@ Video mit einer Auflösung von 1280x720 bei 10 fps, also einer Größe von etwa 
     \label{tab:hardware_software_vergleich} 
 \end{table}
 
-Wie die Werte in Tabelle 3.2 zeigen, lastet die Software Komprimierung die CPU des HB10 über die gesamte Dauer der Komprimierung komplett aus und es ist nicht möglich die Komprimierung parallel zum normalen Spielbetrieb durchzuführen. Deshalb müsste die Komprimierung nach dem Ende des Spieles durchgeführt werden, 
-was zu einer langen Wartezeit führen würde. Bei der Hardware Komprimierung hingegen wird das System nur gering belastet und selbst die max. CPU Auslastung betrug im Mittel nur 39,7\% $\pm$ 3,3. Wenn man davon ausgeht, 
-dass im normalen Dart Spielbetrieb die CPU Auslastung maximal bei etwa 17,5\%, sollte die Hardware Komprimierung problemlos parallel dazu durchgeführt werden können.
+Wie die Werte in Tabelle 3.2 zeigen, lastet die Software-Komprimierung die CPU des HB10 über die gesamte Dauer der Komprimierung komplett aus und es ist nicht möglich die Komprimierung parallel zum normalen Spielbetrieb durchzuführen. Deshalb müsste die Komprimierung nach dem Ende des Spieles durchgeführt werden, 
+was zu einer langen Wartezeit führen würde. Bei der Hardware-Komprimierung hingegen wird das System nur gering belastet und selbst die max. CPU Auslastung betrug im Mittel nur 39,7\% $\pm$ 3,3. Wenn man davon ausgeht, 
+dass im normalen Dart Spielbetrieb die CPU Auslastung maximal bei etwa 17,5\%, sollte die Hardware-Komprimierung problemlos parallel dazu durchgeführt werden können.
 
 Die resultierende Dateigröße lag je nach eingestellten Parametern zwischen 46,6 MB und 94,1 MB.
 Ein Unterschied darin scheint keinen merkbaren Einfluss auf die Dauer oder CPU Auslastung der Komprimierung zu haben. Die entstehende Dateigröße der verschiedenen Codecs lag zwar standardmäßig auseinander, beide Codecs konnten jedoch die Dateigröße des anderen Codecs problemlos erreichen.
 Änderungen an der Dateigröße scheinen sich hauptsächlich auf die Videoqualität auszuwirken, und nicht auf die Dauer oder CPU Auslastung der Komprimierung. Da die Videoqualität für den Anwendungsfall lediglich ausreichen muss, um den Spieler sowie dessen Würfe eindeutig erkennen zu können, 
 stellt die Dateigröße kein maßgebliches Kriterium bei der Wahl des Codecs dar.
 
-Wie diese Daten zeigen, sollte für die spätere Umsetzung zwingend die Hardwaredekodierung benutzt werden. Da in der Zukunft das Betriebssystem des HB10 aktualisiert werden soll, wird dies dann mit umgesetzt. Dieses Update hätte aber den Umfang dieser Arbeit weit überschritten.
+Wie diese Daten zeigen, sollte für die spätere Umsetzung zwingend die hardwarebeschleunigte Kodierung verwendet werden. Da in der Zukunft das Betriebssystem des HB10 aktualisiert werden soll, wird dies dann mit umgesetzt. Dieses Update hätte aber den Umfang dieser Arbeit weit überschritten.
 
 \subsection{Codec Lizenz}
 
@@ -275,13 +275,13 @@ Da H.264 ein deutlich älterer Codec ist, sind bereits der Großteil der Patente
 für jedes einzelne Patent überprüfen ob dieses für unseren Anwendungsfall relevant ist, oder eine Lizenz für H.264 erwerben. 
 Da aber die Patentpools erkannt haben, dass die Patente für H.264 bald auslaufen, wurde die minimale Lizenzgebühr auf 100000\$ pro Jahr festgelegt.
 
-Für H.265 bestehen zwei patentpools, welche beide getrennt Lizenzgebühren für die Nutzung des Codecs verlangen. Für den Verkauf von Geräten mit H.265 Kompression, verlangt ein Patentpool 0,4-1,2\$ pro Gerät, aber mit einem Kredit/Freibetrag sollte man unter 50000\$ pro Jahr bleiben. Für das Streaming,
+Für H.265 bestehen zwei Patentpools, welche beide getrennt Lizenzgebühren für die Nutzung des Codecs verlangen. Für den Verkauf von Geräten mit H.265 Kompression, verlangt ein Patentpool 0,4-1,2\$ pro Gerät, aber mit einem Kredit/Freibetrag sollte man unter 50000\$ pro Jahr bleiben. Für das Streaming,
 erhebt einer der Patentpools keine Lizenzgebühren, der andere bietet verschiedene Lizenzmodelle an, zum einen gibt es die Möglichkeit einen Prozentsatz der Streaming Einnahmen zu bezahlen, auf der anderen Seite einen festen abgestimmten Betrag jährlich zu zahlen, oder man zahlt einen cent Betrag pro Nutzer.
 Ob hierbei die Möglichkeit besteht, keine Lizenzgebühren zu zahlen, solange keine Einnahmen durch das Streaming generiert werden, ist unklar und müsste wahrscheinlich mit dem Patentpool geklärt werden.
 
-Es besteht auch die Möglichkeit, dass für unseren Anwendungsfall, keine lizenzgebühren für die Nutzung von H.264 anfallen, da diese an Plattformen gerichtet sind. Ob die Webseite für das Anschauen der Videos als Platform gilt, ist unklar und müsste mit den Patentpools geklärt werden.
+Es besteht auch die Möglichkeit, dass für unseren Anwendungsfall, keine Lizenzgebühren für die Nutzung von H.264 anfallen, da diese an Plattformen gerichtet sind. Ob die Webseite für das Anschauen der Videos als Platform gilt, ist unklar und müsste mit den Patentpools geklärt werden.
 
-Jedoch übersteigt dies den Umfang und die Kompetenzen dieser Arbeit und muss später von der Rechtsabteilung im Details ausgearbeitet werden.
+Jedoch übersteigt dies den Umfang und die Kompetenzen dieser Arbeit und muss später von der Rechtsabteilung im Detail ausgearbeitet werden.
 
 \section{Entfernungsbestimmung durch Objekterkennung} 
 

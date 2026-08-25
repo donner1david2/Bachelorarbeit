@@ -14,10 +14,6 @@ Nach der lokalen Verarbeitung werden die Videodaten an einen Server übertragen.
 Die Bereitstellung der Videos erfolgt über HLS, wobei die Videodateien in kleinere Segmente aufgeteilt und über HTTP übertragen werden. Über eine REST-Schnittstelle kann die Webplattform auf die gespeicherten Daten zugreifen, die vorhandenen Aufnahmen darstellen und deren Wiedergabe im Browser ermöglichen. 
 
 Der entwickelte Prototyp bildet damit den vollständigen Ablauf von der Aufnahme auf dem HB10 über die Verarbeitung und Speicherung bis zur späteren Wiedergabe auf der Webplattform ab. Die grundsätzliche technische Realisierbarkeit einer Video-on-Demand-Lösung für HB10 Dart Geräte konnte somit nachgewiesen werden. 
-Gleichzeitig hat insbesondere der Vergleich zwischen Software- und Hardware-Komprimierung gezeigt, dass die derzeit eingesetzte Software-Komprimierung keine geeignete Grundlage für einen produktiven Betrieb darstellt. 
-Für eine spätere produktive Umsetzung sind daher eine funktionierende Hardware-Komprimierung sowie die weitere Untersuchung technischer und organisatorischer Anforderungen erforderlich.
-
-\vspace{3cm}
 
 Zukünftig sind mehrere Weiterentwicklungen erforderlich, bevor der entwickelte Prototyp produktiv eingesetzt werden kann. Die wichtigste technische Einschränkung betrifft die Videokomprimierung auf dem HB10. Ursprünglich war vorgesehen, die vorhandene Hardware-Unterstützung für die Komprimierung zu verwenden. 
 Aufgrund der eingesetzten Betriebssystem- und Treiberversion konnte diese jedoch nicht wie geplant genutzt werden, weshalb im Prototypen auf Software-Komprimierung zurückgegriffen wurde. Diese ist zwar grundsätzlich funktionsfähig, belastet das System jedoch stark. Die Messungen haben gezeigt, 
@@ -30,7 +26,7 @@ welche Kameraperspektiven erforderlich sind und ob Spieler sowie Dartscheibe aus
 da diese Faktoren die Aussagekraft der Aufnahmen beeinflussen können. 
 
 Auch die Serverarchitektur und die Webplattform sind als prototypische Umsetzungen zu verstehen. Der Server zeigt, dass der Upload, die Speicherung und der Abruf von Videos grundsätzlich möglich sind. Für einen produktiven Einsatz mit einer größeren Anzahl von HB10-Geräten und Nutzern müsste jedoch untersucht werden, 
-ob die bestehende Architektur ausreichend skalierbar ist. Dabei wäre insbesondere zu prüfen, ob eine horizontale Skalierung, ein externer Videospeicher oder eine stärkere Integration in bestehende Dart-Systeme sinnvoll sind. Zudem müsste die zusätzliche Systemlast berücksichtigt werden, 
+ob die bestehende Architektur ausreichend skalierbar ist. Dabei wäre insbesondere zu prüfen, ob eine horizontale Skalierung, ein externer Videospeicher oder eine stärkere Integration in bestehende Dart-Serversysteme sinnvoll sind. Zudem müsste die zusätzliche Systemlast und benötigte Bandbreite berücksichtigt werden, 
 die durch parallele Video-Uploads und das Streaming der gespeicherten Aufnahmen entsteht. 
 
 Die Webplattform stellt bisher lediglich grundlegende Funktionen zur Anzeige und Wiedergabe der Videos bereit. Erweiterte Funktionen für eine tatsächliche Spielüberprüfung wurden noch nicht umgesetzt. In einer weiterentwickelten Version könnten Videos konkreten Spielen, Spielern oder Turnieren zugeordnet werden. 

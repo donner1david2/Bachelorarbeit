@@ -6,13 +6,13 @@ Die Serveranwendung wurde in Kotlin auf Grundlage von Spring Boot implementiert.
 
 \section{Wahl des Servertyps}
 
-Für den Server wurde entschieden, auf einen klassischen Webserver kombiniert mit relationaler Datenbank zurückzugreifen, der die Videos auf dem Dateisystem speichert. Ein Alternativer Gedanke wäre es, statt das Dateisystem des Servers zu verwenden, die Videos in einem Object-Storage zu speichern. 
+Für den Server wurde entschieden, auf einen klassischen Webserver kombiniert mit relationaler Datenbank zurückzugreifen, der die Videos auf dem Dateisystem speichert. Ein alternativer Gedanke wäre es, statt das Dateisystem des Servers zu verwenden, die Videos in einem Object-Storage zu speichern. 
 Dies ist mittlerweile eine empfohlene Praxis bei \ac{VOD} Streaming Plattformen \cite{2021}. Object-Storage bringt jedoch viel Komplexität mit sich, die nicht gerechtfertigt werden kann. Denn die relativ geringe Menge an Videos mit denen zu rechnen ist, 
-vermindern stark die Vorteile die Object-Storage mit sich bringt. Deshalb wurde entschieden, die Videos auf dem Dateisystem des Servers zu speichern. Da die Videos maximal eine Länge von einigen Minuten haben, ist die Dateigröße relativ klein, 
+verringert deutlich die Vorteile die Object-Storage mit sich bringt. Deshalb wurde entschieden, die Videos auf dem Dateisystem des Servers zu speichern. Da die Videos maximal eine Länge von einigen Minuten haben, ist die Dateigröße relativ klein, 
 sodass eine Speicherung auf dem Dateisystem des Servers keine Probleme mit sich bringen sollte, und die Verknüpfung von Metadaten und Videos stark vereinfacht wird.
 
 Als Kommunikationsprotokoll zwischen Server und Clients wird HTTP zusammen mit REST-API verwendet. Da dies eine simple aber ausreichende Methode ist. Der größte Nachteil ist das abgebrochene Anfragen nicht fortgesetzt werden können. Somit kann die Übertragung von großen Dateien problematisch werden.
-Da aber HLS als Streaming Protokoll verwendet wird, (s. \ref{sec:hls}) liegen die Videos nicht als eine einzelne große Datei vor, sondern eine Playlist Datei mit einzelnen Video Segmenten, welche nicht größer als 5MB werden. Deshalb ist die Übertagung der Videos kein Problem.
+Da aber HLS als Streaming Protokoll verwendet wird, (s. \ref{sec:hls}) liegen die Videos nicht als eine einzelne große Datei vor, sondern eine Playlist Datei mit einzelnen Video Segmenten, welche nicht größer als 5MB werden. Deshalb ist die Übertragung der Videos kein Problem.
 Es braucht deutlich reduzierten Aufwand, einen REST-Server mittels Spring Boot aufzusetzen, als bei einer vergleichbaren Implementierung ohne den Einsatz eines Frameworks. Spring Boot übernimmt den Großteil der Aufgaben und es müssen nur die Endpunkte für die Clients, 
 die Schnittstellen zur Datenbank und wie erhaltene Anfragen bearbeitet werden müssen definiert werden. Da eine große Menge strukturierter Video-Metadaten gespeichert werden, wurde eine relationale Datenbank zur effizienten Verwaltung dieser Daten eingesetzt.
 
@@ -132,10 +132,10 @@ bildet diese Tabelle die zentrale Verbindung zwischen den gespeicherten Videodat
 
 Die Entität besitzt eine eindeutige \textit{id}, über die jeder Datensatz innerhalb der Datenbank identifiziert werden kann. Momentan wird in \textit{name} nur die PlayerId vom Dart gespeichert da es für den Prototypen nicht notwendig war ein Benennungsschema für die Videos zu erstellen. 
 In einer richtigen Implementierung sollten dann passende Namen vergeben werden, und die PlayerId kann in ein eigenes Attribut wandern. Der Wert \textit{path} beschreibt den Pfad der gespeicherten Videodatei beziehungsweise der HLS-Playlist. Ergänzend dazu enthält das Attribut \textit{throws}.
-Dieser wert kann entweder als Statistik zum sortieren verwendet werden, oder im Fall das man die Videolänge angeben möchte können wir diese mit den Würfen berechnen da wir wissen, dass ein Wurf genau 3 Sekunden entspricht. 
+Dieser Wert kann entweder als Statistik zum sortieren verwendet werden, oder im Fall, dass man die Videolänge angeben möchte können wir diese mit den Würfen berechnen da wir wissen, dass ein Wurf genau 3 Sekunden entspricht. 
 
 Der Erstellungszeitpunkt wird über \textit{date} gespeichert. Dieser Wert ist notwendig, um mehrere Videos eines Spielers zeitlich einordnen und in einer nachvollziehbaren Reihenfolge anzeigen zu können. Das Attribut \textit{tournament} beschreibt das zugehörige Turnier des Videos. 
-Um später den Nutzern zu ermöglichen alle Videos zu einem bestimmten Turnier anzuschauen.
+Um später den Nutzern zu ermöglichen alle Videos eines bestimmten Turniers anzuschauen.
 
 Das Datenmodell bleibt damit zunächst bewusst klein gehalten. Für den Prototypen reicht diese Struktur aus, da zunächst nur der Upload, die Speicherung, die Zuordnung und der Abruf der Videos umgesetzt werden müssen. Eine spätere Erweiterung wäre dennoch möglich. 
 So könnten zusätzliche Attribute wie eine Spiel-ID oder weitere Informationen zum Spiel ergänzt werden, falls die Videofunktion stärker in das bestehende Dart-Ökosystem eingebunden wird. Für die aktuelle Umsetzung ist die einzelne Tabelle jedoch ausreichend, 
@@ -154,8 +154,8 @@ da sie alle für die Serverlogik benötigten Metadaten enthält und gleichzeitig
 Für die Kommunikation zwischen dem Server und den Clients werden REST-API-Endpunkte (s. \cref{fig:rest}) bereitgestellt. Diese Endpunkte ermöglichen es den Clients, Videos hochzuladen, Metadaten abzurufen und Videos zu streamen (s. \cref{fig:videocycle}) . Die API-Endpunkte sind wie folgt strukturiert:
 
 \begin{itemize}
-    \item \textbf{POST /video/\{playerId\}/\{filename\}}: Ein Endpunkt für den HB10, um ein Video hochzuladen. Der Endpunkt erhält die spielerId den Dateinamen und die Videodaten.
-    \item \textbf{GET /video/\{playerId\}/\{filename\}}: Ein Endpunkt für den Nutzer, um die HLS playlist und Segmente für ein bestimmtes Video abzurufen.
+    \item \textbf{POST /video/\{playerId\}/\{filename\}}: Ein Endpunkt für den HB10, um ein Video hochzuladen. Der Endpunkt erhält die ID des Spielers den Dateinamen und die Videodaten.
+    \item \textbf{GET /video/\{playerId\}/\{filename\}}: Ein Endpunkt für den Nutzer, um die HLS-playlist und Segmente für ein bestimmtes Video abzurufen.
     \item \textbf{GET /video/videos}: Ein Endpunkt für den Nutzer, um eine Liste aller verfügbaren Videos abzurufen. Der Endpunkt gibt eine Liste von Metadaten über die Videos zurück.
 \end{itemize}
 
@@ -163,7 +163,7 @@ Für die Kommunikation zwischen dem Server und den Clients werden REST-API-Endpu
     \centering
     \includesvg[width=\textwidth]{img/PlantUml/VideoZyklus/VideoZyklus.svg}
     \caption[Lebenszyklus eines Videos]{Lebenszyklus eines Videos. Nachdem das Video auf dem HB10 fertig ist, wird es an den Server übertragen und dort auf dem Dateisystem gespeichert. Die dazugehörigen Metadaten werden in einer Datenbank gespeichert. Wird das Video jetzt vom Webclient abgerufen, 
-    fragt dieser zunächst die Liste aller Videos ab und zeigt sie an. Wird ein Video ausgewählt, wird zunächst die dazugehörige HLS Playlist angefragt und danach die zugehörigen Segmente des Videos geladen.}
+    fragt dieser zunächst die Liste aller Videos ab und zeigt sie an. Wird ein Video ausgewählt, wird zunächst die dazugehörige HLS-Playlist angefragt und danach die zugehörigen Segmente des Videos geladen.}
     \label{fig:videocycle}
 \end{figure}
 
@@ -234,11 +234,12 @@ Die Aufnahme des Spielers ist daher funktional mit dem Spielmodus verbunden.
 Personen im Hintergrund sind für diesen Zweck dagegen grundsätzlich nicht erforderlich. Aus diesem Grund sollte der Bildausschnitt soweit wie möglich auf den Spieler und die Dartscheibe begrenzt werden. Bereiche, 
 die für die spätere Überprüfung nicht benötigt werden, sollten bereits vor der Speicherung entfernt oder unkenntlich gemacht werden (s. \cref{fig:background}). 
 
-\begin{figure}
+\begin{figure}[ht!]
     \centering
-    \includesvg[width=\textwidth]{img/background.svg}
+    \includegraphics[width=\textwidth]{img/background-ai.jpg}
     \caption[Ausblendung nicht benötigter Hintergrundbereiche]{Schematische Darstellung der möglichen Datenminimierung innerhalb einer Videoaufnahme. Der für die Spielüberprüfung relevante Bildbereich enthält den aufgenommenen Spieler. Nicht benötigte Bereiche außerhalb dieses Ausschnitts können vollständig entfernt werden. 
-    Verbleibende Hintergrundbereiche innerhalb des Bildausschnitts können zusätzlich verpixelt oder unscharf dargestellt werden, damit dort erfasste unbeteiligte Personen nicht erkennbar bleiben.}
+    Verbleibende Hintergrundbereiche innerhalb des Bildausschnitts können zusätzlich verpixelt oder unscharf dargestellt werden, damit dort erfasste unbeteiligte Personen nicht erkennbar bleiben. Das unbearbeitete Bild wurde mithilfe von Microsoft Copilot generiert. 
+    Die abgebildeten Personen sind fiktiv und entsprechen keinen realen Personen.}
     \label{fig:background}
 \end{figure}
 
